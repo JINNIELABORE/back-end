@@ -26,6 +26,27 @@ app.use((request, response, next) => {
 //Cria um objeto para definir o tipo de dados que irá chegar no BODY (JSON)
 const bodyParserJSON = bodyParser.json()
 
+// Imports
+
+const controllerClientes = require('./controller/controller_cliente.js')
+
+// Clientes
+
+app.post('/v1/jinni/cliente',  cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let contentType = request.headers['content-type']
+
+    //Recebe os dados encaminhados no Body da requisição
+    let dadosBody = request.body
+
+    //Encaminha os dados para cotroller inserir no BD
+    let resultDados = await controllerClientes.setInserirCliente(dadosBody, contentType)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')
 

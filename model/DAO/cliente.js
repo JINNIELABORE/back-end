@@ -43,6 +43,7 @@ const insertCliente = async (dadosCliente) => {
     }
 
 }
+
 const selectId = async () => {
     try {
         let sql = 'select CAST(id as DECIMAL)as id from cadastro_cliente order by id desc limit 1'
@@ -59,7 +60,76 @@ const selectId = async () => {
     }
 }
 
+const selectAllClientes = async () => {
+    try {
+        let sql = 'select * from cadastro_cliente'
+
+        let rsClientes = await prisma.$queryRawUnsafe(sql)
+
+        return rsClientes
+
+    } catch (error) {
+
+        return false
+
+    }
+}
+
+const selectByIdCliente = async (id) => {
+    try {
+
+        let sql = `SELECT * FROM cadastro_cliente WHERE id = ${id}`
+
+        let rsCliente = await prisma.$queryRawUnsafe(sql)
+
+        return rsCliente
+
+    } catch (error) {
+        return false
+    }
+}
+
+const updateCliente = async (idCliente, dadosCliente) => {
+
+    let sql
+
+    try {
+        sql = `update cadastro_cliente set nome_cliente = '${dadosCliente.nome_cliente}', 
+                                           cnpj_cliente = '${dadosCliente.cnpj_cliente}',
+                                           email_cliente = '${dadosCliente.email_cliente}',
+                                           senha_cliente = '${dadosCliente.senha_cliente}' where id = ${idCliente}`
+
+        let result = await prisma.$executeRawUnsafe(sql)
+        
+        return result
+
+    } catch (error) {
+
+        return false
+    }
+
+}
+
+const deleteCliente = async (id) => {
+
+    try {
+        let sql = `delete from cadastro_cliente where id = ${id}`
+
+        let rsCliente = await prisma.$queryRawUnsafe(sql)
+
+        return rsCliente
+
+    } catch (error) {
+        return false
+    }
+
+}
+
 module.exports = {
     insertCliente,
-    selectId
+    selectId,
+    selectAllClientes,
+    selectByIdCliente,
+    updateCliente,
+    deleteCliente
 }

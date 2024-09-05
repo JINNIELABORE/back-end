@@ -59,7 +59,77 @@ const selectId = async () => {
     }
 }
 
+const selectAllFreelancers = async () => {
+    try {
+        let sql = 'select * from cadastro_freelancer'
+
+        let rsFreelancers = await prisma.$queryRawUnsafe(sql)
+
+        return rsFreelancers
+
+    } catch (error) {
+
+        return false
+
+    }
+}
+
+const selectByIdFreelancer = async (id) => {
+    try {
+
+        let sql = `SELECT * FROM cadastro_freelancer WHERE id = ${id}`
+
+        let rsFreelancer = await prisma.$queryRawUnsafe(sql)
+
+        return rsFreelancer
+
+    } catch (error) {
+        return false
+    }
+}
+
+const updateFreelancer = async (idFreelancer, dadosFreelancer) => {
+
+    let sql
+
+    try {
+        sql = `update cadastro_freelancer set nome_freelancer = '${dadosFreelancer.nome_freelancer}', 
+                                           data_nascimento = '${dadosFreelancer.data_nascimento}',
+                                           cpf_freelancer = '${dadosFreelancer.cpf_freelancer}',
+                                           email_freelancer = '${dadosFreelancer.email_freelancer}',
+                                           senha_freelancer = '${dadosFreelancer.senha_freelancer}' where id = ${idFreelancer}`
+
+        let result = await prisma.$executeRawUnsafe(sql)
+        
+        return result
+
+    } catch (error) {
+
+        return false
+    }
+
+}
+
+const deleteFreelancer = async (id) => {
+
+    try {
+        let sql = `delete from cadastro_freelancer where id = ${id}`
+
+        let rsFreelancer = await prisma.$queryRawUnsafe(sql)
+
+        return rsFreelancer
+
+    } catch (error) {
+        return false
+    }
+
+}
+
 module.exports = {
     insertFreelancer,
-    selectId
+    selectId,
+    selectAllFreelancers,
+    selectByIdFreelancer,
+    updateFreelancer,
+    deleteFreelancer
 }

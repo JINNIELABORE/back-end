@@ -8,11 +8,12 @@ datasource db {
 }
 
 model cadastro_cliente {
-  id            Int    @id @default(autoincrement())
-  nome_cliente  String @db.VarChar(50)
+  id            Int     @id @default(autoincrement())
+  nome_cliente  String  @db.VarChar(50)
   cnpj_cliente  BigInt
-  email_cliente String @db.VarChar(255)
-  senha_cliente String @db.VarChar(80)
+  email_cliente String  @db.VarChar(255)
+  senha_cliente String  @db.VarChar(80)
+  is_premium    Boolean @default(false)
 }
 
 model cadastro_freelancer {
@@ -22,4 +23,5 @@ model cadastro_freelancer {
   cpf_freelancer   BigInt
   email_freelancer String   @db.VarChar(255)
   senha_freelancer String   @db.VarChar(80)
+  is_premium       Boolean  @default(false)
 }

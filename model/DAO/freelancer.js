@@ -125,11 +125,45 @@ const deleteFreelancer = async (id) => {
 
 }
 
+// Verifica se o CPF já existe no banco de dados
+const selectByCpf = async (cpf_freelancer) => {
+    try {
+        let sql = `SELECT * FROM cadastro_freelancer WHERE cpf_freelancer = ${cpf_freelancer}`
+        let rsFreelancer = await prisma.$queryRawUnsafe(sql)
+
+        if (rsFreelancer.length > 0) {
+            return true // CPF já cadastrado
+        } else {
+            return false // CPF não cadastrado
+        }
+    } catch (error) {
+        return false
+    }
+}
+
+// Verifica se o e-mail já existe no banco de dados
+const selectByEmail = async (email_freelancer) => {
+    try {
+        let sql = `SELECT * FROM cadastro_freelancer WHERE email_freelancer = '${email_freelancer}'`
+        let rsFreelancer = await prisma.$queryRawUnsafe(sql)
+
+        if (rsFreelancer.length > 0) {
+            return true // E-mail já cadastrado
+        } else {
+            return false // E-mail não cadastrado
+        }
+    } catch (error) {
+        return false
+    }
+}
+
 module.exports = {
     insertFreelancer,
     selectId,
     selectAllFreelancers,
     selectByIdFreelancer,
     updateFreelancer,
-    deleteFreelancer
+    deleteFreelancer,
+    selectByCpf,
+    selectByEmail
 }

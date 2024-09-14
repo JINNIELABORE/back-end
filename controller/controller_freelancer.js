@@ -14,9 +14,22 @@ const setInserirFreelancer = async (dadosFreelancer, contentType) => {
                dadosFreelancer.email_freelancer == '' || dadosFreelancer.email_freelancer == undefined || dadosFreelancer.email_freelancer == null || dadosFreelancer.email_freelancer.length > 255 || 
                dadosFreelancer.senha_freelancer == '' || dadosFreelancer.senha_freelancer == undefined || dadosFreelancer.senha_freelancer == null || dadosFreelancer.senha_freelancer.length > 80
             ) {
-                return message.ERROR_REQUIRED_FIELDS//400
+                return message.ERROR_REQUIRED_FIELDS //400
+            } 
 
-            } else {
+            // Verifica se o CPF já está cadastrado
+            const cpfExistente = await freelancersDAO.selectByCpf(dadosFreelancer.cpf_freelancer);
+            if (cpfExistente) {
+                return message.ERROR_CPF_ALREADY_EXISTS; //409
+            }
+
+            // Verifica se o e-mail já está cadastrado
+            const emailExistente = await freelancersDAO.selectByEmail(dadosFreelancer.email_freelancer);
+            if (emailExistente) {
+                return message.ERROR_EMAIL_ALREADY_EXISTS; //409
+            }
+
+            else {
                 //encaminha os dados para o DAO inserir
                 let novoFreelancer = await freelancersDAO.insertFreelancer(dadosFreelancer)
 
@@ -46,6 +59,7 @@ const setInserirFreelancer = async (dadosFreelancer, contentType) => {
     }
 
 }
+
 
 const getListarFreelancers = async () => {
     let freelancersJSON = {}

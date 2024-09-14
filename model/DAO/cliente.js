@@ -125,11 +125,45 @@ const deleteCliente = async (id) => {
 
 }
 
+// Verifica se o CNPJ já existe no banco de dados
+const selectByCnpj = async (cnpj_cliente) => {
+    try {
+        let sql = `SELECT * FROM cadastro_cliente WHERE cnpj_cliente = ${cnpj_cliente}`
+        let rsCliente = await prisma.$queryRawUnsafe(sql)
+
+        if (rsCliente.length > 0) {
+            return true // CNPJ já cadastrado
+        } else {
+            return false // CNPJ não cadastrado
+        }
+    } catch (error) {
+        return false
+    }
+}
+
+// Verifica se o e-mail já existe no banco de dados
+const selectByEmail = async (email_cliente) => {
+    try {
+        let sql = `SELECT * FROM cadastro_cliente WHERE email_cliente = '${email_cliente}'`
+        let rsCliente = await prisma.$queryRawUnsafe(sql)
+
+        if (rsCliente.length > 0) {
+            return true // E-mail já cadastrado
+        } else {
+            return false // E-mail não cadastrado
+        }
+    } catch (error) {
+        return false
+    }
+}
+
 module.exports = {
     insertCliente,
     selectId,
     selectAllClientes,
     selectByIdCliente,
+    selectByCnpj,
+    selectByEmail,
     updateCliente,
     deleteCliente
 }

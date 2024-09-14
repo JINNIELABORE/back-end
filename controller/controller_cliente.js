@@ -2,7 +2,6 @@ const clientesDAO = require('../model/DAO/cliente.js')
 const message = require('../modulo/config.js')
 
 const setInserirCliente = async (dadosCliente, contentType) => {
-
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
             let novoClienteJSON = {}
@@ -13,17 +12,26 @@ const setInserirCliente = async (dadosCliente, contentType) => {
                 dadosCliente.email_cliente == '' || dadosCliente.email_cliente == undefined || dadosCliente.email_cliente == null || dadosCliente.email_cliente.length > 255 ||
                 dadosCliente.senha_cliente == '' || dadosCliente.senha_cliente == undefined || dadosCliente.senha_cliente == null || dadosCliente.senha_cliente.length > 80
             ) {
-                return message.ERROR_REQUIRED_FIELDS//400
-
+                return message.ERROR_REQUIRED_FIELDS //400
             } else {
-                //encaminha os dados para o DAO inserir
+                // Verifica se o CNPJ já existe
+                let cnpjExists = await clientesDAO.selectByCnpj(dadosCliente.cnpj_cliente)
+                if (cnpjExists) {
+                    return message.ERROR_CNPJ_ALREADY_EXISTS // Retorna erro se o CNPJ já estiver cadastrado
+                }
+
+                // Verifica se o e-mail já existe
+                let emailExists = await clientesDAO.selectByEmail(dadosCliente.email_cliente)
+                if (emailExists) {
+                    return message.ERROR_EMAIL_ALREADY_EXISTS // Retorna erro se o e-mail já estiver cadastrado
+                }
+
+                // Encaminha os dados para o DAO inserir
                 let novoCliente = await clientesDAO.insertCliente(dadosCliente)
-
                 if (novoCliente) {
-
                     let id = await clientesDAO.selectId()
 
-                    //Cria o JSON de retorno com informações de requisição e os dados novos
+                    // Cria o JSON de retorno com informações de requisição e os dados novos
                     novoClienteJSON.status = message.SUCESS_CREATED_ITEM.status
                     novoClienteJSON.status_code = message.SUCESS_CREATED_ITEM.status_code
                     novoClienteJSON.message = message.SUCESS_CREATED_ITEM.message
@@ -31,20 +39,17 @@ const setInserirCliente = async (dadosCliente, contentType) => {
                     novoClienteJSON.cliente = dadosCliente
 
                     return novoClienteJSON //201
-
                 } else {
                     console.log("Erro interno do servidor ao inserir clientes no banco de dados.")
                     return message.ERROR_INTERNAL_SERVER_DB //500
                 }
             }
-
         }
-
     } catch (error) {
         return message.ERROR_INTERNAL_SERVER //500 erro na camada da controller
     }
-
 }
+
 
 const getListarClientes = async () => {
     let clientesJSON = {}

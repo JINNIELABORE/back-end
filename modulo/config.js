@@ -19,6 +19,9 @@ const ERROR_CONTENT_TYPE= {status: false, status_code: 415, message: 'O content-
 const SUCESS_CREATED_ITEM = {status: true, status_code: 201, message: 'O item foi criado com sucesso no banco de dados!'}
 const SUCESS_DELETE_ITEM = {status: true, status_code: 200, message: 'O item foi deletado com sucesso no banco de dados!'}
 const SUCESS_UPDATE_ITEM = {status: true, status_code: 200, message: 'O item foi atualizado com sucesso no banco de dados!'}
+const ERROR_CPF_ALREADY_EXISTS = {status: false, status_code: 409, message: 'O CPF já está cadastrado no sistema!'}
+const ERROR_CNPJ_ALREADY_EXISTS = {status: false, status_code: 409, message: 'O CNPJ já está cadastrado no sistema!'}
+const ERROR_EMAIL_ALREADY_EXISTS = {status: false, status_code: 409, message: 'O e-mail já está cadastrado no sistema!'}
 
 module.exports = {
     ERROR_INVALID_ID,
@@ -26,7 +29,9 @@ module.exports = {
     ERROR_NOT_FOUND,
     ERROR_INTERNAL_SERVER_DB,
     ERROR_INTERNAL_SERVER,
-    ERROR_CONTENT_TYPE,
+    ERROR_CPF_ALREADY_EXISTS,
+    ERROR_CNPJ_ALREADY_EXISTS,
+    ERROR_EMAIL_ALREADY_EXISTS,
     SUCESS_CREATED_ITEM,
     SUCESS_DELETE_ITEM,
     SUCESS_UPDATE_ITEM

@@ -30,6 +30,7 @@ const bodyParserJSON = bodyParser.json()
 
 const controllerClientes = require('./controller/controller_cliente.js')
 const controllerFreelancers = require('./controller/controller_freelancer.js')
+const controllerCategorias = require('./controller/controller_categoria.js')
 
 // Clientes
 
@@ -130,7 +131,6 @@ app.get('/v1/jinni/freelancers', cors(), async (request, response, next) => {
 
 })
 
-
 app.get('/v1/jinni/freelancer/:id', cors(), async (request, response, next) => {
   
     //Recebe o ID encaminhando a requisição
@@ -164,6 +164,76 @@ app.delete('/v1/jinni/freelancer/:id',  cors(), bodyParserJSON, async (request, 
 
     response.status(dadosFreelancer.status_code)
     response.json(dadosFreelancer)
+})
+
+
+
+//Categoria
+
+
+app.post('/v1/jinni/categoria',  cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let contentType = request.headers['content-type']
+
+    //Recebe os dados encaminhados no Body da requisição
+    let dadosBody = request.body
+
+    //Encaminha os dados para cotroller inserir no BD
+    let resultDados = await controllerCategorias.setInserirNovaCategoria(dadosBody, contentType)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+app.get('/v1/jinni/categorias', cors(), async (request, response, next) => {
+
+    let dadosCategorias = await controllerCategorias.getListarCategorias()
+
+    if (dadosCategorias) {
+        response.json(dadosCategorias)
+        response.status(200)
+    } else {
+        response.json({ message: 'Nenhum resgistro encontrado' })
+        response.status(404)
+    }
+
+})
+
+
+app.get('/v1/jinni/categoria/:id', cors(), async (request, response, next) => {
+  
+    //Recebe o ID encaminhando a requisição
+    let idCategoria = request.params.id
+
+    let dadosCategoria = await controllerCategorias.getBuscarCategoria(idCategoria)
+
+    response.status(dadosCategoria.status_code)
+    response.json(dadosCategoria)
+})
+
+app.put('/v1/jinni/categorias/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+
+    let idCategoria = request.params.id
+
+    let contentType = request.headers['content-type']
+
+    let dadosBody = request.body
+
+    let resultDados = await controllerCategorias.setAtualizarCategoria(dadosBody, contentType, idCategoria)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+app.delete('/v1/jinni/categoria/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+   
+    let idCategoria = request.params.id
+    let dadosCategoria = await controllerCategorias.setExcluirCategoria(idCategoria)
+
+    response.status(dadosCategoria.status_code)
+    response.json(dadosCategoria)
 })
 
 app.listen(8080, function () {

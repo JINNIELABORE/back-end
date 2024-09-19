@@ -14,7 +14,7 @@ const insertCategoria = async (dadosCategoria) => {
     try {
         let sql
 
-        sql = `insert into categorias(nome_categoria) values('${dadosCategoria.nome_categoria}','${dadosCategoria.icon_categoria}')`
+        sql = `insert into categorias(nome_categoria, icon_categoria) values('${dadosCategoria.nome_categoria}','${dadosCategoria.icon_categoria}' )`
 
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -26,7 +26,7 @@ const insertCategoria = async (dadosCategoria) => {
         //Cria a variável SQL
 
     } catch (error) {
-
+        console.log(error);
         return false
     }
 
@@ -53,7 +53,8 @@ const updateCategoria = async (idCategoria, dadosCategoria) => {
     let sql
 
     try {
-        sql = `update categorias set nome_categoria = '${dadosCategoria.nome_categoria}' where id = ${idCategoria}`
+        sql = `update categorias set nome_categoria = '${dadosCategoria.nome_categoria}', 
+                                                    icon_categoria = '${dadosCategoria.icon_categoria}' where id = ${idCategoria}`
 
         let result = await prisma.$executeRawUnsafe(sql)
         

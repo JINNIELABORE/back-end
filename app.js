@@ -31,6 +31,7 @@ const bodyParserJSON = bodyParser.json()
 const controllerClientes = require('./controller/controller_cliente.js')
 const controllerFreelancers = require('./controller/controller_freelancer.js')
 const controllerCategorias = require('./controller/controller_categoria.js')
+const controllerHabilidades = require('./controller/controller_habilidade.js')
 
 // Clientes
 
@@ -236,6 +237,74 @@ app.delete('/v1/jinni/categoria/:id',  cors(), bodyParserJSON, async (request, r
     response.json(dadosCategoria)
 })
 
+
+//Habilidade
+
+
+app.post('/v1/jinni/habilidade',  cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let contentType = request.headers['content-type']
+
+    //Recebe os dados encaminhados no Body da requisição
+    let dadosBody = request.body
+
+    //Encaminha os dados para cotroller inserir no BD
+    let resultDados = await controllerHabilidades.setInserirNovaHabilidade(dadosBody, contentType)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+app.get('/v1/jinni/habilidades', cors(), async (request, response, next) => {
+
+    let dadosHabilidades = await controllerHabilidades.getListarHabilidades()
+
+    if (dadosHabilidades) {
+        response.json(dadosHabilidades)
+        response.status(200)
+    } else {
+        response.json({ message: 'Nenhum resgistro encontrado' })
+        response.status(404)
+    }
+
+})
+
+
+app.get('/v1/jinni/habilidade/:id', cors(), async (request, response, next) => {
+  
+    //Recebe o ID encaminhando a requisição
+    let idHabilidade = request.params.id
+
+    let dadosHabilidade = await controllerHabilidades.getBuscarHabilidade(idHabilidade)
+
+    response.status(dadosHabilidade.status_code)
+    response.json(dadosHabilidade)
+})
+
+app.put('/v1/jinni/habilidade/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+
+    let idHabilidade = request.params.id
+
+    let contentType = request.headers['content-type']
+
+    let dadosBody = request.body
+
+    let resultDados = await controllerHabilidades.setAtualizarHabilidade(dadosBody, contentType, idHabilidade)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+app.delete('/v1/jinni/habilidade/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+   
+    let idHabilidade = request.params.id
+    let dadosHabilidade = await controllerHabilidades.setExcluirHablidade(idHabilidade)
+
+    response.status(dadosHabilidade.status_code)
+    response.json(dadosHabilidade)
+})
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')
 })

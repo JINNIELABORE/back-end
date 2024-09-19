@@ -1,22 +1,22 @@
-const categoriasDAO = require('../model/DAO/categoria.js')
+const categoriasDAO = require('../model/DAO/habilidade.js')
 
 const message = require('../modulo/config.js')
 
-const setInserirNovaCategoria = async (dadosCategoria, contentType) => {
+const setInserirNovaHabilidade = async (dadosHabilidade, contentType) => {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
             let novaCategoriaJSON = {}
 
             if (
-                dadosCategoria.nome_categoria == '' || dadosCategoria.nome_categoria == undefined || dadosCategoria.nome_categoria == null || dadosCategoria.nome_categoria.length > 45 ||
-                dadosCategoria.icon_categoria == '' || dadosCategoria.icon_categoria == undefined || dadosCategoria.icon_categoria == null || dadosCategoria.icon_categoria.length > 400
+                dadosHabilidade.nome_habilidade == '' || dadosHabilidade.nome_habilidade == undefined || dadosHabilidade.nome_habilidade == null || dadosHabilidade.nome_habilidade.length > 45 ||
+                dadosHabilidade.icon_habilidade == '' || dadosHabilidade.icon_habilidade == undefined || dadosHabilidade.icon_habilidade == null || dadosHabilidade.icon_habilidade.length > 400
             ) {
                 return message.ERROR_REQUIRED_FIELDS//400
 
             } else {
-                let novaCategoria = await categoriasDAO.insertCategoria(dadosCategoria)
+                let novaHabilidade = await categoriasDAO.insertHabilidade(dadosHabilidade)
 
-                if (novaCategoria) {
+                if (novaHabilidade) {
 
                     let id = await categoriasDAO.selectId()
 
@@ -24,7 +24,7 @@ const setInserirNovaCategoria = async (dadosCategoria, contentType) => {
                     novaCategoriaJSON.status_code = message.SUCESS_CREATED_ITEM.status_code
                     novaCategoriaJSON.message = message.SUCESS_CREATED_ITEM.message
                     novaCategoriaJSON.id = parseInt(id)
-                    novaCategoriaJSON.categoria = dadosCategoria
+                    novaCategoriaJSON.categoria = dadosHabilidade
 
                     return novaCategoriaJSON //201
 
@@ -42,29 +42,30 @@ const setInserirNovaCategoria = async (dadosCategoria, contentType) => {
     }
 }
 
-const setAtualizarCategoria = async (dadosCategoria, contentType, id) => {
+const setAtualizarHabilidade = async (dadosHabilidade, contentType, id) => {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
             let updateCategoriaJSON = {}
 
             if (
-                dadosCategoria.nome_categoria == '' || dadosCategoria.nome_categoria == undefined || dadosCategoria.nome_categoria == null || dadosCategoria.nome_categoria.length > 45
+                dadosHabilidade.nome_habilidade == '' || dadosHabilidade.nome_habilidade == undefined || dadosHabilidade.nome_habilidade == null || dadosHabilidade.nome_habilidade.length > 45 ||
+                dadosHabilidade.icon_habilidade == '' || dadosHabilidade.icon_habilidade == undefined || dadosHabilidade.icon_habilidade == null || dadosHabilidade.icon_habilidade.length > 400
             ) {
                 return message.ERROR_REQUIRED_FIELDS//400
 
             } else {
                
-                let categoriaAtualizada = await categoriasDAO.updateCategoria(id, dadosCategoria)
+                let habilidadeAtualizada = await habilidadeDAO.updateHabilidade(id, dadosHabilidade)
 
-                if (categoriaAtualizada) {
-                    let updatedCategoria = await categoriasDAO.selectByIdCategoria(id) 
-                    let updatedId = updatedCategoria[0].id 
+                if (habilidadeAtualizada) {
+                    let updatedHabilidade = await habilidadeDAO.selectByIdHabilidade(id) 
+                    let updatedId = updatedHabilidade[0].id 
 
                     updateCategoriaJSON.status = message.SUCESS_UPDATE_ITEM.status
                     updateCategoriaJSON.status_code = message.SUCESS_UPDATE_ITEM.status_code
                     updateCategoriaJSON.message = message.SUCESS_UPDATE_ITEM.message
                     updateCategoriaJSON.id = updatedId // Usa o id atualizado aqui
-                    updateCategoriaJSON.categoria = dadosCategoria
+                    updateCategoriaJSON.habilidade = dadosHabilidade
 
                     return updateCategoriaJSON
 
@@ -80,26 +81,26 @@ const setAtualizarCategoria = async (dadosCategoria, contentType, id) => {
     }
 }
 
-const setExcluirCategoria = async (id) => {
+const setExcluirHabilidade = async (id) => {
 
     try {
 
-        let idCategoria = id
+        let idHabilidade = id
 
-        let validaCategoria = await getBuscarCategoria(idCategoria)
+        let validaHabilidade = await getBuscarHabilidade(idHabilidade)
 
-        let dadosCategoria = await categoriasDAO.deleteCategoria(idCategoria)
+        let dadosHabilidade = await habilidadeDAO.deleteHabilidade(idHabilidade)
 
-        if (idCategoria == '' || idCategoria == undefined || isNaN(idCategoria)) {
+        if (idHabilidade == '' || idHabilidade == undefined || isNaN(idHabilidade)) {
 
             return message.ERROR_INVALID_ID //400
 
-        } else if (validaCategoria.status == false) {
+        } else if (validaHabilidade.status == false) {
             return message.ERROR_NOT_FOUND
 
         } else {
 
-            if (dadosCategoria)
+            if (dadosHabilidade)
                 return message.SUCESS_DELETE_ITEM // 200
             else
                 return message.ERROR_INTERNAL_SERVER_DB
@@ -118,12 +119,12 @@ const getListarCategorias = async () => {
     //Cria o objeto JSON
     let categoriasJSON = {}
 
-    let dadosCategorias = await categoriasDAO.selectAllCategorias()
+    let dadosHabilidades = await categoriasDAO.selectAllCategorias()
 
-    if (dadosCategorias) {
-        if (dadosCategorias.length > 0) {
-            categoriasJSON.categorias = dadosCategorias
-            categoriasJSON.quantidade = dadosCategorias.length
+    if (dadosHabilidades) {
+        if (dadosHabilidades.length > 0) {
+            categoriasJSON.categorias = dadosHabilidades
+            categoriasJSON.quantidade = dadosHabilidades.length
             categoriasJSON.status_code = 200
 
             return categoriasJSON
@@ -135,22 +136,22 @@ const getListarCategorias = async () => {
     }
 }
 
-const getBuscarCategoria = async (id) => {
+const getBuscarHabilidade = async (id) => {
 
-    let idCategoria = id
+    let idHabilidade = id
 
     let categoriaJSON = {}
 
-    if (idCategoria == '' || idCategoria == undefined || isNaN(idCategoria)) {
+    if (idHabilidade == '' || idHabilidade == undefined || isNaN(idHabilidade)) {
         return message.ERROR_INVALID_ID
     } else {
 
-        let dadosCategoria = await categoriasDAO.selectByIdCategoria(idCategoria)
+        let dadosHabilidade = await categoriasDAO.selectByIdHabilidade(idHabilidade)
 
-        if (dadosCategoria) {
+        if (dadosHabilidade) {
 
-            if (dadosCategoria.length > 0) {
-                categoriaJSON.categoria = dadosCategoria
+            if (dadosHabilidade.length > 0) {
+                categoriaJSON.categoria = dadosHabilidade
                 categoriaJSON.status_code = 200
 
                 return categoriaJSON
@@ -164,9 +165,9 @@ const getBuscarCategoria = async (id) => {
 }
 
 module.exports = {
-    setInserirNovaCategoria,
-    setAtualizarCategoria,
-    setExcluirCategoria,
-    getListarCategorias,
-    getBuscarCategoria
+    setInserirNovaHabilidade,
+    setAtualizarHabilidade,
+    setExcluirHabilidade,
+    getListarHabilidades,
+    getBuscarHabilidade
 }

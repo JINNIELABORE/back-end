@@ -300,7 +300,7 @@ app.put('/v1/jinni/habilidade/:id',  cors(), bodyParserJSON, async (request, res
 app.delete('/v1/jinni/habilidade/:id',  cors(), bodyParserJSON, async (request, response, next) => {
    
     let idHabilidade = request.params.id
-    let dadosHabilidade = await controllerHabilidades.setExcluirHablidade(idHabilidade)
+    let dadosHabilidade = await controllerHabilidades.setExcluirHabilidade(idHabilidade)
 
     response.status(dadosHabilidade.status_code)
     response.json(dadosHabilidade)

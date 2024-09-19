@@ -82,7 +82,7 @@ const deleteHabilidade = async (id) => {
 
 }
 
-const selectByidHabilidade = async (id) => {
+const selectByIdHabilidade = async (id) => {
 
     try {
         let sql = `select * from habilidades where id = ${id}`
@@ -122,5 +122,5 @@ module.exports = {
     updateHabilidade,
     deleteHabilidade,
     selectAllhabilidades,
-    selectByidHabilidade,
+    selectByIdHabilidade,
 }

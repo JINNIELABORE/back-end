@@ -8,7 +8,8 @@ const setInserirNovaCategoria = async (dadosCategoria, contentType) => {
             let novaCategoriaJSON = {}
 
             if (
-                dadosCategoria.nome_categoria == '' || dadosCategoria.nome_categoria == undefined || dadosCategoria.nome_categoria == null || dadosCategoria.nome_categoria.length > 45
+                dadosCategoria.nome_categoria == '' || dadosCategoria.nome_categoria == undefined || dadosCategoria.nome_categoria == null || dadosCategoria.nome_categoria.length > 45 ||
+                dadosCategoria.icon_categoria == '' || dadosCategoria.icon_categoria == undefined || dadosCategoria.icon_categoria == null || dadosCategoria.icon_categoria.length > 200
             ) {
                 return message.ERROR_REQUIRED_FIELDS//400
 

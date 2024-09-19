@@ -14,7 +14,7 @@ const insertCategoria = async (dadosCategoria) => {
     try {
         let sql
 
-        sql = `insert into categorias(nome_categoria) values('${dadosCategoria.nome_categoria}')`
+        sql = `insert into categorias(nome_categoria) values('${dadosCategoria.nome_categoria}','${dadosCategoria.icon_categoria}')`
 
         let result = await prisma.$executeRawUnsafe(sql)
 

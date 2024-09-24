@@ -32,6 +32,7 @@ const controllerClientes = require('./controller/controller_cliente.js')
 const controllerFreelancers = require('./controller/controller_freelancer.js')
 const controllerCategorias = require('./controller/controller_categoria.js')
 const controllerHabilidades = require('./controller/controller_habilidade.js')
+const controllerFreelancerCategoria = require('./controller/controller_categoria_freelancer.js')
 
 // Clientes
 
@@ -304,6 +305,15 @@ app.delete('/v1/jinni/habilidade/:id',  cors(), bodyParserJSON, async (request, 
 
     response.status(dadosHabilidade.status_code)
     response.json(dadosHabilidade)
+})
+
+app.post('/v1/jinni/freelancer/categoria', cors(), bodyParserJSON, async(request, response) => {
+    let contentType = request.headers['content-type']
+    let dados = request.body
+    let result = await controllerFreelancerCategoria.setInserirNovaCategoriaFreelancer(dados, contentType)
+
+    response.status(result.status)
+    response.json(result)
 })
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')

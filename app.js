@@ -387,6 +387,76 @@ app.put ('/v1/jinni/categoria/freelancer/:id',  cors(), bodyParserJSON, async (r
 
 })
 
+// Habilidade para Freelancer
+
+app.post('/v1/jinni/habilidade/freelancer',  cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let contentType = request.headers['content-type']
+
+    //Recebe os dados encaminhados no Body da requisição
+    let dadosBody = request.body
+
+    //Encaminha os dados para cotroller inserir no BD
+    let resultDados = await controllerFreelancerHabilidade.setInserirHabilidadeFreelancer(dadosBody, contentType)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+
+})
+
+app.get('/v1/jinni/habilidade/freelancers', cors(), async (request, response, next) => {
+
+    let dadosHabilidadesFreelancers = await controllerFreelancerHabilidade.getListarHabilidadesFreelancer()
+
+    //Validação para retornar os dados ou o erro 404
+    if (dadosHabilidadesFreelancers) {
+        response.json(dadosHabilidadesFreelancers)
+        response.status(200)
+    } else {
+        response.json({ message: 'Nenhum resgistro encontrado' })
+        response.status(404)
+    }
+
+})
+
+app.get('/v1/jinni/habilidade/freelancer/:id', cors(), async (request, response, next) => {
+  
+    //Recebe o ID encaminhando a requisição
+    let idHabilidadeFreelancer = request.params.id
+
+    let dadosHabilidadeFreelancer = await controllerFreelancerHabilidade.getBuscarHabilidadeFreelancer(idHabilidadeFreelancer)
+
+    response.status(dadosHabilidadeFreelancer.status_code)
+    response.json(dadosHabilidadeFreelancer)
+})
+
+app.delete('/v1/jinni/habilidade/freelancer/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+   
+    let idHabilidadeFreelancer = request.params.id
+    let dadosHabilidadeFreelancer = await controllerFreelancerHabilidade.setExcluirHabilidadeFreelancer(idHabilidadeFreelancer)
+
+    response.status(dadosHabilidadeFreelancer.status_code)
+    response.json(dadosHabilidadeFreelancer)
+})
+
+app.put ('/v1/jinni/habilidade/freelancer/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+
+    let idHabilidadeFreelancer = request.params.id
+
+    let contentType = request.headers['content-type']
+
+    //Recebe os dados encaminhados no Body da requisição
+    let dadosBody = request.body
+
+    let resultDados = await controllerFreelancerHabilidade.setAtualizarHabilidadeFreelancer(dadosBody, contentType, idHabilidadeFreelancer)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')
 })

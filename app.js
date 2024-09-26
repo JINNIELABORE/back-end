@@ -324,6 +324,57 @@ app.post('/v1/jinni/categoria/freelancer',  cors(), bodyParserJSON, async (reque
 
 })
 
+app.get('/v1/jinni/categorias/freelancers', cors(), async (request, response, next) => {
+
+    let dadosCategoriasFreelancers = await controllerFreelancerCategoria.getListarCategoriasFreelancers()
+
+    //Validação para retornar os dados ou o erro 404
+    if (dadosCategoriasFreelancers) {
+        response.json(dadosCategoriasFreelancers)
+        response.status(200)
+    } else {
+        response.json({ message: 'Nenhum resgistro encontrado' })
+        response.status(404)
+    }
+
+})
+
+app.get('/v1/jinni/categoria/freelancer/:id', cors(), async (request, response, next) => {
+  
+    //Recebe o ID encaminhando a requisição
+    let idCategoriaFreelancer = request.params.id
+
+    let dadosCategoriaFreelancer = await controllerFreelancerCategoria.getBuscarCategoriaFreelancer(idCategoriaFreelancer)
+
+    response.status(dadosCategoriaFreelancer.status_code)
+    response.json(dadosCategoriaFreelancer)
+})
+
+app.delete('/v1/jinni/categoria/freelancer/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+   
+    let idCategoriaFreelancer = request.params.id
+    let dadosCategoriaFreelancer = await controllerFreelancerCategoria.setExcluirCategoriaFreelancer(idCategoriaFreelancer)
+
+    response.status(dadosCategoriaFreelancer.status_code)
+    response.json(dadosCategoriaFreelancer)
+})
+
+app.put ('/v1/jinni/categoria/freelancer/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+
+    let idCategoriaFreelancer = request.params.id
+
+    let contentType = request.headers['content-type']
+
+    //Recebe os dados encaminhados no Body da requisição
+    let dadosBody = request.body
+
+    let resultDados = await controllerFreelancerCategoria.setAtualizarCategoriaFreelancer(dadosBody, contentType, idCategoriaFreelancer)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')
 })

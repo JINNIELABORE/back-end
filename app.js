@@ -33,6 +33,7 @@ const controllerFreelancers = require('./controller/controller_freelancer.js')
 const controllerCategorias = require('./controller/controller_categoria.js')
 const controllerHabilidades = require('./controller/controller_habilidade.js')
 const controllerFreelancerCategoria = require('./controller/controller_categoria_freelancer.js')
+const controllerFreelancerHabilidade = require('./controller/controller_habilidade_freelancer.js')
 
 // Clientes
 
@@ -397,7 +398,7 @@ app.post('/v1/jinni/habilidade/freelancer',  cors(), bodyParserJSON, async (requ
     let dadosBody = request.body
 
     //Encaminha os dados para cotroller inserir no BD
-    let resultDados = await controllerFreelancerHabilidade.setInserirHabilidadeFreelancer(dadosBody, contentType)
+    let resultDados = await controllerFreelancerHabilidade.setInserirNovaHabilidadeFreelancer(dadosBody, contentType)
 
     response.status(resultDados.status_code)
     response.json(resultDados)
@@ -405,7 +406,7 @@ app.post('/v1/jinni/habilidade/freelancer',  cors(), bodyParserJSON, async (requ
 
 })
 
-app.get('/v1/jinni/habilidade/freelancers', cors(), async (request, response, next) => {
+app.get('/v1/jinni/habilidades/freelancers', cors(), async (request, response, next) => {
 
     let dadosHabilidadesFreelancers = await controllerFreelancerHabilidade.getListarHabilidadesFreelancer()
 
@@ -414,7 +415,7 @@ app.get('/v1/jinni/habilidade/freelancers', cors(), async (request, response, ne
         response.json(dadosHabilidadesFreelancers)
         response.status(200)
     } else {
-        response.json({ message: 'Nenhum resgistro encontrado' })
+        response.json({ message: 'Nenhum registro encontrado' })
         response.status(404)
     }
 

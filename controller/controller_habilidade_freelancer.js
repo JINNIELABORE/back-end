@@ -91,9 +91,10 @@ const setExcluirHabilidadeFreelancer = async (id) => {
             return message.ERROR_NOT_FOUND
             
         } else {
-            if (dadosHabilidadeFreelancer) {
+            
+            if (dadosHabilidadeFreelancer) 
                 return message.SUCESS_DELETE_ITEM // 200
-            } else {
+             else {
                 return message.ERROR_INTERNAL_SERVER_DB
             }
         }
@@ -104,7 +105,7 @@ const setExcluirHabilidadeFreelancer = async (id) => {
 
 const getListarHabilidadesFreelancer = async () => {
     // Cria o objeto JSON
-    let HabilidadesFreelancerJSON = {}
+    let habilidadesFreelancerJSON = {}
 
     // Cria a função DAO para retornar os dados do BD
     let dadosHabilidadeFreelancer = await habilidadeFreelancerDAO.selectAllHabilidadesFreelancer()
@@ -112,11 +113,11 @@ const getListarHabilidadesFreelancer = async () => {
     // Validação para criar o JSON de dados
     if (dadosHabilidadeFreelancer) {
         if (dadosHabilidadeFreelancer.length > 0) {
-            HabilidadesFreelancerJSON.habilidade_freelancer = dadosHabilidadeFreelancer
-            HabilidadesFreelancerJSON.quantidade = dadosHabilidadeFreelancer.length
-            HabilidadesFreelancerJSON.status_code = 200
+            habilidadesFreelancerJSON.habilidade_freelancer = dadosHabilidadeFreelancer
+            habilidadesFreelancerJSON.quantidade = dadosHabilidadeFreelancer.length
+            habilidadesFreelancerJSON.status_code = 200
 
-            return HabilidadesFreelancerJSON
+            return habilidadesFreelancerJSON
         } else {
             return message.ERROR_NOT_FOUND
         }
@@ -127,19 +128,19 @@ const getListarHabilidadesFreelancer = async () => {
 
 const getBuscarHabilidadeFreelancer = async (id) => {
     let idHabilidadeFreelancer = id
-    let HabilidadesFreelancerJSON = {}
+    let habilidadesFreelancerJSON = {}
 
     if (idHabilidadeFreelancer == '' || idHabilidadeFreelancer == undefined || isNaN(idHabilidadeFreelancer)) {
         return message.ERROR_INVALID_ID
     } else {
-        let dadosHabilidadeFreelancer = await habilidadeFreelancerDAO.selectByidHabilidadeFreelancer(idHabilidadeFreelancer)
+        let dadosHabilidadeFreelancer = await habilidadeFreelancerDAO.selectByIdHabilidadeFreelancer(idHabilidadeFreelancer)
 
         if (dadosHabilidadeFreelancer) {
             if (dadosHabilidadeFreelancer.length > 0) {
-                HabilidadesFreelancerJSON.habilidade_freelancer = dadosHabilidadeFreelancer
-                HabilidadesFreelancerJSON.status_code = 200
+                habilidadesFreelancerJSON.habilidade_freelancer = dadosHabilidadeFreelancer
+                habilidadesFreelancerJSON.status_code = 200
 
-                return HabilidadesFreelancerJSON
+                return habilidadesFreelancerJSON
             } else {
                 return message.ERROR_NOT_FOUND
             }

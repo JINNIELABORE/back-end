@@ -29,7 +29,7 @@ const setInserirNovaHabilidade = async (dadosHabilidade, contentType) => {
                     return novaHabilidadeJSON //201
 
                 } else {
-                    console.log("Erro interno do servidor ao inserir Habilidade no banco de dados.")
+                    console.log("Erro interno do servidor ao inserir habilidade no banco de dados.")
                     return message.ERROR_INTERNAL_SERVER_DB //500
                 }
             }

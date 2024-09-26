@@ -91,9 +91,9 @@ const setExcluirCategoriaFreelancer = async (id) => {
             return message.ERROR_NOT_FOUND
             
         } else {
-            if (dadosCategoriaFreelancer) {
+            if (dadosCategoriaFreelancer) 
                 return message.SUCESS_DELETE_ITEM // 200
-            } else {
+            else {
                 return message.ERROR_INTERNAL_SERVER_DB
             }
         }

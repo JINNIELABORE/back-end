@@ -8,19 +8,21 @@ const prisma = new PrismaClient()
 const insertCategoriaFreelancer = async (dadosCategoriaFreelancer) => {
     try {
         let sql = `insert into freelancer_categoria (
-                                                    id_freelancer, 
-                                                    id_categoria
-                                                    ) values (
-                                                              '${dadosCategoriaFreelancer.id_freelancer}', 
-                                                              '${dadosCategoriaFreelancer.id_categoria}'
-                                                              )`
+                                                     id_freelancer, 
+                                                     id_categoria
+                                                     ) values (
+                                                               '${dadosCategoriaFreelancer.id_freelancer}', 
+                                                               '${dadosCategoriaFreelancer.id_categoria}'
+                                                               )`
         let result = await prisma.$executeRawUnsafe(sql)
         
         return result
     } catch (error) {
+        console.error("Erro ao inserir nova categoria freelancer:", error)
         return false
     }
 }
+
 
 // Função para selecionar o último ID de classificação
 const selectId = async () => {

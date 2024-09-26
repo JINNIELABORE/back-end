@@ -3,6 +3,7 @@ const categoriaFreelancerDAO = require('../model/DAO/categoria_freelancer.js')
 
 const message = require('../modulo/config.js')
 const { getBuscarCategoria } = require('./controller_categoria.js')
+
 const setInserirNovaCategoriaFreelancer = async (dadosCategoriaFreelancer, contentType) => {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {

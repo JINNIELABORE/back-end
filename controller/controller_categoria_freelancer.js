@@ -2,7 +2,6 @@
 const categoriaFreelancerDAO = require('../model/DAO/categoria_freelancer.js')
 
 const message = require('../modulo/config.js')
-const { getBuscarCategoriaFreelancer } = require('./controller_categoria.js')
 
 const setInserirNovaCategoriaFreelancer = async (dadosCategoriaFreelancer, contentType) => {
     try {
@@ -25,6 +24,7 @@ const setInserirNovaCategoriaFreelancer = async (dadosCategoriaFreelancer, conte
                     novaCategoriaFreelancerJSON.message = message.SUCESS_CREATED_ITEM.message
                     novaCategoriaFreelancerJSON.id = parseInt(id)
                     novaCategoriaFreelancerJSON.categoria_freelancer = dadosCategoriaFreelancer
+                    
 
                     return novaCategoriaFreelancerJSON // 201
                 } else {

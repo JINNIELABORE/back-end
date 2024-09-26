@@ -307,14 +307,23 @@ app.delete('/v1/jinni/habilidade/:id',  cors(), bodyParserJSON, async (request, 
     response.json(dadosHabilidade)
 })
 
-app.post('/v1/jinni/freelancer/categoria', cors(), bodyParserJSON, async(request, response) => {
-    let contentType = request.headers['content-type']
-    let dados = request.body
-    let result = await controllerFreelancerCategoria.setInserirNovaCategoriaFreelancer(dados, contentType)
+// Categoria para freelancer
 
-    response.status(result.status)
-    response.json(result)
+app.post('/v1/jinni/categoria/freelancer',  cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let contentType = request.headers['content-type']
+
+    //Recebe os dados encaminhados no Body da requisição
+    let dadosBody = request.body
+
+    //Encaminha os dados para cotroller inserir no BD
+    let resultDados = await controllerFreelancerCategoria.setInserirNovaCategoriaFreelancer(dadosBody, contentType)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
 })
+
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')
 })

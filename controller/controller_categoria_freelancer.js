@@ -74,31 +74,35 @@ const setAtualizarCategoriaFreelancer = async (dadosCategoriaFreelancer, content
 }
 
 const setExcluirCategoriaFreelancer = async (id) => {
-
     try {
+        let idCategoriaFreelancer = id;
 
-        let idCategoriaFreelancer = id
+        // Verifica se o ID é válido antes de buscar
+        if (idCategoriaFreelancer === '' || idCategoriaFreelancer === undefined || isNaN(idCategoriaFreelancer)) {
+            return message.ERROR_INVALID_ID;
+        }
 
-        let validaCategoriaFreelancer = await getBuscarCategoriaFreelancer(idCategoriaFreelancer)
+        let validaCategoriaFreelancer = await getBuscarCategoriaFreelancer(idCategoriaFreelancer);
+        
+        // Verifica se a categoria foi encontrada
+        if (validaCategoriaFreelancer.status === false) {
+            return message.ERROR_NOT_FOUND;
+        }
 
-        let dadosCategoriaFreelancer = await categoriaFreelancerDAO.deleteCategoriaFreelancer(idCategoriaFreelancer)
+        // Tenta deletar a categoria
+        let dadosCategoriaFreelancer = await categoriaFreelancerDAO.deleteCategoriaFreelancer(idCategoriaFreelancer);
 
-        if (idCategoriaFreelancer == '' || idCategoriaFreelancer == undefined || isNaN(idCategoriaFreelancer)) {
-           
-            return message.ERROR_INVALID_ID 
-
-        } else if (validaCategoriaFreelancer.status == false) 
-            return message.ERROR_NOT_FOUND
-         else {
-            if (dadosCategoriaFreelancer) 
-                return message.SUCESS_DELETE_ITEM 
-            else 
-                return message.ERROR_INTERNAL_SERVER_DB
+        if (dadosCategoriaFreelancer) {
+            return message.SUCESS_DELETE_ITEM;
+        } else {
+            return message.ERROR_INTERNAL_SERVER_DB;
         }
     } catch (error) {
-        return message.ERROR_INTERNAL_SERVER
+        console.error("Erro ao excluir a categoria:", error); // Log do erro
+        return message.ERROR_INTERNAL_SERVER;
     }
 }
+
 
 const getListarCategoriasFreelancers = async () => {
     // Cria o objeto JSON

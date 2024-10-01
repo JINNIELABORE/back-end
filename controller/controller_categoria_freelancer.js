@@ -85,17 +85,15 @@ const setExcluirCategoriaFreelancer = async (id) => {
 
         if (idCategoriaFreelancer == '' || idCategoriaFreelancer == undefined || isNaN(idCategoriaFreelancer)) {
            
-            return message.ERROR_INVALID_ID // 400
+            return message.ERROR_INVALID_ID 
 
-        } else if (validaCategoriaFreelancer.status == false) {
+        } else if (validaCategoriaFreelancer.status == false) 
             return message.ERROR_NOT_FOUND
-            
-        } else {
+         else {
             if (dadosCategoriaFreelancer) 
-                return message.SUCESS_DELETE_ITEM // 200
-            else {
+                return message.SUCESS_DELETE_ITEM 
+            else 
                 return message.ERROR_INTERNAL_SERVER_DB
-            }
         }
     } catch (error) {
         return message.ERROR_INTERNAL_SERVER

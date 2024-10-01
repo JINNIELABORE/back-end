@@ -11,7 +11,7 @@ const setInserirNovaCategoriaFreelancer = async (dadosCategoriaFreelancer, conte
 
             if (
                 dadosCategoriaFreelancer.id_freelancer == undefined || isNaN(dadosCategoriaFreelancer.id_freelancer) || dadosCategoriaFreelancer.id_freelancer == null ||
-                dadosCategoriaFreelancer.id_categoria == undefined || isNaN(dadosCategoriaFreelancer.id_categoria) || dadosCategoriaFreelancer.id_categoria == null 
+                dadosCategoriaFreelancer.id_categoria == undefined || isNaN(dadosCategoriaFreelancer.id_categoria) || dadosCategoriaFreelancer.id_categoria == null
             ) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {
@@ -44,62 +44,67 @@ const setAtualizarCategoriaFreelancer = async (dadosCategoriaFreelancer, content
 
             if (
                 dadosCategoriaFreelancer.id_freelancer == undefined || isNaN(dadosCategoriaFreelancer.id_freelancer) || dadosCategoriaFreelancer.id_freelancer == null ||
-                dadosCategoriaFreelancer.id_categoria == undefined || isNaN(dadosCategoriaFreelancer.id_categoria) || dadosCategoriaFreelancer.id_categoria == null 
+                dadosCategoriaFreelancer.id_categoria == undefined || isNaN(dadosCategoriaFreelancer.id_categoria) || dadosCategoriaFreelancer.id_categoria == null
             ) {
                 return message.ERROR_REQUIRED_FIELDS // 400
-            } else {
-                // Encaminha os dados para o DAO atualizar
-                let categoriaFreelancerAtualizada = await categoriaFreelancerDAO.updateCategoriaFreelancer(id, dadosCategoriaFreelancer)
+            } 
 
-                if (categoriaFreelancerAtualizada) {
-                    let updatedCategoriaFreelancer = await categoriaFreelancerDAO.selectByIdCategoriaFreelancer(id) 
+            let categoriaFreelancerAtualizada = await categoriaFreelancerDAO.updateCategoriaFreelancer(id, dadosCategoriaFreelancer)
+
+            if (categoriaFreelancerAtualizada) {
+                let updatedCategoriaFreelancer = await categoriaFreelancerDAO.selectByIdCategoriaFreelancer(id)
+
+                if (updatedCategoriaFreelancer && updatedCategoriaFreelancer.length > 0) {
                     let updatedId = updatedCategoriaFreelancer[0].id
 
-                    // Constrói o JSON de resposta com o id atualizado
                     updateCategoriaFreelancer.status = message.SUCESS_UPDATE_ITEM.status
                     updateCategoriaFreelancer.status_code = message.SUCESS_UPDATE_ITEM.status_code
                     updateCategoriaFreelancer.message = message.SUCESS_UPDATE_ITEM.message
-                    updateCategoriaFreelancer.id = updatedId 
+                    updateCategoriaFreelancer.id = updatedId
                     updateCategoriaFreelancer.categoria_freelancer = dadosCategoriaFreelancer
 
-                    return updateCategoriaFreelancer // Retorna a resposta JSON atualizada
+                    return updateCategoriaFreelancer
                 } else {
-                    return message.ERROR_INTERNAL_SERVER_DB // 500
+                    return message.ERROR_NOT_FOUND 
                 }
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB
             }
         }
     } catch (error) {
-        return message.ERROR_INTERNAL_SERVER // 500 erro na camada da controller
+        console.error("Erro ao atualizar a categoria:", error)
+        return message.ERROR_INTERNAL_SERVER
     }
 }
 
+
 const setExcluirCategoriaFreelancer = async (id) => {
     try {
-        let idCategoriaFreelancer = id;
+        let idCategoriaFreelancer = id
 
         // Verifica se o ID é válido antes de buscar
         if (idCategoriaFreelancer === '' || idCategoriaFreelancer === undefined || isNaN(idCategoriaFreelancer)) {
-            return message.ERROR_INVALID_ID;
+            return message.ERROR_INVALID_ID
         }
 
-        let validaCategoriaFreelancer = await getBuscarCategoriaFreelancer(idCategoriaFreelancer);
-        
+        let validaCategoriaFreelancer = await getBuscarCategoriaFreelancer(idCategoriaFreelancer)
+
         // Verifica se a categoria foi encontrada
         if (validaCategoriaFreelancer.status === false) {
-            return message.ERROR_NOT_FOUND;
+            return message.ERROR_NOT_FOUND
         }
 
         // Tenta deletar a categoria
-        let dadosCategoriaFreelancer = await categoriaFreelancerDAO.deleteCategoriaFreelancer(idCategoriaFreelancer);
+        let dadosCategoriaFreelancer = await categoriaFreelancerDAO.deleteCategoriaFreelancer(idCategoriaFreelancer)
 
         if (dadosCategoriaFreelancer) {
-            return message.SUCESS_DELETE_ITEM;
+            return message.SUCESS_DELETE_ITEM
         } else {
-            return message.ERROR_INTERNAL_SERVER_DB;
+            return message.ERROR_INTERNAL_SERVER_DB
         }
     } catch (error) {
-        console.error("Erro ao excluir a categoria:", error); // Log do erro
-        return message.ERROR_INTERNAL_SERVER;
+        console.error("Erro ao excluir a categoria:", error) // Log do erro
+        return message.ERROR_INTERNAL_SERVER
     }
 }
 

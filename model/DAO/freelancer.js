@@ -157,6 +157,24 @@ const selectByEmail = async (email_freelancer) => {
     }
 }
 
+const getFreelancerByEmail = async (email_freelancer) => {
+    try {
+        let sql = `SELECT nome_freelancer FROM cadastro_freelancer WHERE email_freelancer = '${email_freelancer}'`;
+        console.log(sql);
+        let rsFreelancer = await prisma.$queryRawUnsafe(sql);
+        console.log(rsFreelancer);  
+
+        if (rsFreelancer.length > 0) {
+            return rsFreelancer[0].nome_freelancer; // Retorna o nome do freelancer
+        } else {
+            return null; // E-mail não cadastrado
+        }
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+
 module.exports = {
     insertFreelancer,
     selectId,
@@ -165,5 +183,6 @@ module.exports = {
     updateFreelancer,
     deleteFreelancer,
     selectByCpf,
-    selectByEmail
+    selectByEmail,
+    getFreelancerByEmail
 }

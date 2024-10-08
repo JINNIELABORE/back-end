@@ -68,7 +68,6 @@ app.get('/v1/jinni/clientes', cors(), async (request, response, next) => {
 
 
 app.get('/v1/jinni/cliente/:id', cors(), async (request, response, next) => {
-  
     //Recebe o ID encaminhando a requisição
     let idCliente = request.params.id
 
@@ -456,6 +455,55 @@ app.put ('/v1/jinni/habilidade/freelancer/:id',  cors(), bodyParserJSON, async (
     response.json(resultDados)
 
 })
+
+app.post('v1/jinni/freelancer/nome', async (req, res) => {
+    const { email_freelancer } = req.body;
+
+    if (!email_freelancer) {
+        return res.status(400).json({ error: 'Email é obrigatório.' });
+    }
+
+    const nomeFreelancer = await controllerFreelancers.getFreelancerByEmail(email_freelancer);
+
+    if (nomeFreelancer) {
+        return res.status(200).json({ nome: nomeFreelancer });
+    } else {
+        return res.status(404).json({ error: 'Freelancer não encontrado.' });
+    }
+});
+
+app.get('/v1/jinni/nome/cliente', async (req, res) => {
+
+
+    const emailPesquisado = req.query.emailDigitado
+console.log(emailPesquisado);
+
+
+    const nomeCliente = await controllerClientes.getClienteByEmail(emailPesquisado);
+
+    if (nomeCliente) {
+        return res.status(200).json({ nome: nomeCliente});
+    } else {
+        return res.status(404).json({ error: 'Cliente não encontrado.' });
+    }
+});
+
+app.get('/v1/jinni/nome/freelancer', async (req, res) => {
+
+
+    const emailPesquisado = req.query.emailDigitado
+console.log(emailPesquisado);
+
+
+    const nomeCliente = await controllerFreelancers.getFreelancerByEmail(emailPesquisado);
+
+    if (nomeCliente) {
+        return res.status(200).json({ nome: nomeCliente});
+    } else {
+        return res.status(404).json({ error: 'Cliente não encontrado.' });
+    }
+});
+
 
 
 app.listen(8080, function () {

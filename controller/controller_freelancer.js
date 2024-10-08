@@ -70,7 +70,7 @@ const getListarFreelancers = async () => {
             // Converter BigInt para string
             dadosFreelancers = dadosFreelancers.map(freelancer => {
                 return {
-                    ...freelancer,
+                    freelancer,
                     cpf_freelancer: freelancer.cpf_freelancer.toString()
                 }
             })
@@ -198,11 +198,31 @@ const setExcluirFreelancer = async (id) => {
 }
 
 
+const getFreelancerByEmail = async (emailPesquisado) =>{
+
+    let dadosFreelancers = await freelancersDAO.getFreelancerByEmail(emailPesquisado)
+
+    if (dadosFreelancers) {
+        if (dadosFreelancers.length > 0) {
+            return dadosFreelancers
+        } else {
+            return { message: 'Nenhum registro encontrado', status_code: 404 }
+        }
+    } else {
+        return { message: 'Erro interno do servidor', status_code: 500 }
+    }
+
+}
+
+
+
+
 
 module.exports = {
     setInserirFreelancer,
     getListarFreelancers,
     getBuscarFreelancer,
     setAtualizarFreelancer,
-    setExcluirFreelancer
+    setExcluirFreelancer,
+    getFreelancerByEmail
 }

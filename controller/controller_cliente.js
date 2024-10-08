@@ -187,11 +187,29 @@ const setExcluirCliente = async (id) => {
 }
 
 
+const getClienteByEmail = async (emailPesquisado) =>{
+
+    let dadosCliente = await clientesDAO.getClienteByEmail(emailPesquisado)
+
+    if (dadosCliente) {
+        if (dadosCliente.length > 0) {
+            return dadosCliente
+        } else {
+            return { message: 'Nenhum registro encontrado', status_code: 404 }
+        }
+    } else {
+        return { message: 'Erro interno do servidor', status_code: 500 }
+    }
+
+}
+
+
 
 module.exports = {
     setInserirCliente,
     getListarClientes,
     getBuscarCliente,
     setAtualizarCliente,
-    setExcluirCliente
+    setExcluirCliente,
+    getClienteByEmail
 }

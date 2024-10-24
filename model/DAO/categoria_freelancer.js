@@ -4,7 +4,6 @@ const { PrismaClient } = require('@prisma/client')
 // Instanciando a classe PrismaClient
 const prisma = new PrismaClient()
 
-// Função para inserir uma classificação no Banco de Dados
 const insertCategoriaFreelancer = async (dadosCategoriaFreelancer) => {
     try {
         let sql = `insert into freelancer_categoria (
@@ -23,8 +22,6 @@ const insertCategoriaFreelancer = async (dadosCategoriaFreelancer) => {
     }
 }
 
-
-// Função para selecionar o último ID de classificação
 const selectId = async () => {
     try {
         let sql = 'select CAST(id as DECIMAL) as id FROM freelancer_categoria order by id desc limit 1'
@@ -41,7 +38,6 @@ const selectId = async () => {
     }
 }
 
-// Função para atualizar uma classificação
 const updateCategoriaFreelancer = async (idCategoriaFreelancer, dadosCategoriaFreelancer) => {
 
     let sql
@@ -60,7 +56,6 @@ const updateCategoriaFreelancer = async (idCategoriaFreelancer, dadosCategoriaFr
     }
 }
 
-// Função para deletar uma classificação no Banco de Dados
 const deleteCategoriaFreelancer = async (id) => {
 
     try {
@@ -78,7 +73,7 @@ const deleteCategoriaFreelancer = async (id) => {
 
 const selectByIdCategoriaFreelancer = async (idCategoriaFreelancer) => {
     try {
-        let sql = `SELECT * FROM freelancer_categoria WHERE id_freelancer = ${idCategoriaFreelancer}`
+        let sql = `SELECT * FROM freelancer_categoria WHERE id = ${idCategoriaFreelancer}`
         
         let rsCategoriaFreelancers = await prisma.$queryRawUnsafe(sql)
 
@@ -89,7 +84,6 @@ const selectByIdCategoriaFreelancer = async (idCategoriaFreelancer) => {
     }
 }
 
-// Função para selecionar todas as classificações
 const selectAllCategoriasFreelancer = async () => {
 
     try {

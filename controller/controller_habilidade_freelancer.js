@@ -52,7 +52,7 @@ const setAtualizarHabilidadeFreelancer = async (dadosHabilidadeFreelancer, conte
                 let habilidadeFreelancerAtualizada = await habilidadeFreelancerDAO.updateHabilidadeFreelancer(id, dadosHabilidadeFreelancer)
 
                 if (habilidadeFreelancerAtualizada) {
-                    let updatedHabilidadeFreelancer = await habilidadeFreelancerDAO.selectByidHabilidadeFreelancer(id) 
+                    let updatedHabilidadeFreelancer = await habilidadeFreelancerDAO.selectByIdHabilidadeFreelancer(id) 
                     let updatedId = updatedHabilidadeFreelancer[0].id
 
                     // Constrói o JSON de resposta com o id atualizado

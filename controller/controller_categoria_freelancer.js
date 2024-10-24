@@ -40,46 +40,46 @@ const setInserirNovaCategoriaFreelancer = async (dadosCategoriaFreelancer, conte
 const setAtualizarCategoriaFreelancer = async (dadosCategoriaFreelancer, contentType, id) => {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
-            let updateCategoriaFreelancer = {};
+            let updateCategoriaFreelancer = {}
 
             // Valida os campos necessários
             if (
                 dadosCategoriaFreelancer.id_freelancer == undefined || isNaN(dadosCategoriaFreelancer.id_freelancer) || dadosCategoriaFreelancer.id_freelancer == null ||
                 dadosCategoriaFreelancer.id_categoria == undefined || isNaN(dadosCategoriaFreelancer.id_categoria) || dadosCategoriaFreelancer.id_categoria == null
             ) {
-                return message.ERROR_REQUIRED_FIELDS; // 400
+                return message.ERROR_REQUIRED_FIELDS // 400
             }
 
             // Atualiza a categoria
-            let categoriaFreelancerAtualizada = await categoriaFreelancerDAO.updateCategoriaFreelancer(id, dadosCategoriaFreelancer);
+            let categoriaFreelancerAtualizada = await categoriaFreelancerDAO.updateCategoriaFreelancer(id, dadosCategoriaFreelancer)
 
             if (categoriaFreelancerAtualizada) {
-                let updatedCategoriaFreelancer = await categoriaFreelancerDAO.selectByIdCategoriaFreelancer(id);
+                let updatedCategoriaFreelancer = await categoriaFreelancerDAO.selectByIdCategoriaFreelancer(id)
 
                 // Verifica se a atualização realmente retornou dados
                 if (updatedCategoriaFreelancer && updatedCategoriaFreelancer.length > 0) {
-                    let updatedId = updatedCategoriaFreelancer[0].id;
+                    let updatedId = updatedCategoriaFreelancer[0].id
 
                     // Constrói o JSON de resposta com o id atualizado
-                    updateCategoriaFreelancer.status = message.SUCESS_UPDATE_ITEM.status;
-                    updateCategoriaFreelancer.status_code = message.SUCESS_UPDATE_ITEM.status_code;
-                    updateCategoriaFreelancer.message = message.SUCESS_UPDATE_ITEM.message;
-                    updateCategoriaFreelancer.id = updatedId;
-                    updateCategoriaFreelancer.categoria_freelancer = dadosCategoriaFreelancer;
+                    updateCategoriaFreelancer.status = message.SUCESS_UPDATE_ITEM.status
+                    updateCategoriaFreelancer.status_code = message.SUCESS_UPDATE_ITEM.status_code
+                    updateCategoriaFreelancer.message = message.SUCESS_UPDATE_ITEM.message
+                    updateCategoriaFreelancer.id = updatedId
+                    updateCategoriaFreelancer.categoria_freelancer = dadosCategoriaFreelancer
 
-                    return updateCategoriaFreelancer; // Retorna a resposta JSON atualizada
+                    return updateCategoriaFreelancer // Retorna a resposta JSON atualizada
                 } else {
-                    console.error("Categoria não encontrada após atualização, ID:", id);
-                    return message.ERROR_NOT_FOUND; // 404 caso não encontre o item
+                    console.error("Categoria não encontrada após atualização, ID:", id)
+                    return message.ERROR_NOT_FOUND // 404 caso não encontre o item
                 }
             } else {
-                console.error("Falha na atualização da categoria, ID:", id);
-                return message.ERROR_INTERNAL_SERVER_DB; // 500
+                console.error("Falha na atualização da categoria, ID:", id)
+                return message.ERROR_INTERNAL_SERVER_DB // 500
             }
         }
     } catch (error) {
-        console.error("Erro ao atualizar a categoria:", error); // Log do erro
-        return message.ERROR_INTERNAL_SERVER; // 500 erro na camada da controller
+        console.error("Erro ao atualizar a categoria:", error) // Log do erro
+        return message.ERROR_INTERNAL_SERVER // 500 erro na camada da controller
     }
 }
 

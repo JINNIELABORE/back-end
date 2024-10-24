@@ -4,7 +4,6 @@ const { PrismaClient } = require('@prisma/client')
 // Instanciando a classe PrismaClient
 const prisma = new PrismaClient()
 
-// Função para inserir uma classificação no Banco de Dados
 const insertHabilidadeFreelancer = async (dadosHabilidadeFreelancer) => {
     try {
         let sql = `insert into freelancer_habilidade (
@@ -22,7 +21,6 @@ const insertHabilidadeFreelancer = async (dadosHabilidadeFreelancer) => {
     }
 }
 
-// Função para selecionar o último ID de classificação
 const selectId = async () => {
     try {
         let sql = 'select CAST(id as DECIMAL) as id FROM freelancer_habilidade order by id desc limit 1'
@@ -39,7 +37,6 @@ const selectId = async () => {
     }
 }
 
-// Função para atualizar uma classificação
 const updateHabilidadeFreelancer = async (idHabilidadeFreelancer, dadosHabilidadeFreelancer) => {
 
     let sql
@@ -58,7 +55,6 @@ const updateHabilidadeFreelancer = async (idHabilidadeFreelancer, dadosHabilidad
     }
 }
 
-// Função para deletar uma classificação no Banco de Dados
 const deleteHabilidadeFreelancer = async (id) => {
 
     try {
@@ -76,7 +72,7 @@ const deleteHabilidadeFreelancer = async (id) => {
 
 const selectByIdHabilidadeFreelancer = async (idHabilidadeFreelancer) => {
     try {
-        let sql = `SELECT * FROM freelancer_habilidade WHERE id_freelancer = ${idHabilidadeFreelancer}`
+        let sql = `SELECT * FROM freelancer_habilidade WHERE id = ${idHabilidadeFreelancer}`
         
         let rsHabilidadeFreelancer = await prisma.$queryRawUnsafe(sql)
 
@@ -87,7 +83,6 @@ const selectByIdHabilidadeFreelancer = async (idHabilidadeFreelancer) => {
     }
 }
 
-// Função para selecionar todas as classificações
 const selectAllHabilidadesFreelancer = async () => {
 
     try {

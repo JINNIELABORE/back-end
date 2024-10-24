@@ -214,7 +214,7 @@ app.get('/v1/jinni/categoria/:id', cors(), async (request, response, next) => {
     response.json(dadosCategoria)
 })
 
-app.put('/v1/jinni/categorias/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+app.put('/v1/jinni/categoria/:id',  cors(), bodyParserJSON, async (request, response, next) => {
 
     let idCategoria = request.params.id
 

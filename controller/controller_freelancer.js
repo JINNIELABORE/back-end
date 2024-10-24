@@ -70,7 +70,7 @@ const getListarFreelancers = async () => {
             // Converter BigInt para string
             dadosFreelancers = dadosFreelancers.map(freelancer => {
                 return {
-                    freelancer,
+                    ...freelancer,
                     cpf_freelancer: freelancer.cpf_freelancer.toString()
                 }
             })

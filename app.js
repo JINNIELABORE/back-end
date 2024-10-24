@@ -505,7 +505,9 @@ console.log(emailPesquisado);
     }
 });
 
-app.get('/v1/jinni/nivelexperiencias', cors(), async (request, response, next) => {
+// Níveis de experiência
+
+app.get('/v1/jinni/nivel/experiencias', cors(), async (request, response, next) => {
   
     //Recebe o ID encaminhando a requisição
     let idNivelExperiencia = request.params.id
@@ -517,7 +519,7 @@ app.get('/v1/jinni/nivelexperiencias', cors(), async (request, response, next) =
 })
 
 
-app.get('/v1/jinni/nivelexperiencia/:id', cors(), async (request, response, next) => {
+app.get('/v1/jinni/nivel/experiencia/:id', cors(), async (request, response, next) => {
   
     //Recebe o ID encaminhando a requisição
     let idNivelExperiencia = request.params.id
@@ -528,7 +530,7 @@ app.get('/v1/jinni/nivelexperiencia/:id', cors(), async (request, response, next
     response.json(dadosNivelExperiencia)
 })
 
-app.delete('/v1/jinni/nivelexperiencia/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+app.delete('/v1/jinni/nivel/experiencia/:id',  cors(), bodyParserJSON, async (request, response, next) => {
    
     let idNivelExperiencia = request.params.id
     let dadosNivelExperiencia = await controllerNivelExperiencia.setExcluirNivelExperiencia(idNivelExperiencia)
@@ -537,7 +539,7 @@ app.delete('/v1/jinni/nivelexperiencia/:id',  cors(), bodyParserJSON, async (req
     response.json(dadosNivelExperiencia)
 })
 
-app.put ('/v1/jinni/nivelexperiencia/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+app.put ('/v1/jinni/nivel/experiencia/:id',  cors(), bodyParserJSON, async (request, response, next) => {
 
     let idNivelExperiencia = request.params.id
 
@@ -553,7 +555,7 @@ app.put ('/v1/jinni/nivelexperiencia/:id',  cors(), bodyParserJSON, async (reque
 
 })
 
-app.post('/v1/jinni/nivelexperiencia',  cors(), bodyParserJSON, async (request, response, next) =>{
+app.post('/v1/jinni/nivel/experiencia',  cors(), bodyParserJSON, async (request, response, next) =>{
 
     let contentType = request.headers['content-type']
 

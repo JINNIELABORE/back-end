@@ -88,7 +88,7 @@ const updateNivelExperiencia = async (idNivelExperiencia, dadosNivel) => {
     let sql
 
     try {
-        sql = `update nivel_experiencia set nivel_experiencia = '${dadosNivel.nivel_experiencia}"`
+        sql = `update nivel_experiencia set nivel_experiencia = '${dadosNivel.nivel_experiencia}' where id = ${idNivelExperiencia}`
 
         let result = await prisma.$executeRawUnsafe(sql)
         

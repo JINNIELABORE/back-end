@@ -117,7 +117,7 @@ const getListarNivelExperiencias = async () => {
     //Cria o objeto JSON
     let nivelExperienciaJSON = {}
 
-    let dadosNivelExperiencia = await nivelExperienciaDAO.selectAllnivelExperiencias()
+    let dadosNivelExperiencia = await nivelExperienciaDAO.selectAllNivelExperiencia()
 
     if (dadosNivelExperiencia) {
         if (dadosNivelExperiencia.length > 0) {

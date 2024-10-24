@@ -34,6 +34,7 @@ const controllerCategorias = require('./controller/controller_categoria.js')
 const controllerHabilidades = require('./controller/controller_habilidade.js')
 const controllerFreelancerCategoria = require('./controller/controller_categoria_freelancer.js')
 const controllerFreelancerHabilidade = require('./controller/controller_habilidade_freelancer.js')
+const controllerNivelExperiencia = require('./controller/controller_nivel_experiencia.js')
 
 // Clientes
 
@@ -503,6 +504,71 @@ console.log(emailPesquisado);
         return res.status(404).json({ error: 'Cliente não encontrado.' });
     }
 });
+
+app.get('/v1/jinni/nivelexperiencias', cors(), async (request, response, next) => {
+  
+    //Recebe o ID encaminhando a requisição
+    let idNivelExperiencia = request.params.id
+
+    let dadosNivelExperiencia = await controllerNivelExperiencia.getListarNivelExperiencias(idNivelExperiencia)
+
+    response.status(dadosNivelExperiencia.status_code)
+    response.json(dadosNivelExperiencia)
+})
+
+
+app.get('/v1/jinni/nivelexperiencia/:id', cors(), async (request, response, next) => {
+  
+    //Recebe o ID encaminhando a requisição
+    let idNivelExperiencia = request.params.id
+
+    let dadosNivelExperiencia = await controllerNivelExperiencia.getBuscarNivelExperiencia(idNivelExperiencia)
+
+    response.status(dadosNivelExperiencia.status_code)
+    response.json(dadosNivelExperiencia)
+})
+
+app.delete('/v1/jinni/nivelexperiencia/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+   
+    let idNivelExperiencia = request.params.id
+    let dadosNivelExperiencia = await controllerNivelExperiencia.setExcluirNivelExperiencia(idNivelExperiencia)
+
+    response.status(dadosNivelExperiencia.status_code)
+    response.json(dadosNivelExperiencia)
+})
+
+app.put ('/v1/jinni/nivelexperiencia/:id',  cors(), bodyParserJSON, async (request, response, next) => {
+
+    let idNivelExperiencia = request.params.id
+
+    let contentType = request.headers['content-type']
+
+    //Recebe os dados encaminhados no Body da requisição
+    let dadosBody = request.body
+
+    let resultDados = await controllerNivelExperiencia.setAtualizarNivelExperiencia(dadosBody, contentType, idNivelExperiencia)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+})
+
+app.post('/v1/jinni/nivelexperiencia',  cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let contentType = request.headers['content-type']
+
+    //Recebe os dados encaminhados no Body da requisição
+    let dadosBody = request.body
+
+    //Encaminha os dados para cotroller inserir no BD
+    let resultDados = await controllerNivelExperiencia.setInserirNovoNivelExperiencia(dadosBody, contentType)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+
+
+})
+
 
 
 

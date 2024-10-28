@@ -82,10 +82,20 @@ model publicacao_projetos {
   descricao_projeto    String? @db.VarChar(150)
   orcamento            Float
   id_nivel_experiencia Int
-  id_categoria         Int
-  id_habilidade        Int
+
+  @@index([id_nivel_experiencia], map: "id_nivel_experiencia")
+}
+
+model categoria_publicacao_projetos {
+  id           Int @id @default(autoincrement())
+  id_categoria Int
 
   @@index([id_categoria], map: "id_categoria")
+}
+
+model habilidade_publicacao_projetos {
+  id            Int @id @default(autoincrement())
+  id_habilidade Int
+
   @@index([id_habilidade], map: "id_habilidade")
-  @@index([id_nivel_experiencia], map: "id_nivel_experiencia")
 }

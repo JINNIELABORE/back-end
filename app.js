@@ -35,6 +35,7 @@ const controllerHabilidades = require('./controller/controller_habilidade.js')
 const controllerFreelancerCategoria = require('./controller/controller_categoria_freelancer.js')
 const controllerFreelancerHabilidade = require('./controller/controller_habilidade_freelancer.js')
 const controllerNivelExperiencia = require('./controller/controller_nivel_experiencia.js')
+const controllerPublicacaoProjeto = require('./controller/controller_publicacao_projeto.js')
 
 // Clientes
 
@@ -458,52 +459,52 @@ app.put ('/v1/jinni/habilidade/freelancer/:id',  cors(), bodyParserJSON, async (
 })
 
 app.post('v1/jinni/freelancer/nome', async (req, res) => {
-    const { email_freelancer } = req.body;
+    const { email_freelancer } = req.body
 
     if (!email_freelancer) {
-        return res.status(400).json({ error: 'Email é obrigatório.' });
+        return res.status(400).json({ error: 'Email é obrigatório.' })
     }
 
-    const nomeFreelancer = await controllerFreelancers.getFreelancerByEmail(email_freelancer);
+    const nomeFreelancer = await controllerFreelancers.getFreelancerByEmail(email_freelancer)
 
     if (nomeFreelancer) {
-        return res.status(200).json({ nome: nomeFreelancer });
+        return res.status(200).json({ nome: nomeFreelancer })
     } else {
-        return res.status(404).json({ error: 'Freelancer não encontrado.' });
+        return res.status(404).json({ error: 'Freelancer não encontrado.' })
     }
-});
+})
 
 app.get('/v1/jinni/nome/cliente', async (req, res) => {
 
 
     const emailPesquisado = req.query.emailDigitado
-console.log(emailPesquisado);
+console.log(emailPesquisado)
 
 
-    const nomeCliente = await controllerClientes.getClienteByEmail(emailPesquisado);
+    const nomeCliente = await controllerClientes.getClienteByEmail(emailPesquisado)
 
     if (nomeCliente) {
-        return res.status(200).json({ nome: nomeCliente});
+        return res.status(200).json({ nome: nomeCliente})
     } else {
-        return res.status(404).json({ error: 'Cliente não encontrado.' });
+        return res.status(404).json({ error: 'Cliente não encontrado.' })
     }
-});
+})
 
 app.get('/v1/jinni/nome/freelancer', async (req, res) => {
 
 
     const emailPesquisado = req.query.emailDigitado
-console.log(emailPesquisado);
+console.log(emailPesquisado)
 
 
-    const nomeCliente = await controllerFreelancers.getFreelancerByEmail(emailPesquisado);
+    const nomeCliente = await controllerFreelancers.getFreelancerByEmail(emailPesquisado)
 
     if (nomeCliente) {
-        return res.status(200).json({ nome: nomeCliente});
+        return res.status(200).json({ nome: nomeCliente})
     } else {
-        return res.status(404).json({ error: 'Cliente não encontrado.' });
+        return res.status(404).json({ error: 'Cliente não encontrado.' })
     }
-});
+})
 
 // Níveis de experiência
 
@@ -571,7 +572,58 @@ app.post('/v1/jinni/nivel/experiencia',  cors(), bodyParserJSON, async (request,
 
 })
 
+// Publicação Projeto
 
+app.get('/v1/jinni/projetos', cors(), async (request, response, next) => {
+  
+    let dadosProjetos = await controllerPublicacaoProjeto.getListarProjetos()
+
+    response.status(dadosProjetos.status_code)
+    response.json(dadosProjetos)
+})
+
+app.get('/v1/jinni/projeto/:id', cors(), async (request, response, next) => {
+  
+    let idProjeto = request.params.id
+
+    let dadosProjeto = await controllerPublicacaoProjeto.getBuscarProjeto(idProjeto)
+
+    response.status(dadosProjeto.status_code)
+    response.json(dadosProjeto)
+})
+
+app.delete('/v1/jinni/projeto/:id', cors(), bodyParserJSON, async (request, response, next) => {
+  
+    let idProjeto = request.params.id
+
+    let resultado = await controllerPublicacaoProjeto.setExcluirProjeto(idProjeto)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.put('/v1/jinni/projeto/:id', cors(), bodyParserJSON, async (request, response, next) => {
+
+    let idProjeto = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerPublicacaoProjeto.setAtualizarProjeto(dadosBody, contentType, idProjeto)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.post('/v1/jinni/projeto', cors(), bodyParserJSON, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerPublicacaoProjeto.setInserirNovaPublicacaoProjeto(dadosBody, contentType)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
 
 
 app.listen(8080, function () {

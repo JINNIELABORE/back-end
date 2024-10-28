@@ -14,7 +14,7 @@ const insertPublicacaoProjeto = async (dadosPublicacaoProjeto) => {
                                             id_nivel_experiencia
                                             ) values(
                                             '${dadosPublicacaoProjeto.nome_projeto}',
-                                             ${dadosPublicacaoProjeto.descricao_projeto},
+                                            '${dadosPublicacaoProjeto.descricao_projeto}',
                                             '${dadosPublicacaoProjeto.orcamento}',
                                             '${dadosPublicacaoProjeto.id_nivel_experiencia}'                                            
                                             )`

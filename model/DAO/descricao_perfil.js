@@ -6,14 +6,20 @@ const prisma = new PrismaClient()
 
 const insertDescricaoPerfil = async (dadosDescricaoPerfil) => {
     try {
+        // Verifica se a descrição e pelo menos um dos IDs (cliente ou freelancer) estão presentes
+        if (!dadosDescricaoPerfil.descricao || 
+            (!dadosDescricaoPerfil.id_cliente && !dadosDescricaoPerfil.id_freelancer)) {
+            throw new Error("É necessário fornecer a descrição e pelo menos um id_cliente ou id_freelancer.")
+        }
+
         let sql = `insert into descricao_perfil (
                                                      descricao, 
                                                      id_cliente, 
                                                      id_freelancer
                                                      ) values (
                                                                '${dadosDescricaoPerfil.descricao}', 
-                                                               '${dadosDescricaoPerfil.id_cliente}', 
-                                                               '${dadosDescricaoPerfil.id_freelancer}'
+                                                               ${dadosDescricaoPerfil.id_cliente ? `'${dadosDescricaoPerfil.id_cliente}'` : null}, 
+                                                               ${dadosDescricaoPerfil.id_freelancer ? `'${dadosDescricaoPerfil.id_freelancer}'` : null}
                                                                )`
         let result = await prisma.$executeRawUnsafe(sql)
         
@@ -41,20 +47,23 @@ const selectId = async () => {
 }
 
 const updateDescricaoPerfil = async (idDescricaoPerfil, dadosDescricaoPerfil) => {
-
-    let sql
-
     try {
-            sql = `update descricao_perfil set 
-                                                    descricao = '${dadosDescricaoPerfil.descricao}', 
-                                                    id_cliente = '${dadosDescricaoPerfil.id_cliente}', 
-                                                    id_freelancer = '${dadosDescricaoPerfil.id_freelancer}'
-                                                    where id = ${idDescricaoPerfil}`
+        // Verifica se a descrição e pelo menos um dos IDs (cliente ou freelancer) está presente
+        if (!dadosDescricaoPerfil.descricao || 
+            (!dadosDescricaoPerfil.id_cliente && !dadosDescricaoPerfil.id_freelancer)) {
+            throw new Error("É necessário fornecer a descrição e pelo menos um id_cliente ou id_freelancer.")
+        }
+
+        let sql = `update descricao_perfil set 
+                                        descricao = '${dadosDescricaoPerfil.descricao}', 
+                                        id_cliente = ${dadosDescricaoPerfil.id_cliente ? `'${dadosDescricaoPerfil.id_cliente}'` : null}, 
+                                        id_freelancer = ${dadosDescricaoPerfil.id_freelancer ? `'${dadosDescricaoPerfil.id_freelancer}'` : null}
+                                        where id = ${idDescricaoPerfil}`
         let result = await prisma.$executeRawUnsafe(sql)
         
         return result
-
     } catch (error) {
+        console.error("Erro ao atualizar a descrição de perfil:", error)
         return false
     }
 }

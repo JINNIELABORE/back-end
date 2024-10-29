@@ -39,6 +39,7 @@ const controllerPublicacaoProjeto = require('./controller/controller_publicacao_
 const controllerCategoriaProjeto = require('./controller/controller_categoria_publicacao_projeto.js')
 const controllerHabilidadeProjeto = require('./controller/controller_habilidade_publicacao_projeto.js')
 const controllerDescricaoPerfil = require('./controller/controller_descricao_perfil.js')
+const controllerFotoPerfil = require('./controller/controller_foto_perfil.js')
 
 // Clientes
 
@@ -781,6 +782,55 @@ app.post('/v1/jinni/descricao/perfil', cors(), bodyParserJSON, async (request, r
     response.status(resultado.status_code)
     response.json(resultado)
 })
+
+// Foto de Perfil
+
+app.get('/v1/jinni/fotos/perfis', cors(), async (request, response, next) => {
+    let dadosFotoPerfis = await controllerFotoPerfil.getListarFotosPerfis()
+
+    response.status(dadosFotoPerfis.status_code)
+    response.json(dadosFotoPerfis)
+})
+
+app.get('/v1/jinni/foto/perfil/:id', cors(), async (request, response, next) => {
+    let idFotoPerfil = request.params.id
+
+    let dadosFotoPerfil = await controllerFotoPerfil.getBuscarFotoPerfil(idFotoPerfil)
+
+    response.status(dadosFotoPerfil.status_code)
+    response.json(dadosFotoPerfil)
+})
+
+app.delete('/v1/jinni/foto/perfil/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idFotoPerfil = request.params.id
+
+    let resultado = await controllerFotoPerfil.setExcluirFotoPerfil(idFotoPerfil)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.put('/v1/jinni/foto/perfil/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idFotoPerfil = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerFotoPerfil.setAtualizarFotoPerfil(dadosBody, contentType, idFotoPerfil)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.post('/v1/jinni/foto/perfil', cors(), bodyParserJSON, async (request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerFotoPerfil.setInserirNovaFotoPerfil(dadosBody, contentType)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
 
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')

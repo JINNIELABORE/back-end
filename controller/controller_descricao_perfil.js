@@ -5,15 +5,12 @@ const message = require('../modulo/config.js')
 
 const setInserirNovaDescricaoPerfil = async (dadosDescricaoPerfil, contentType) => {
     try {
-        if (String(contentType).toLowerCase() == 'application/json') {
+        if (String(contentType).toLowerCase() === 'application/json') {
             let novaDescricaoPerfilJSON = {}
 
-            if (
-                dadosDescricaoPerfil.descricao == undefined || dadosDescricaoPerfil.descricao == null ||
-                (dadosDescricaoPerfil.id_cliente == undefined && dadosDescricaoPerfil.id_freelancer == undefined) ||
-                (dadosDescricaoPerfil.id_cliente != undefined && isNaN(dadosDescricaoPerfil.id_cliente)) ||
-                (dadosDescricaoPerfil.id_freelancer != undefined && isNaN(dadosDescricaoPerfil.id_freelancer))
-            ) {
+            // Verifica se a descrição e pelo menos um dos IDs (cliente ou freelancer) estão presentes
+            if (!dadosDescricaoPerfil.descricao || 
+                (!dadosDescricaoPerfil.id_cliente && !dadosDescricaoPerfil.id_freelancer)) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {
                 // Encaminha os dados para o DAO inserir
@@ -25,7 +22,7 @@ const setInserirNovaDescricaoPerfil = async (dadosDescricaoPerfil, contentType) 
                     novaDescricaoPerfilJSON.status_code = message.SUCESS_CREATED_ITEM.status_code
                     novaDescricaoPerfilJSON.message = message.SUCESS_CREATED_ITEM.message
                     novaDescricaoPerfilJSON.id = parseInt(id)
-                    novaDescricaoPerfilJSON.descricao_Perfil = dadosDescricaoPerfil
+                    novaDescricaoPerfilJSON.descricao_perfil = dadosDescricaoPerfil
 
                     return novaDescricaoPerfilJSON // 201
                 } else {
@@ -34,21 +31,19 @@ const setInserirNovaDescricaoPerfil = async (dadosDescricaoPerfil, contentType) 
             }
         }
     } catch (error) {
+        console.error("Erro ao inserir nova descrição de perfil:", error)
         return message.ERROR_INTERNAL_SERVER // 500 erro na camada da controller
     }
 }
 
 const setAtualizarDescricaoPerfil = async (dadosDescricaoPerfil, contentType, id) => {
     try {
-        if (String(contentType).toLowerCase() == 'application/json') {
+        if (String(contentType).toLowerCase() === 'application/json') {
             let updateDescricaoPerfil = {}
 
-            if (
-                dadosDescricaoPerfil.descricao == undefined || dadosDescricaoPerfil.descricao == null ||
-                (dadosDescricaoPerfil.id_cliente == undefined && dadosDescricaoPerfil.id_freelancer == undefined) ||
-                (dadosDescricaoPerfil.id_cliente != undefined && isNaN(dadosDescricaoPerfil.id_cliente)) ||
-                (dadosDescricaoPerfil.id_freelancer != undefined && isNaN(dadosDescricaoPerfil.id_freelancer))
-            ) {
+            // Verifica se a descrição e pelo menos um dos IDs (cliente ou freelancer) estão presentes
+            if (!dadosDescricaoPerfil.descricao || 
+                (!dadosDescricaoPerfil.id_cliente && !dadosDescricaoPerfil.id_freelancer)) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             }
 
@@ -64,7 +59,7 @@ const setAtualizarDescricaoPerfil = async (dadosDescricaoPerfil, contentType, id
                     updateDescricaoPerfil.status_code = message.SUCESS_UPDATE_ITEM.status_code
                     updateDescricaoPerfil.message = message.SUCESS_UPDATE_ITEM.message
                     updateDescricaoPerfil.id = updatedId
-                    updateDescricaoPerfil.descricao_Perfil = dadosDescricaoPerfil
+                    updateDescricaoPerfil.descricao_perfil = dadosDescricaoPerfil
 
                     return updateDescricaoPerfil // Retorna a resposta JSON atualizada
                 } else {
@@ -116,7 +111,7 @@ const getListarDescricoesPerfis = async () => {
 
     if (dadosDescricaoPerfil) {
         if (dadosDescricaoPerfil.length > 0) {
-            descricaoPerfisJSON.descricao_Perfil = dadosDescricaoPerfil
+            descricaoPerfisJSON.descricao_perfil = dadosDescricaoPerfil
             descricaoPerfisJSON.quantidade = dadosDescricaoPerfil.length
             descricaoPerfisJSON.status_code = 200
 
@@ -140,7 +135,7 @@ const getBuscarDescricaoPerfil = async (id) => {
 
         if (dadosDescricaoPerfil) {
             if (dadosDescricaoPerfil.length > 0) {
-                descricaoPerfilJSON.descricao_Perfil = dadosDescricaoPerfil
+                descricaoPerfilJSON.descricao_perfil = dadosDescricaoPerfil
                 descricaoPerfilJSON.status_code = 200
 
                 return descricaoPerfilJSON

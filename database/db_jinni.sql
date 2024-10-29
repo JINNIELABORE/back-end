@@ -88,33 +88,58 @@ foreign key (id_nivel_experiencia) references nivel_experiencia(id)
 
 create table categoria_publicacao_projetos(
 id int not null auto_increment primary key,
+id_projeto int not null,
 id_categoria int not null,
 
+foreign key (id_projeto) references publicacao_projetos(id),
 foreign key (id_categoria) references categorias(id)
 );
 
 create table habilidade_publicacao_projetos(
 id int not null auto_increment primary key,
+id_projeto int not null,
 id_habilidade int not null,
 
+foreign key (id_projeto) references publicacao_projetos(id),
 foreign key (id_habilidade) references habilidades(id)
 );
 
 create table descricao_perfil(
-id int not null auto_increment primary key,
-descricao varchar(200)
+  id int not null auto_increment primary key,
+  descricao varchar(200) not null,
+  id_cliente int,
+  id_freelancer int,
+
+  foreign key (id_cliente) references cadastro_cliente(id),
+  foreign key (id_freelancer) references cadastro_freelancer(id)
 );
 
 create table foto_perfil(
-id int not null auto_increment primary key,
-foto_perfil text
+  id int not null auto_increment primary key,
+  foto_perfil text not null,
+  id_cliente int,
+  id_freelancer int,
 
+  foreign key (id_cliente) references cadastro_cliente(id),
+  foreign key (id_freelancer) references cadastro_freelancer(id)
 );
 
 create table portfolio(
-id int not null auto_increment primary key,
-arquivo text
+  id int not null auto_increment primary key,
+  arquivo text not null
 );
+
+create table usuario_portfolio(
+  id int not null auto_increment primary key,
+  id_portfolio int not null,
+  id_cliente int,
+  id_freelancer int,
+
+  foreign key (id_portfolio) references portfolio(id),
+  foreign key (id_cliente) references cadastro_cliente(id),
+  foreign key (id_freelancer) references cadastro_freelancer(id)
+);
+
 
 -- Inserindo Clientes
 INSERT INTO cadastro_cliente (nome_cliente, cnpj_cliente, email_cliente, senha_cliente, is_premium)

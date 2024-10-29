@@ -36,6 +36,7 @@ const controllerFreelancerCategoria = require('./controller/controller_categoria
 const controllerFreelancerHabilidade = require('./controller/controller_habilidade_freelancer.js')
 const controllerNivelExperiencia = require('./controller/controller_nivel_experiencia.js')
 const controllerPublicacaoProjeto = require('./controller/controller_publicacao_projeto.js')
+const controllerCategoriaProjeto = require('./controller/controller_categoria_publicacao_projeto.js')
 
 // Clientes
 
@@ -576,7 +577,7 @@ app.post('/v1/jinni/nivel/experiencia',  cors(), bodyParserJSON, async (request,
 
 app.get('/v1/jinni/projetos', cors(), async (request, response, next) => {
   
-    let dadosProjetos = await controllerPublicacaoProjeto.getListarProjetos()
+    let dadosProjetos = await controllerPublicacaoProjeto.getListarPublicacaoProjetos()
 
     response.status(dadosProjetos.status_code)
     response.json(dadosProjetos)
@@ -586,7 +587,7 @@ app.get('/v1/jinni/projeto/:id', cors(), async (request, response, next) => {
   
     let idProjeto = request.params.id
 
-    let dadosProjeto = await controllerPublicacaoProjeto.getBuscarProjeto(idProjeto)
+    let dadosProjeto = await controllerPublicacaoProjeto.getBuscarPublicacaoProjeto(idProjeto)
 
     response.status(dadosProjeto.status_code)
     response.json(dadosProjeto)
@@ -596,7 +597,7 @@ app.delete('/v1/jinni/projeto/:id', cors(), bodyParserJSON, async (request, resp
   
     let idProjeto = request.params.id
 
-    let resultado = await controllerPublicacaoProjeto.setExcluirProjeto(idProjeto)
+    let resultado = await controllerPublicacaoProjeto.setExcluirPublicacaoProjeto(idProjeto)
 
     response.status(resultado.status_code)
     response.json(resultado)
@@ -608,7 +609,7 @@ app.put('/v1/jinni/projeto/:id', cors(), bodyParserJSON, async (request, respons
     let contentType = request.headers['content-type']
     let dadosBody = request.body
 
-    let resultado = await controllerPublicacaoProjeto.setAtualizarProjeto(dadosBody, contentType, idProjeto)
+    let resultado = await controllerPublicacaoProjeto.setAtualizarPublicacaoProjeto(dadosBody, contentType, idProjeto)
 
     response.status(resultado.status_code)
     response.json(resultado)
@@ -625,6 +626,58 @@ app.post('/v1/jinni/projeto', cors(), bodyParserJSON, async (request, response, 
     response.json(resultado)
 })
 
+// Categorias Publicacão Projeto
+
+app.get('/v1/jinni/categorias/projetos', cors(), async (request, response, next) => {
+  
+    let dadosCategoriaProjetos = await controllerCategoriaProjeto.getListarCategoriasProjetos()
+
+    response.status(dadosCategoriaProjetos.status_code)
+    response.json(dadosCategoriaProjetos)
+})
+
+app.get('/v1/jinni/categoria/projeto/:id', cors(), async (request, response, next) => {
+  
+    let idCatgoriaProjeto = request.params.id
+
+    let dadosCategoriaProjeto = await controllerCategoriaProjeto.getBuscarCategoriaProjeto(idCatgoriaProjeto)
+
+    response.status(dadosCategoriaProjeto.status_code)
+    response.json(dadosCategoriaProjeto)
+})
+
+app.delete('/v1/jinni/categoria/projeto/:id', cors(), bodyParserJSON, async (request, response, next) => {
+  
+    let idCatgoriaProjeto = request.params.id
+
+    let resultado = await controllerCategoriaProjeto.setExcluirCategoriaProjeto(idCatgoriaProjeto)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.put('/v1/jinni/categoria/projeto/:id', cors(), bodyParserJSON, async (request, response, next) => {
+
+    let idCatgoriaProjeto = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerCategoriaProjeto.setAtualizarCategoriaProjeto(dadosBody, contentType, idCatgoriaProjeto)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.post('/v1/jinni/categoria/projeto', cors(), bodyParserJSON, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerCategoriaProjeto.setInserirNovaCategoriaProjeto(dadosBody, contentType)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
 
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')

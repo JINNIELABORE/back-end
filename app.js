@@ -38,6 +38,7 @@ const controllerNivelExperiencia = require('./controller/controller_nivel_experi
 const controllerPublicacaoProjeto = require('./controller/controller_publicacao_projeto.js')
 const controllerCategoriaProjeto = require('./controller/controller_categoria_publicacao_projeto.js')
 const controllerHabilidadeProjeto = require('./controller/controller_habilidade_publicacao_projeto.js')
+const controllerDescricaoPerfil = require('./controller/controller_descricao_perfil.js')
 
 // Clientes
 
@@ -733,6 +734,53 @@ app.post('/v1/jinni/habilidade/projeto', cors(), bodyParserJSON, async (request,
     response.json(resultado)
 })
 
+// Descrição Perfil
+
+app.get('/v1/jinni/descricoes/perfis', cors(), async (request, response, next) => {
+    let dadosDescricaoPerfis = await controllerDescricaoPerfil.getListarDescricoesPerfis()
+
+    response.status(dadosDescricaoPerfis.status_code)
+    response.json(dadosDescricaoPerfis)
+})
+
+app.get('/v1/jinni/descricao/perfil/:id', cors(), async (request, response, next) => {
+    let idDescricaoPerfil = request.params.id
+
+    let dadosDescricaoPerfil = await controllerDescricaoPerfil.getBuscarDescricaoPerfil(idDescricaoPerfil)
+
+    response.status(dadosDescricaoPerfil.status_code)
+    response.json(dadosDescricaoPerfil)
+})
+
+app.delete('/v1/jinni/descricao/perfil/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idDescricaoPerfil = request.params.id
+
+    let resultado = await controllerDescricaoPerfil.setExcluirDescricaoPerfil(idDescricaoPerfil)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.put('/v1/jinni/descricao/perfil/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idDescricaoPerfil = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerDescricaoPerfil.setAtualizarDescricaoPerfil(dadosBody, contentType, idDescricaoPerfil)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.post('/v1/jinni/descricao/perfil', cors(), bodyParserJSON, async (request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerDescricaoPerfil.setInserirNovaDescricaoPerfil(dadosBody, contentType)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
 
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')

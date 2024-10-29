@@ -37,6 +37,7 @@ const controllerFreelancerHabilidade = require('./controller/controller_habilida
 const controllerNivelExperiencia = require('./controller/controller_nivel_experiencia.js')
 const controllerPublicacaoProjeto = require('./controller/controller_publicacao_projeto.js')
 const controllerCategoriaProjeto = require('./controller/controller_categoria_publicacao_projeto.js')
+const controllerHabilidadeProjeto = require('./controller/controller_habilidade_publicacao_projeto.js')
 
 // Clientes
 
@@ -678,6 +679,60 @@ app.post('/v1/jinni/categoria/projeto', cors(), bodyParserJSON, async (request, 
     response.status(resultado.status_code)
     response.json(resultado)
 })
+
+// Habilidades Publicação Projeto
+
+app.get('/v1/jinni/habilidades/projetos', cors(), async (request, response, next) => {
+  
+    let dadosHabilidadeProjetos = await controllerHabilidadeProjeto.getListarHabilidadesProjetos()
+
+    response.status(dadosHabilidadeProjetos.status_code)
+    response.json(dadosHabilidadeProjetos)
+})
+
+app.get('/v1/jinni/habilidade/projeto/:id', cors(), async (request, response, next) => {
+  
+    let idHabilidadeProjeto = request.params.id
+
+    let dadosHabilidadeProjeto = await controllerHabilidadeProjeto.getBuscarHabilidadeProjeto(idHabilidadeProjeto)
+
+    response.status(dadosHabilidadeProjeto.status_code)
+    response.json(dadosHabilidadeProjeto)
+})
+
+app.delete('/v1/jinni/habilidade/projeto/:id', cors(), bodyParserJSON, async (request, response, next) => {
+  
+    let idHabilidadeProjeto = request.params.id
+
+    let resultado = await controllerHabilidadeProjeto.setExcluirHabilidadeProjeto(idHabilidadeProjeto)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.put('/v1/jinni/habilidade/projeto/:id', cors(), bodyParserJSON, async (request, response, next) => {
+
+    let idHabilidadeProjeto = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerHabilidadeProjeto.setAtualizarHabilidadeProjeto(dadosBody, contentType, idHabilidadeProjeto)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.post('/v1/jinni/habilidade/projeto', cors(), bodyParserJSON, async (request, response, next) => {
+
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerHabilidadeProjeto.setInserirNovaHabilidadeProjeto(dadosBody, contentType)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
 
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')

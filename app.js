@@ -40,6 +40,7 @@ const controllerCategoriaProjeto = require('./controller/controller_categoria_pu
 const controllerHabilidadeProjeto = require('./controller/controller_habilidade_publicacao_projeto.js')
 const controllerDescricaoPerfil = require('./controller/controller_descricao_perfil.js')
 const controllerFotoPerfil = require('./controller/controller_foto_perfil.js')
+const controllerPortfolio = require('./controller/controller_portfolio.js')
 
 // Clientes
 
@@ -826,6 +827,54 @@ app.post('/v1/jinni/foto/perfil', cors(), bodyParserJSON, async (request, respon
     let dadosBody = request.body
 
     let resultado = await controllerFotoPerfil.setInserirNovaFotoPerfil(dadosBody, contentType)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+// Portfolio
+
+app.get('/v1/jinni/portfolios', cors(), bodyParserJSON, async (request, response, next) => {
+    let dadosPortfolios = await controllerPortfolio.getListarPortfolios()
+
+    response.status(dadosPortfolios.status_code)
+    response.json(dadosPortfolios)
+})
+
+app.get('/v1/jinni/portfolio/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idPortfolio = request.params.id
+
+    let dadosPortfolio = await controllerPortfolio.getBuscarPortfolio(idPortfolio)
+
+    response.status(dadosPortfolio.status_code)
+    response.json(dadosPortfolio)
+})
+
+app.delete('/v1/jinni/portfolio/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idPortfolio = request.params.id
+
+    let resultado = await controllerPortfolio.setExcluirPortfolio(idPortfolio)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.put('/v1/jinni/portfolio/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idPortfolio = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerPortfolio.setAtualizarPortfolio(dadosBody, contentType, idPortfolio)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.post('/v1/jinni/portfolio', cors(), bodyParserJSON, async (request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerPortfolio.setInserirNovoPortfolio(dadosBody, contentType)
 
     response.status(resultado.status_code)
     response.json(resultado)

@@ -106,7 +106,7 @@ foreign key (id_habilidade) references habilidades(id)
 
 create table descricao_perfil(
   id int not null auto_increment primary key,
-  descricao varchar(200) not null,
+  descricao text not null,
   id_cliente int,
   id_freelancer int,
 
@@ -124,19 +124,18 @@ create table foto_perfil(
   foreign key (id_freelancer) references cadastro_freelancer(id)
 );
 
+
 create table portfolio(
   id int not null auto_increment primary key,
   arquivo text not null
 );
 
-create table usuario_portfolio(
+create table portfolio_freelancer(
   id int not null auto_increment primary key,
   id_portfolio int not null,
-  id_cliente int,
-  id_freelancer int,
+  id_freelancer int not null,
 
   foreign key (id_portfolio) references portfolio(id),
-  foreign key (id_cliente) references cadastro_cliente(id),
   foreign key (id_freelancer) references cadastro_freelancer(id)
 );
 
@@ -194,4 +193,3 @@ VALUES
 (3, 3), -- Freelancer C -> JavaScript
 (4, 4), -- Freelancer D -> Python
 (5, 5); -- Freelancer E -> SQL
-

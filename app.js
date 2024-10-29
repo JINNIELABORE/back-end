@@ -41,6 +41,7 @@ const controllerHabilidadeProjeto = require('./controller/controller_habilidade_
 const controllerDescricaoPerfil = require('./controller/controller_descricao_perfil.js')
 const controllerFotoPerfil = require('./controller/controller_foto_perfil.js')
 const controllerPortfolio = require('./controller/controller_portfolio.js')
+const controllerPortfolioFreelancer = require('./controller/controller_portfolio_freelancer.js')
 
 // Clientes
 
@@ -880,6 +881,53 @@ app.post('/v1/jinni/portfolio', cors(), bodyParserJSON, async (request, response
     response.json(resultado)
 })
 
+// Associar Portfolio ao Freelancer
+
+app.get('/v1/jinni/portfolios/freelancers', cors(), bodyParserJSON, async (request, response, next) => {
+    let dadosPortfoliosFreelancers = await controllerPortfolioFreelancer.getListarPortfolioFreelancer()
+
+    response.status(dadosPortfoliosFreelancers.status_code)
+    response.json(dadosPortfoliosFreelancers)
+})
+
+app.get('/v1/jinni/portfolio/freelancer/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idPortfolioFreelancer = request.params.id
+
+    let dadosPortfolioFreelancer = await controllerPortfolioFreelancer.getBuscarPortfolioFreelancer(idPortfolioFreelancer)
+
+    response.status(dadosPortfolioFreelancer.status_code)
+    response.json(dadosPortfolioFreelancer)
+})
+
+app.delete('/v1/jinni/portfolio/freelancer/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idPortfolioFreelancer = request.params.id
+
+    let resultado = await controllerPortfolioFreelancer.setExcluirPortfolioFreelancer(idPortfolioFreelancer)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.put('/v1/jinni/portfolio/freelancer/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idPortfolioFreelancer = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerPortfolioFreelancer.setAtualizarPortfolioFreelancer(dadosBody, contentType, idPortfolioFreelancer)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.post('/v1/jinni/portfolio/freelancer', cors(), bodyParserJSON, async (request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerPortfolioFreelancer.setInserirNovoPortfolioFreelancer(dadosBody, contentType)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
 
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')

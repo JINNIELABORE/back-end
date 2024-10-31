@@ -7,17 +7,18 @@ const setInserirNovaAvaliacao = async (dadosAvaliacao, contentType) => {
         if (String(contentType).toLowerCase() == 'application/json') {
             let novaAvaliacaoJSON = {}
 
+            // Verifica se as estrelas estão entre 1 e 5
             if (
+                dadosAvaliacao.estrelas < 1 || dadosAvaliacao.estrelas > 5 ||
                 dadosAvaliacao.estrelas == '' || dadosAvaliacao.estrelas == undefined || dadosAvaliacao.estrelas == null || 
                 dadosAvaliacao.comentario == '' || dadosAvaliacao.comentario == undefined || dadosAvaliacao.comentario == null
             ) {
-                return message.ERROR_REQUIRED_FIELDS//400
+                return message.ERROR_REQUIRED_FIELDS // 400
 
             } else {
                 let novaAvaliacao = await avaliacaoDAO.insertAvaliacao(dadosAvaliacao)
 
                 if (novaAvaliacao) {
-
                     let id = await avaliacaoDAO.selectId()
 
                     novaAvaliacaoJSON.status = message.SUCESS_CREATED_ITEM.status
@@ -26,21 +27,19 @@ const setInserirNovaAvaliacao = async (dadosAvaliacao, contentType) => {
                     novaAvaliacaoJSON.id = parseInt(id)
                     novaAvaliacaoJSON.avaliacao = dadosAvaliacao
 
-                    return novaAvaliacaoJSON //201
-
+                    return novaAvaliacaoJSON // 201
                 } else {
                     console.log("Erro interno do servidor ao inserir Avaliacao no banco de dados.")
-                    return message.ERROR_INTERNAL_SERVER_DB //500
+                    return message.ERROR_INTERNAL_SERVER_DB // 500
                 }
             }
-
         }
-
     } catch (error) {
-        console.log(error);
+        console.log(error)
         return message.ERROR_INTERNAL_SERVER
     }
 }
+
 
 const setAtualizarAvaliacao = async (dadosAvaliacao, contentType, id) => {
     try {

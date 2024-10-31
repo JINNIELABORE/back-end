@@ -30,19 +30,22 @@ const insertPortfolio = async (dadosPortfolio) => {
     }
 }
 
+
 const selectId = async () => {
     try {
-        let sql = 'select CAST (id as DECIMAL) as id from portfolio order by id desc limit 1'
+        let sql = 'select CAST(id as DECIMAL)as id from portfolio order by id desc limit 1'
 
         let rsPortfolio = await prisma.$queryRawUnsafe(sql)
 
-        return rsPortfolio ? rsPortfolio[0].id : false
+        if (rsPortfolio) {
+            return rsPortfolio[0].id
+        } else {
+            return false
+        }
     } catch (error) {
-        console.error("Erro ao selecionar ID do portfólio:", error)
         return false
     }
 }
-
 const updatePortfolio = async (idPortfolio, dadosPortfolio) => {
     let sql
 
@@ -72,19 +75,22 @@ const deletePortfolio = async (id) => {
     }
 }
 
+
 const selectByIdPortfolio = async (id) => {
+
     try {
         let sql = `select * from portfolio where id = ${id}`
 
         let rsPortfolio = await prisma.$queryRawUnsafe(sql)
 
-        return rsPortfolio ? rsPortfolio : false
+        return rsPortfolio
+
     } catch (error) {
-        console.error("Erro ao buscar arquivo do portfólio por ID:", error)
         return false
     }
-}
 
+
+}
 const selectAllPortfolios = async () => {
     try {
         let sql = 'select * from portfolio'

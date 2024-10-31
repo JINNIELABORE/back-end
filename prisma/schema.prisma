@@ -33,13 +33,23 @@ model categorias {
 }
 
 model descricao_perfil {
-  id        Int     @id @default(autoincrement())
-  descricao String? @db.VarChar(200)
+  id            Int    @id @default(autoincrement())
+  descricao     String @db.Text
+  id_cliente    Int?
+  id_freelancer Int?
+
+  @@index([id_cliente], map: "id_cliente")
+  @@index([id_freelancer], map: "id_freelancer")
 }
 
 model foto_perfil {
-  id          Int     @id @default(autoincrement())
-  foto_perfil String? @db.Text
+  id            Int    @id @default(autoincrement())
+  foto_perfil   String @db.Text
+  id_cliente    Int?
+  id_freelancer Int?
+
+  @@index([id_cliente], map: "id_cliente")
+  @@index([id_freelancer], map: "id_freelancer")
 }
 
 model freelancer_categoria {
@@ -72,8 +82,8 @@ model nivel_experiencia {
 }
 
 model portfolio {
-  id      Int     @id @default(autoincrement())
-  arquivo String? @db.Text
+  id      Int    @id @default(autoincrement())
+  arquivo String @db.Text
 }
 
 model publicacao_projetos {
@@ -88,14 +98,27 @@ model publicacao_projetos {
 
 model categoria_publicacao_projetos {
   id           Int @id @default(autoincrement())
+  id_projeto   Int
   id_categoria Int
 
   @@index([id_categoria], map: "id_categoria")
+  @@index([id_projeto], map: "id_projeto")
 }
 
 model habilidade_publicacao_projetos {
   id            Int @id @default(autoincrement())
+  id_projeto    Int
   id_habilidade Int
 
   @@index([id_habilidade], map: "id_habilidade")
+  @@index([id_projeto], map: "id_projeto")
+}
+
+model portfolio_freelancer {
+  id            Int @id @default(autoincrement())
+  id_portfolio  Int
+  id_freelancer Int
+
+  @@index([id_freelancer], map: "id_freelancer")
+  @@index([id_portfolio], map: "id_portfolio")
 }

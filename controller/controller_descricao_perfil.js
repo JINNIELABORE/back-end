@@ -8,26 +8,26 @@ const setInserirNovaDescricaoPerfil = async (dadosDescricaoPerfil, contentType) 
         if (String(contentType).toLowerCase() === 'application/json') {
             let novaDescricaoPerfilJSON = {}
 
-            // Verifica se a descrição e pelo menos um dos IDs (cliente ou freelancer) estão presentes
+            // Verifica se a descrição está presente e se apenas um dos IDs (cliente ou freelancer) está preenchido
             if (!dadosDescricaoPerfil.descricao || 
-                (!dadosDescricaoPerfil.id_cliente && !dadosDescricaoPerfil.id_freelancer)) {
+                (dadosDescricaoPerfil.id_cliente && dadosDescricaoPerfil.id_freelancer)) {
                 return message.ERROR_REQUIRED_FIELDS // 400
+            }
+
+            // Encaminha os dados para o DAO inserir
+            let novaDescricaoPerfil = await descricaoPerfilDAO.insertDescricaoPerfil(dadosDescricaoPerfil)
+
+            if (novaDescricaoPerfil) {
+                let id = await descricaoPerfilDAO.selectId()
+                novaDescricaoPerfilJSON.status = message.SUCESS_CREATED_ITEM.status
+                novaDescricaoPerfilJSON.status_code = message.SUCESS_CREATED_ITEM.status_code
+                novaDescricaoPerfilJSON.message = message.SUCESS_CREATED_ITEM.message
+                novaDescricaoPerfilJSON.id = parseInt(id)
+                novaDescricaoPerfilJSON.descricao_perfil = dadosDescricaoPerfil
+
+                return novaDescricaoPerfilJSON // 201
             } else {
-                // Encaminha os dados para o DAO inserir
-                let novaDescricaoPerfil = await descricaoPerfilDAO.insertDescricaoPerfil(dadosDescricaoPerfil)
-
-                if (novaDescricaoPerfil) {
-                    let id = await descricaoPerfilDAO.selectId()
-                    novaDescricaoPerfilJSON.status = message.SUCESS_CREATED_ITEM.status
-                    novaDescricaoPerfilJSON.status_code = message.SUCESS_CREATED_ITEM.status_code
-                    novaDescricaoPerfilJSON.message = message.SUCESS_CREATED_ITEM.message
-                    novaDescricaoPerfilJSON.id = parseInt(id)
-                    novaDescricaoPerfilJSON.descricao_perfil = dadosDescricaoPerfil
-
-                    return novaDescricaoPerfilJSON // 201
-                } else {
-                    return message.ERROR_INTERNAL_SERVER_DB // 500
-                }
+                return message.ERROR_INTERNAL_SERVER_DB // 500
             }
         }
     } catch (error) {
@@ -41,9 +41,9 @@ const setAtualizarDescricaoPerfil = async (dadosDescricaoPerfil, contentType, id
         if (String(contentType).toLowerCase() === 'application/json') {
             let updateDescricaoPerfil = {}
 
-            // Verifica se a descrição e pelo menos um dos IDs (cliente ou freelancer) estão presentes
+            // Verifica se a descrição está presente e se apenas um dos IDs (cliente ou freelancer) está preenchido
             if (!dadosDescricaoPerfil.descricao || 
-                (!dadosDescricaoPerfil.id_cliente && !dadosDescricaoPerfil.id_freelancer)) {
+                (dadosDescricaoPerfil.id_cliente && dadosDescricaoPerfil.id_freelancer)) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             }
 

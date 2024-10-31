@@ -8,9 +8,9 @@ const setInserirNovaFotoPerfil = async (dadosFotoPerfil, contentType) => {
         if (String(contentType).toLowerCase() === 'application/json') {
             let novaFotoPerfilJSON = {}
 
-            // Verifica se a foto e pelo menos um dos IDs (cliente ou freelancer) estão presentes
+            // Verifica se a foto está presente e se apenas um dos IDs (cliente ou freelancer) está preenchido
             if (!dadosFotoPerfil.foto_perfil || 
-                (!dadosFotoPerfil.id_cliente && !dadosFotoPerfil.id_freelancer)) {
+                (dadosFotoPerfil.id_cliente && dadosFotoPerfil.id_freelancer)) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {
                 // Encaminha os dados para o DAO inserir
@@ -31,6 +31,7 @@ const setInserirNovaFotoPerfil = async (dadosFotoPerfil, contentType) => {
             }
         }
     } catch (error) {
+        console.error("Erro ao inserir nova foto de perfil:", error)
         return message.ERROR_INTERNAL_SERVER // 500 erro na camada da controller
     }
 }
@@ -40,9 +41,9 @@ const setAtualizarFotoPerfil = async (dadosFotoPerfil, contentType, id) => {
         if (String(contentType).toLowerCase() === 'application/json') {
             let updateFotoPerfilJSON = {}
 
-            // Verifica se a foto e pelo menos um dos IDs (cliente ou freelancer) estão presentes
+            // Verifica se a foto está presente e se apenas um dos IDs (cliente ou freelancer) está preenchido
             if (!dadosFotoPerfil.foto_perfil || 
-                (!dadosFotoPerfil.id_cliente && !dadosFotoPerfil.id_freelancer)) {
+                (dadosFotoPerfil.id_cliente && dadosFotoPerfil.id_freelancer)) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             }
 
@@ -72,10 +73,9 @@ const setAtualizarFotoPerfil = async (dadosFotoPerfil, contentType, id) => {
         }
     } catch (error) {
         console.error("Erro ao atualizar a foto de perfil:", error)
-        return message.ERROR_INTERNAL_SERVER // 500 erro na camada da controller
+   
     }
 }
-
 const setExcluirFotoPerfil = async (id) => {
     try {
         let idFotoPerfil = id

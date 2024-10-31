@@ -139,6 +139,12 @@ create table portfolio_freelancer(
   foreign key (id_freelancer) references cadastro_freelancer(id)
 );
 
+create table avaliacao (
+id int not null auto_increment primary key,
+estrelas int not null check (estrelas between 1 and 5),
+comentario text not null 
+);
+
 
 -- Inserindo Clientes
 INSERT INTO cadastro_cliente (nome_cliente, cnpj_cliente, email_cliente, senha_cliente, is_premium)
@@ -193,3 +199,57 @@ VALUES
 (3, 3), -- Freelancer C -> JavaScript
 (4, 4), -- Freelancer D -> Python
 (5, 5); -- Freelancer E -> SQL
+
+-- Inserindo Níveis de Experiência
+INSERT INTO nivel_experiencia (nivel_experiencia)
+VALUES 
+('Júnior'),
+('Pleno'),
+('Sênior');
+
+-- Inserindo Projetos
+INSERT INTO publicacao_projetos (nome_projeto, descricao_projeto, orcamento, id_nivel_experiencia)
+VALUES 
+('Site Institucional', 'Desenvolvimento de site para empresa de TI', 5000.00, 1),
+('Aplicativo Mobile', 'Aplicativo de agendamento para clínicas', 8000.00, 2),
+('Análise de Dados', 'Projeto de análise de dados de vendas', 7000.00, 3);
+
+-- Inserindo Categoria em Publicação de Projetos
+INSERT INTO categoria_publicacao_projetos (id_projeto, id_categoria)
+VALUES 
+(1, 2), -- Site Institucional -> Front-End
+(2, 3), -- Aplicativo Mobile -> Mobile
+(3, 4); -- Análise de Dados -> Data Science
+
+-- Inserindo Habilidade em Publicação de Projetos
+INSERT INTO habilidade_publicacao_projetos (id_projeto, id_habilidade)
+VALUES 
+(1, 1), -- Site Institucional -> HTML
+(2, 3), -- Aplicativo Mobile -> JavaScript
+(3, 4); -- Análise de Dados -> Python
+
+-- Inserindo Descrição de Perfil
+INSERT INTO descricao_perfil (descricao, id_cliente, id_freelancer)
+VALUES 
+('Empresa focada em desenvolvimento de software.', 1, NULL),
+('Freelancer com experiência em Back-End e JavaScript.', NULL, 1);
+
+-- Inserindo Foto de Perfil
+INSERT INTO foto_perfil (foto_perfil, id_cliente, id_freelancer)
+VALUES 
+('empresaA_foto.png', 1, NULL),
+('freelancerA_foto.png', NULL, 1);
+
+-- Inserindo Portfólio
+INSERT INTO portfolio (arquivo)
+VALUES 
+('projeto_site_institucional.zip'),
+('projeto_app_mobile.zip'),
+('analise_dados_vendas.pdf');
+
+-- Associando Portfólio ao Freelancer
+INSERT INTO portfolio_freelancer (id_portfolio, id_freelancer)
+VALUES 
+(1, 1), -- Freelancer A -> projeto_site_institucional.zip
+(2, 3), -- Freelancer C -> projeto_app_mobile.zip
+(3, 4); -- Freelancer D -> analise_dados_vendas.pdf

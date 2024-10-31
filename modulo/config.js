@@ -13,15 +13,16 @@ const ERROR_NOT_FOUND = {status: false, status_code: 404, message: 'Nenhum item 
 const ERROR_INTERNAL_SERVER_DB = {status: false, status_code: 500, message: 'Ocorreram Erros no processamento do Banco de dados. Contate o administrador da API!'}
 const ERROR_INTERNAL_SERVER = {status: false, status_code: 500, message: 'Ocorreram erros no servidor back-end na camada de serviços, portanto não foi possível processar a requisição. Contate o administrador da API!'}
 const ERROR_CONTENT_TYPE= {status: false, status_code: 415, message: 'O content-type da requisição não é suportado na API. Deve-se encaminhar dados em formato application/json!'}
+const ERROR_CPF_ALREADY_EXISTS = {status: false, status_code: 409, message: 'O CPF já está cadastrado no sistema!'}
+const ERROR_CNPJ_ALREADY_EXISTS = {status: false, status_code: 409, message: 'O CNPJ já está cadastrado no sistema!'}
+const ERROR_EMAIL_ALREADY_EXISTS = {status: false, status_code: 409, message: 'O e-mail já está cadastrado no sistema!'}
 
 
 /************************ MENSAGENS DE SUCESSO DO PROJETO ************************/
 const SUCESS_CREATED_ITEM = {status: true, status_code: 201, message: 'O item foi criado com sucesso no banco de dados!'}
 const SUCESS_DELETE_ITEM = {status: true, status_code: 200, message: 'O item foi deletado com sucesso no banco de dados!'}
 const SUCESS_UPDATE_ITEM = {status: true, status_code: 200, message: 'O item foi atualizado com sucesso no banco de dados!'}
-const ERROR_CPF_ALREADY_EXISTS = {status: false, status_code: 409, message: 'O CPF já está cadastrado no sistema!'}
-const ERROR_CNPJ_ALREADY_EXISTS = {status: false, status_code: 409, message: 'O CNPJ já está cadastrado no sistema!'}
-const ERROR_EMAIL_ALREADY_EXISTS = {status: false, status_code: 409, message: 'O e-mail já está cadastrado no sistema!'}
+
 
 module.exports = {
     ERROR_INVALID_ID,

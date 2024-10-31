@@ -44,7 +44,7 @@ const setInserirNovoPortfolio = async (dadosPortfolio, contentType) => {
 const setAtualizarPortfolio = async (dadosPortfolio, contentType, id) => {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
-            let updateportfolioJSON = {}
+            let updatePortfolioJSON = {}
 
             if (
                 dadosPortfolio.arquivo == '' || dadosPortfolio.arquivo == undefined || dadosPortfolio.arquivo == null
@@ -59,13 +59,13 @@ const setAtualizarPortfolio = async (dadosPortfolio, contentType, id) => {
                     let updatedPortfolio = await portfolioDAO.selectByIdPortfolio(id) 
                     let updatedId = updatedPortfolio[0].id 
 
-                    updateportfolioJSON.status = message.SUCESS_UPDATE_ITEM.status
-                    updateportfolioJSON.status_code = message.SUCESS_UPDATE_ITEM.status_code
-                    updateportfolioJSON.message = message.SUCESS_UPDATE_ITEM.message
-                    updateportfolioJSON.id = updatedId // Usa o id atualizado aqui
-                    updateportfolioJSON.portfolio = dadosPortfolio
+                    updatePortfolioJSON.status = message.SUCESS_UPDATE_ITEM.status
+                    updatePortfolioJSON.status_code = message.SUCESS_UPDATE_ITEM.status_code
+                    updatePortfolioJSON.message = message.SUCESS_UPDATE_ITEM.message
+                    updatePortfolioJSON.id = updatedId // Usa o id atualizado aqui
+                    updatePortfolioJSON.portfolio = dadosPortfolio
 
-                    return updateportfolioJSON
+                    return updatePortfolioJSON
 
                 } else {
                     return message.ERROR_INTERNAL_SERVER_DB // 500

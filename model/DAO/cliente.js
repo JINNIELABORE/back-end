@@ -159,19 +159,19 @@ const selectByEmail = async (email_cliente) => {
 
 const getClienteByEmail = async (email_cliente) => {
     try {
-        let sql = `SELECT nome_cliente FROM cadastro_cliente WHERE email_cliente = '${email_cliente}'`;
-        let rsCliente = await prisma.$queryRawUnsafe(sql);
+        let sql = `SELECT nome_cliente FROM cadastro_cliente WHERE email_cliente = '${email_cliente}'`
+        let rsCliente = await prisma.$queryRawUnsafe(sql)
 
         if (rsCliente.length > 0) {
-            return rsCliente[0].nome_cliente; // Retorna o nome do freelancer
+            return rsCliente[0].nome_cliente // Retorna o nome do freelancer
         } else {
-            return null; // E-mail não cadastrado
+            return null // E-mail não cadastrado
         }
     } catch (error) {
-        console.error(error);
-        return null;
+        console.error(error)
+        return null
     }
-};
+}
 module.exports = {
     insertCliente,
     selectId,

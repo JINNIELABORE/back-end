@@ -42,6 +42,7 @@ const controllerDescricaoPerfil = require('./controller/controller_descricao_per
 const controllerFotoPerfil = require('./controller/controller_foto_perfil.js')
 const controllerPortfolio = require('./controller/controller_portfolio.js')
 const controllerPortfolioFreelancer = require('./controller/controller_portfolio_freelancer.js')
+const controllerAvaliacao = require('./controller/controller_avaliacao.js')
 
 // Clientes
 
@@ -924,6 +925,54 @@ app.post('/v1/jinni/portfolio/freelancer', cors(), bodyParserJSON, async (reques
     let dadosBody = request.body
 
     let resultado = await controllerPortfolioFreelancer.setInserirNovoPortfolioFreelancer(dadosBody, contentType)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+// Avaliação
+
+app.get('/v1/jinni/avaliacoes', cors(), bodyParserJSON, async (request, response, next) => {
+    let dadosAvaliacoes = await controllerAvaliacao.getListarAvaliacoes()
+
+    response.status(dadosAvaliacoes.status_code)
+    response.json(dadosAvaliacoes)
+})
+
+app.get('/v1/jinni/avaliacao/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idAvaliacao = request.params.id
+
+    let dadosAvaliacao = await controllerAvaliacao.getBuscarAvaliacao(idAvaliacao)
+
+    response.status(dadosAvaliacao.status_code)
+    response.json(dadosAvaliacao)
+})
+
+app.delete('/v1/jinni/avaliacao/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idAvaliacao = request.params.id
+
+    let resultado = await controllerAvaliacao.setExcluirAvaliacao(idAvaliacao)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.put('/v1/jinni/avaliacao/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idAvaliacao = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerAvaliacao.setAtualizarAvaliacao(dadosBody, contentType, idAvaliacao)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.post('/v1/jinni/avaliacao', cors(), bodyParserJSON, async (request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerAvaliacao.setInserirNovaAvaliacao(dadosBody, contentType)
 
     response.status(resultado.status_code)
     response.json(resultado)

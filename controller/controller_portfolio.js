@@ -47,7 +47,7 @@ const setAtualizarPortfolio = async (dadosPortfolio, contentType, id) => {
             let updateportfolioJSON = {}
 
             if (
-                dadosPortfolio.arquivo == '' || dadosPortfolio.arquivo == undefined || dadosPortfolio.arquivo == null || dadosPortfolio.arquivo.length > 45
+                dadosPortfolio.arquivo == '' || dadosPortfolio.arquivo == undefined || dadosPortfolio.arquivo == null
             ) {
                 return message.ERROR_REQUIRED_FIELDS//400
 

@@ -139,12 +139,27 @@ create table portfolio_freelancer(
   foreign key (id_freelancer) references cadastro_freelancer(id)
 );
 
+-- Tabela de Avaliações
 create table avaliacao (
-id int not null auto_increment primary key,
-estrelas int not null check (estrelas between 1 and 5),
-comentario text not null 
+    id int not null auto_increment primary key,
+    estrelas int not null check (estrelas between 1 and 5),
+    comentario text not null 
 );
 
+-- Tabela Intermediária para Associar Avaliações a Usuários
+create table avaliacao_usuario (
+    id int not null auto_increment primary key,
+    id_avaliacao int not null,
+    id_avaliador int not null,
+    tipo_avaliador enum('cliente', 'freelancer') not null,
+    id_avaliado int not null,
+    tipo_avaliado enum('cliente', 'freelancer') not null,
+    
+    foreign key (id_avaliacao) references avaliacao(id)
+);
+
+INSERT INTO avaliacao_usuario (id_avaliacao, id_avaliador, tipo_avaliador, id_avaliado, tipo_avaliado)
+VALUES (1, 1, 'cliente', 1, 'freelancer');
 
 -- Inserindo Clientes
 INSERT INTO cadastro_cliente (nome_cliente, cnpj_cliente, email_cliente, senha_cliente, is_premium)

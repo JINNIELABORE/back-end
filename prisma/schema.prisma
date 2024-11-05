@@ -122,3 +122,31 @@ model portfolio_freelancer {
   @@index([id_freelancer], map: "id_freelancer")
   @@index([id_portfolio], map: "id_portfolio")
 }
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model avaliacao {
+  id         Int    @id @default(autoincrement())
+  estrelas   Int
+  comentario String @db.Text
+}
+
+model avaliacao_usuario {
+  id             Int                              @id @default(autoincrement())
+  id_avaliacao   Int
+  id_avaliador   Int
+  tipo_avaliador avaliacao_usuario_tipo_avaliador
+  id_avaliado    Int
+  tipo_avaliado  avaliacao_usuario_tipo_avaliado
+
+  @@index([id_avaliacao], map: "id_avaliacao")
+}
+
+enum avaliacao_usuario_tipo_avaliador {
+  cliente
+  freelancer
+}
+
+enum avaliacao_usuario_tipo_avaliado {
+  cliente
+  freelancer
+}

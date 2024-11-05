@@ -1,44 +1,70 @@
 const avaliacaoDAO = require('../model/DAO/avaliacao.js')
-
+const avaliacaoUsuarioDAO = require('../model/DAO/avaliacao_usuario.js')  // Adicionando o DAO para avaliação_usuario
 const message = require('../modulo/config.js')
 
 const setInserirNovaAvaliacao = async (dadosAvaliacao, contentType) => {
     try {
-        if (String(contentType).toLowerCase() == 'application/json') {
+        if (String(contentType).toLowerCase() === 'application/json') {
             let novaAvaliacaoJSON = {}
 
-            // Verifica se as estrelas estão entre 1 e 5
+            // Verifica se os campos obrigatórios estão preenchidos
             if (
-                dadosAvaliacao.estrelas < 1 || dadosAvaliacao.estrelas > 5 ||
-                dadosAvaliacao.estrelas == '' || dadosAvaliacao.estrelas == undefined || dadosAvaliacao.estrelas == null || 
-                dadosAvaliacao.comentario == '' || dadosAvaliacao.comentario == undefined || dadosAvaliacao.comentario == null
+                dadosAvaliacao.estrelas === '' || dadosAvaliacao.estrelas == undefined || dadosAvaliacao.estrelas == null || 
+                dadosAvaliacao.comentario === '' || dadosAvaliacao.comentario == undefined || dadosAvaliacao.comentario == null || 
+                dadosAvaliacao.id_avaliador === '' || dadosAvaliacao.id_avaliador == undefined || dadosAvaliacao.id_avaliador == null || 
+                dadosAvaliacao.id_avaliado === '' || dadosAvaliacao.id_avaliado == undefined || dadosAvaliacao.id_avaliado == null
             ) {
-                return message.ERROR_REQUIRED_FIELDS // 400
-
+                return message.ERROR_REQUIRED_FIELDS  // 400
             } else {
+                // Insere a avaliação
                 let novaAvaliacao = await avaliacaoDAO.insertAvaliacao(dadosAvaliacao)
-
                 if (novaAvaliacao) {
-                    let id = await avaliacaoDAO.selectId()
+                    let idAvaliacao = await avaliacaoDAO.selectId()  // Obtém o id da avaliação recém inserida
 
-                    novaAvaliacaoJSON.status = message.SUCESS_CREATED_ITEM.status
-                    novaAvaliacaoJSON.status_code = message.SUCESS_CREATED_ITEM.status_code
-                    novaAvaliacaoJSON.message = message.SUCESS_CREATED_ITEM.message
-                    novaAvaliacaoJSON.id = parseInt(id)
-                    novaAvaliacaoJSON.avaliacao = dadosAvaliacao
+                    // Agora insere na tabela intermediária 'avaliacao_usuario'
+                    let dadosAvaliacaoUsuario = {
+                        id_avaliacao: idAvaliacao,
+                        id_avaliador: dadosAvaliacao.id_avaliador,
+                        tipo_avaliador: dadosAvaliacao.tipo_avaliador,
+                        id_avaliado: dadosAvaliacao.id_avaliado,
+                        tipo_avaliado: dadosAvaliacao.tipo_avaliado
+                    }
 
-                    return novaAvaliacaoJSON // 201
+                    let resultadoAvaliacaoUsuario = await avaliacaoUsuarioDAO.insertAvaliacaoUsuario(dadosAvaliacaoUsuario)
+                    if (resultadoAvaliacaoUsuario) {
+                        // Se a inserção na tabela 'avaliacao_usuario' for bem-sucedida
+                        novaAvaliacaoJSON.status = true
+                        novaAvaliacaoJSON.status_code = 201
+                        novaAvaliacaoJSON.message = "O item foi criado com sucesso no banco de dados!"
+                        novaAvaliacaoJSON.id = parseInt(idAvaliacao)
+                        
+                        // Corrigido para retornar 'avaliacao' como um array
+                        novaAvaliacaoJSON.avaliacao = [{
+                            estrelas: dadosAvaliacao.estrelas,
+                            comentario: dadosAvaliacao.comentario,
+                            id_avaliador: dadosAvaliacao.id_avaliador,
+                            tipo_avaliador: dadosAvaliacao.tipo_avaliador,
+                            id_avaliado: dadosAvaliacao.id_avaliado,
+                            tipo_avaliado: dadosAvaliacao.tipo_avaliado
+                        }]
+                        
+                        return novaAvaliacaoJSON // 201
+                    } else {
+                        console.log("Erro ao inserir na tabela 'avaliacao_usuario'.")
+                        return message.ERROR_INTERNAL_SERVER_DB  // 500
+                    }
                 } else {
-                    console.log("Erro interno do servidor ao inserir Avaliacao no banco de dados.")
-                    return message.ERROR_INTERNAL_SERVER_DB // 500
+                    console.log("Erro ao inserir avaliação no banco de dados.")
+                    return message.ERROR_INTERNAL_SERVER_DB  // 500
                 }
             }
         }
     } catch (error) {
         console.log(error)
-        return message.ERROR_INTERNAL_SERVER
+        return message.ERROR_INTERNAL_SERVER  // 500
     }
 }
+
 
 
 const setAtualizarAvaliacao = async (dadosAvaliacao, contentType, id) => {
@@ -114,15 +140,22 @@ const setExcluirAvaliacao = async (id) => {
 }
 
 const getListarAvaliacoes = async () => {
-
-    //Cria o objeto JSON
     let avaliacoesJSON = {}
-
-    let dadosAvaliacoes = await avaliacaoDAO.selectAllAvaliacoes()
+    
+    // Altera a consulta para incluir os dados de avaliacao_usuario
+    let dadosAvaliacoes = await avaliacaoDAO.selectAllAvaliacoesComUsuarios()
 
     if (dadosAvaliacoes) {
         if (dadosAvaliacoes.length > 0) {
-            avaliacoesJSON.avaliacoes = dadosAvaliacoes
+            avaliacoesJSON.avaliacoes = dadosAvaliacoes.map(avaliacao => ({
+                id: avaliacao.id,  // Inclui o id da avaliação
+                estrelas: avaliacao.estrelas,
+                comentario: avaliacao.comentario,
+                id_avaliador: avaliacao.id_avaliador,
+                tipo_avaliador: avaliacao.tipo_avaliador,
+                id_avaliado: avaliacao.id_avaliado,
+                tipo_avaliado: avaliacao.tipo_avaliado
+            }))
             avaliacoesJSON.quantidade = dadosAvaliacoes.length
             avaliacoesJSON.status_code = 200
 
@@ -136,7 +169,6 @@ const getListarAvaliacoes = async () => {
 }
 
 const getBuscarAvaliacao = async (id) => {
-
     let idAvaliacao = id
 
     let avaliacaoJSON = {}
@@ -144,13 +176,20 @@ const getBuscarAvaliacao = async (id) => {
     if (idAvaliacao == '' || idAvaliacao == undefined || isNaN(idAvaliacao)) {
         return message.ERROR_INVALID_ID
     } else {
-
-        let dadosAvaliacao = await avaliacaoDAO.selectByIdAvaliacao(idAvaliacao)
+        let dadosAvaliacao = await avaliacaoDAO.selectByIdAvaliacaoComUsuarios(idAvaliacao)
 
         if (dadosAvaliacao) {
-
             if (dadosAvaliacao.length > 0) {
-                avaliacaoJSON.avaliacao = dadosAvaliacao
+                // Formatar a avaliação para que fique no formato desejado dentro de um array, incluindo o id
+                avaliacaoJSON.avaliacao = [{
+                    id: dadosAvaliacao[0].id,  // Inclui o id da avaliação
+                    estrelas: dadosAvaliacao[0].estrelas,
+                    comentario: dadosAvaliacao[0].comentario,
+                    id_avaliador: dadosAvaliacao[0].id_avaliador,
+                    tipo_avaliador: dadosAvaliacao[0].tipo_avaliador,
+                    id_avaliado: dadosAvaliacao[0].id_avaliado,
+                    tipo_avaliado: dadosAvaliacao[0].tipo_avaliado
+                }]
                 avaliacaoJSON.status_code = 200
 
                 return avaliacaoJSON
@@ -162,6 +201,8 @@ const getBuscarAvaliacao = async (id) => {
         }
     }
 }
+
+
 
 module.exports = {
     setInserirNovaAvaliacao,

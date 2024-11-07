@@ -74,7 +74,8 @@ const selectAllFreelancers = async () => {
                    fc.id_categoria,
                    c.nome_categoria,
                    fh.id_habilidade,
-                   h.nome_habilidade
+                   h.nome_habilidade,
+                   fp.foto_perfil
             FROM cadastro_freelancer f
             LEFT JOIN avaliacao_usuario au ON au.id_avaliado = f.id AND au.tipo_avaliado = 'freelancer'
             LEFT JOIN avaliacao a ON a.id = au.id_avaliacao -- Pega os dados da avaliação
@@ -83,6 +84,7 @@ const selectAllFreelancers = async () => {
             LEFT JOIN categorias c ON c.id = fc.id_categoria
             LEFT JOIN freelancer_habilidade fh ON fh.id_freelancer = f.id
             LEFT JOIN habilidades h ON h.id = fh.id_habilidade
+            LEFT JOIN foto_perfil fp ON fp.id_freelancer = f.id
         `;
 
         let rsFreelancers = await prisma.$queryRawUnsafe(sql);
@@ -94,8 +96,6 @@ const selectAllFreelancers = async () => {
         return false;
     }
 }
-
-
 
 const selectByIdFreelancer = async (id) => {
     try {

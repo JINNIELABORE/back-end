@@ -60,7 +60,7 @@ const getListarClientes = async () => {
             const clientesMap = {}
 
             dadosClientes.forEach(cliente => {
-                const { id, nome_cliente, data_nascimento, cnpj_cliente, email_cliente, senha_cliente, is_premium, id_avaliacao, estrelas, comentario, nome_avaliador } = cliente
+                const { id, nome_cliente, data_nascimento, cnpj_cliente, email_cliente, senha_cliente, is_premium, foto_perfil, id_avaliacao, estrelas, comentario, nome_avaliador } = cliente
 
                 // Adiciona os Clientes se ainda não existir no mapa
                 if (!clientesMap[id]) {
@@ -71,6 +71,7 @@ const getListarClientes = async () => {
                         cnpj_cliente: cnpj_cliente.toString(),
                         email_cliente,
                         senha_cliente,
+                        foto_perfil,
                         is_premium,
                         avaliacao: []
                     }

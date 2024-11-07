@@ -13,8 +13,10 @@ const insertPagamento = async (dadosPagamento) => {
                       '${dadosPagamento.status_pagamento}', '${dadosPagamento.parcelas}', '${dadosPagamento.taxa}', 
                       '${dadosPagamento.codigo_transacao}', '${dadosPagamento.descricao}', '${dadosPagamento.moeda}')`
 
+                      console.log(sql);
+                      
         let result = await prisma.$executeRawUnsafe(sql)
-
+        
         if (result) 
             return true
         else 

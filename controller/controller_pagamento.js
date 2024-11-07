@@ -19,10 +19,9 @@ const setInserirNovoPagamento = async (dadosPagamento, contentType) => {
             } else {
                 // Insere o novo pagamento
                 let novoPagamento = await pagamentoDAO.insertPagamento(dadosPagamento)
-
+                
                 if (novoPagamento) {
                     let id = await pagamentoDAO.selectUltimoIdPagamento()
-
                     novoPagamentoJSON.status = message.SUCESS_CREATED_ITEM.status
                     novoPagamentoJSON.status_code = message.SUCESS_CREATED_ITEM.status_code
                     novoPagamentoJSON.message = message.SUCESS_CREATED_ITEM.message

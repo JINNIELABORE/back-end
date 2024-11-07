@@ -69,6 +69,10 @@ const selectAllFreelancers = async () => {
             LEFT JOIN avaliacao_usuario au ON au.id_avaliado = f.id AND au.tipo_avaliado = 'freelancer'
             LEFT JOIN avaliacao a ON a.id = au.id_avaliacao
             LEFT JOIN cadastro_freelancer f_avaliador ON f_avaliador.id = au.id_avaliador
+            LEFT JOIN 
+                foto_perfil fp ON 
+                    (au.tipo_avaliador = 'cliente' AND fp.id_cliente = au.id_avaliador) OR 
+                    (au.tipo_avaliador = 'freelancer' AND fp.id_freelancer = au.id_avaliador);
         `;
 
         let rsFreelancers = await prisma.$queryRawUnsafe(sql);

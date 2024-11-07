@@ -43,6 +43,7 @@ const controllerFotoPerfil = require('./controller/controller_foto_perfil.js')
 const controllerPortfolio = require('./controller/controller_portfolio.js')
 const controllerPortfolioFreelancer = require('./controller/controller_portfolio_freelancer.js')
 const controllerAvaliacao = require('./controller/controller_avaliacao.js')
+const controllerPagamentos = require('./controller/controller_pagamento.js')
 
 // Clientes
 
@@ -976,6 +977,63 @@ app.post('/v1/jinni/avaliacao', cors(), bodyParserJSON, async (request, response
 
     response.status(resultado.status_code)
     response.json(resultado)
+})
+
+// Pagamento
+
+app.post('/v1/jinni/pagamento', cors(), bodyParserJSON, async (request, response, next) => {
+    let contentType = request.headers['content-type']
+
+    // Recebe os dados encaminhados no Body da requisição
+    let dadosBody = request.body
+
+    // Encaminha os dados para o controller inserir no BD
+    let resultDados = await controllerPagamentos.setInserirNovoPagamento(dadosBody, contentType)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+
+app.get('/v1/jinni/pagamentos', cors(), async (request, response, next) => {
+    // Chama o controller para listar todos os pagamentos
+    let dadosPagamentos = await controllerPagamentos.getListarPagamentos()
+
+    if (dadosPagamentos) {
+        response.json(dadosPagamentos)
+        response.status(200)
+    } else {
+        response.json({ message: 'Nenhum registro encontrado' })
+        response.status(404)
+    }
+})
+
+app.get('/v1/jinni/pagamento/:id', cors(), async (request, response, next) => {
+    // Recebe o ID do pagamento encaminhado na requisição
+    let idPagamento = request.params.id
+
+    let dadosPagamento = await controllerPagamentos.getBuscarPagamento(idPagamento)
+
+    response.status(dadosPagamento.status_code)
+    response.json(dadosPagamento)
+})
+
+app.put('/v1/jinni/pagamento/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idPagamento = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultDados = await controllerPagamentos.setAtualizarPagamento(dadosBody, contentType, idPagamento)
+
+    response.status(resultDados.status_code)
+    response.json(resultDados)
+})
+
+app.delete('/v1/jinni/pagamento/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idPagamento = request.params.id
+    let dadosPagamento = await controllerPagamentos.setExcluirPagamento(idPagamento)
+
+    response.status(dadosPagamento.status_code)
+    response.json(dadosPagamento)
 })
 
 app.listen(8080, function () {

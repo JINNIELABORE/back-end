@@ -9,7 +9,7 @@ const setInserirNovoPagamento = async (dadosPagamento, contentType) => {
 
             // Valida se os campos estão corretos
             if (
-                dadosPagamento.id_usuario == '' || dadosPagamento.id_usuario == undefined || dadosPagamento.id_usuario == null ||
+                dadosPagamento.id_cliente == '' || dadosPagamento.id_cliente == undefined || dadosPagamento.id_cliente == null ||
                 dadosPagamento.valor == '' || dadosPagamento.valor == undefined || dadosPagamento.valor == null ||
                 dadosPagamento.metodo_pagamento == '' || dadosPagamento.metodo_pagamento == undefined || dadosPagamento.metodo_pagamento == null ||
                 dadosPagamento.status_pagamento == '' || dadosPagamento.status_pagamento == undefined || dadosPagamento.status_pagamento == null ||
@@ -52,7 +52,7 @@ const setAtualizarPagamento = async (dadosPagamento, contentType, id) => {
 
             // Valida os campos do pagamento
             if (
-                dadosPagamento.id_usuario == '' || dadosPagamento.id_usuario == undefined || dadosPagamento.id_usuario == null ||
+                dadosPagamento.id_cliente == '' || dadosPagamento.id_cliente == undefined || dadosPagamento.id_cliente == null ||
                 dadosPagamento.valor == '' || dadosPagamento.valor == undefined || dadosPagamento.valor == null ||
                 dadosPagamento.metodo_pagamento == '' || dadosPagamento.metodo_pagamento == undefined || dadosPagamento.metodo_pagamento == null ||
                 dadosPagamento.status_pagamento == '' || dadosPagamento.status_pagamento == undefined || dadosPagamento.status_pagamento == null ||

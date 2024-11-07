@@ -158,6 +158,22 @@ create table avaliacao_usuario (
     foreign key (id_avaliacao) references avaliacao(id)
 );
 
+CREATE TABLE pagamentos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_cliente INT NOT NULL, 
+    valor DECIMAL(10, 2) NOT NULL, 
+    metodo_pagamento ENUM('cartao_credito', 'boleto', 'pix', 'transferencia') NOT NULL, 
+    status_pagamento ENUM('pendente', 'concluido', 'cancelado') NOT NULL, 
+    parcelas INT DEFAULT 1, 
+    taxa DECIMAL(5, 2) DEFAULT 0.00, 
+    codigo_transacao VARCHAR(50) UNIQUE NOT NULL, 
+    descricao TEXT, 
+    moeda VARCHAR(3) DEFAULT 'BRL', 
+    data_pagamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (id_cliente) REFERENCES cadastro_cliente(id)
+);
+
 INSERT INTO avaliacao (estrelas, comentario)
 VALUES (4, 'Muito bom seviço');
 

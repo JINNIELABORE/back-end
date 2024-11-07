@@ -158,6 +158,9 @@ create table avaliacao_usuario (
     foreign key (id_avaliacao) references avaliacao(id)
 );
 
+INSERT INTO avaliacao (estrelas, comentario)
+VALUES (4, 'Muito bom seviço');
+
 INSERT INTO avaliacao_usuario (id_avaliacao, id_avaliador, tipo_avaliador, id_avaliado, tipo_avaliado)
 VALUES (1, 1, 'cliente', 1, 'freelancer');
 

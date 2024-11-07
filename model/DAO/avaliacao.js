@@ -116,20 +116,34 @@ const deleteAvaliacao = async (id) => {
 const selectAllAvaliacoesComUsuarios = async () => {
     try {
         let sql = `
-            SELECT a.*, au.id_avaliador, au.tipo_avaliador, au.id_avaliado, au.tipo_avaliado
-            FROM avaliacao a
-            JOIN avaliacao_usuario au ON a.id = au.id_avaliacao
-        `
+            SELECT 
+                a.id,
+                a.estrelas,
+                a.comentario,
+                au.id_avaliador,
+                au.tipo_avaliador,
+                au.id_avaliado,
+                au.tipo_avaliado,
+                fp.foto_perfil AS foto_perfil_avaliador
+            FROM 
+                avaliacao a
+            JOIN 
+                avaliacao_usuario au ON a.id = au.id_avaliacao
+            LEFT JOIN 
+                foto_perfil fp ON 
+                    (au.tipo_avaliador = 'cliente' AND fp.id_cliente = au.id_avaliador) OR 
+                    (au.tipo_avaliador = 'freelancer' AND fp.id_freelancer = au.id_avaliador);
+        `;
 
-        let rsAvaliacoes = await prisma.$queryRawUnsafe(sql)
-
-        return rsAvaliacoes
+        let rsAvaliacoes = await prisma.$queryRawUnsafe(sql);
+        return rsAvaliacoes;
 
     } catch (error) {
-        console.error('Database Error:', error)
-        return false
+        console.error('Database Error:', error);
+        return false;
     }
 }
+
 
 const selectByIdAvaliacaoComUsuarios = async (idAvaliacao) => {
     try {

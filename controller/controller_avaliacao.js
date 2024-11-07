@@ -142,19 +142,20 @@ const setExcluirAvaliacao = async (id) => {
 const getListarAvaliacoes = async () => {
     let avaliacoesJSON = {}
     
-    // Altera a consulta para incluir os dados de avaliacao_usuario
+    // Alteração na consulta para incluir a foto de perfil do avaliador
     let dadosAvaliacoes = await avaliacaoDAO.selectAllAvaliacoesComUsuarios()
 
     if (dadosAvaliacoes) {
         if (dadosAvaliacoes.length > 0) {
             avaliacoesJSON.avaliacoes = dadosAvaliacoes.map(avaliacao => ({
-                id: avaliacao.id,  // Inclui o id da avaliação
+                id: avaliacao.id,
                 estrelas: avaliacao.estrelas,
                 comentario: avaliacao.comentario,
                 id_avaliador: avaliacao.id_avaliador,
                 tipo_avaliador: avaliacao.tipo_avaliador,
                 id_avaliado: avaliacao.id_avaliado,
-                tipo_avaliado: avaliacao.tipo_avaliado
+                tipo_avaliado: avaliacao.tipo_avaliado,
+                foto_perfil_avaliador: avaliacao.foto_perfil_avaliador 
             }))
             avaliacoesJSON.quantidade = dadosAvaliacoes.length
             avaliacoesJSON.status_code = 200
@@ -167,6 +168,7 @@ const getListarAvaliacoes = async () => {
         return message.ERROR_INTERNAL_SERVER_DB
     }
 }
+
 
 const getBuscarAvaliacao = async (id) => {
     let idAvaliacao = id

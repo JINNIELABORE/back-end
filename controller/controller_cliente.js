@@ -50,28 +50,53 @@ const setInserirCliente = async (dadosCliente, contentType) => {
     }
 }
 
-
 const getListarClientes = async () => {
     let clientesJSON = {}
     let dadosClientes = await clientesDAO.selectAllClientes()
 
     if (dadosClientes) {
         if (dadosClientes.length > 0) {
-            // Converter BigInt para string
-            dadosClientes = dadosClientes.map(cliente => {
-                return {
-                    ...cliente,
-                    cnpj_cliente: cliente.cnpj_cliente.toString()
+            // Organize os dados para incluir as avaliações junto com os Clientes
+            const clientesMap = {}
+
+            dadosClientes.forEach(cliente => {
+                const { id, nome_cliente, data_nascimento, cnpj_cliente, email_cliente, is_premium, id_avaliacao, estrelas, comentario, nome_avaliador } = cliente
+
+                // Adiciona os Clientes se ainda não existir no mapa
+                if (!clientesMap[id]) {
+                    clientesMap[id] = {
+                        id,
+                        nome_cliente,
+                        data_nascimento,
+                        cnpj_cliente: cnpj_cliente.toString(),
+                        email_cliente,
+                        is_premium,
+                        avaliacao: []
+                    }
+                }
+
+                // Adiciona a avaliação ao cliente, se ela existir
+                if (id_avaliacao) {
+                    clientesMap[id].avaliacao.push({
+                        id: id_avaliacao,
+                        estrelas,
+                        comentario,
+                        id_avaliador: cliente.id_avaliador,
+                        nome_avaliador,
+                        tipo_avaliador: cliente.tipo_avaliador,
+                        foto_perfil_avaliador: cliente.foto_perfil_avaliador 
+                    })
                 }
             })
 
-            clientesJSON.clientes = dadosClientes
-            clientesJSON.quantidade = dadosClientes.length
+            // Converte o mapa em um array
+            clientesJSON.clientes = Object.values(clientesMap)
+            clientesJSON.quantidade = clientesJSON.clientes.length
             clientesJSON.status_code = 200
 
             return clientesJSON
         } else {
-            return { message: 'Nenhum registro encontrado', status_code: 404 }
+            return { message: 'Nenhum cliente encontrado', status_code: 404 }
         }
     } else {
         return { message: 'Erro interno do servidor', status_code: 500 }
@@ -186,7 +211,6 @@ const setExcluirCliente = async (id) => {
 
 }
 
-
 const getClienteByEmail = async (emailPesquisado) =>{
 
     let dadosCliente = await clientesDAO.getClienteByEmail(emailPesquisado)
@@ -202,8 +226,6 @@ const getClienteByEmail = async (emailPesquisado) =>{
     }
 
 }
-
-
 
 module.exports = {
     setInserirCliente,

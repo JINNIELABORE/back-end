@@ -18,15 +18,15 @@ const setInserirFreelancer = async (dadosFreelancer, contentType) => {
             } 
 
             // Verifica se o CPF já está cadastrado
-            const cpfExistente = await freelancersDAO.selectByCpf(dadosFreelancer.cpf_freelancer);
+            const cpfExistente = await freelancersDAO.selectByCpf(dadosFreelancer.cpf_freelancer)
             if (cpfExistente) {
-                return message.ERROR_CPF_ALREADY_EXISTS; //409
+                return message.ERROR_CPF_ALREADY_EXISTS //409
             }
 
             // Verifica se o e-mail já está cadastrado
-            const emailExistente = await freelancersDAO.selectByEmail(dadosFreelancer.email_freelancer);
+            const emailExistente = await freelancersDAO.selectByEmail(dadosFreelancer.email_freelancer)
             if (emailExistente) {
-                return message.ERROR_EMAIL_ALREADY_EXISTS; //409
+                return message.ERROR_EMAIL_ALREADY_EXISTS //409
             }
 
             else {
@@ -60,18 +60,22 @@ const setInserirFreelancer = async (dadosFreelancer, contentType) => {
 
 }
 
-
 const getListarFreelancers = async () => {
-    let freelancersJSON = {};
-    let dadosFreelancers = await freelancersDAO.selectAllFreelancers();
+    let freelancersJSON = {}
+    let dadosFreelancers = await freelancersDAO.selectAllFreelancers()
 
     if (dadosFreelancers) {
         if (dadosFreelancers.length > 0) {
-            // Organize os dados para incluir as avaliações junto com os freelancers
-            const freelancersMap = {};
+            // Organize os dados para incluir as avaliações, categorias e habilidades junto com os freelancers
+            const freelancersMap = {}
 
             dadosFreelancers.forEach(freelancer => {
-                const { id, nome_freelancer, data_nascimento, cpf_freelancer, email_freelancer, is_premium, id_avaliacao, estrelas, comentario, nome_avaliador } = freelancer;
+                const { 
+                    id, nome_freelancer, data_nascimento, cpf_freelancer, 
+                    email_freelancer, is_premium, id_avaliacao, estrelas, 
+                    comentario, nome_avaliador, id_categoria, nome_categoria,
+                    id_habilidade, nome_habilidade 
+                } = freelancer
 
                 // Adiciona os freelancers se ainda não existir no mapa
                 if (!freelancersMap[id]) {
@@ -82,8 +86,26 @@ const getListarFreelancers = async () => {
                         cpf_freelancer: cpf_freelancer.toString(),
                         email_freelancer,
                         is_premium,
+                        categorias: [],
+                        habilidades: [],
                         avaliacao: []
-                    };
+                    }
+                }
+
+                // Adiciona a categoria ao freelancer, se ela existir
+                if (id_categoria && nome_categoria) {
+                    freelancersMap[id].categorias.push({
+                        id_categoria,
+                        nome_categoria
+                    })
+                }
+
+                // Adiciona a habilidade ao freelancer, se ela existir
+                if (id_habilidade && nome_habilidade) {
+                    freelancersMap[id].habilidades.push({
+                        id_habilidade,
+                        nome_habilidade
+                    })
                 }
 
                 // Adiciona a avaliação ao freelancer, se ela existir
@@ -94,27 +116,24 @@ const getListarFreelancers = async () => {
                         comentario,
                         id_avaliador: freelancer.id_avaliador,
                         nome_avaliador,
-                        tipo_avaliador: freelancer.tipo_avaliador,
-                        foto_perfil_avaliador: freelancer.foto_perfil_avaliador 
-                    });
+                        tipo_avaliador: freelancer.tipo_avaliador
+                    })
                 }
-            });
+            })
 
             // Converte o mapa em um array
-            freelancersJSON.freelancers = Object.values(freelancersMap);
-            freelancersJSON.quantidade = freelancersJSON.freelancers.length;
-            freelancersJSON.status_code = 200;
+            freelancersJSON.freelancers = Object.values(freelancersMap)
+            freelancersJSON.quantidade = freelancersJSON.freelancers.length
+            freelancersJSON.status_code = 200
 
-            return freelancersJSON;
+            return freelancersJSON
         } else {
-            return { message: 'Nenhum freelancer encontrado', status_code: 404 };
+            return { message: 'Nenhum freelancer encontrado', status_code: 404 }
         }
     } else {
-        return { message: 'Erro interno do servidor', status_code: 500 };
+        return { message: 'Erro interno do servidor', status_code: 500 }
     }
 }
-
-
 
 const getBuscarFreelancer = async (id) => {
     let idFreelancer = id
@@ -225,7 +244,6 @@ const setExcluirFreelancer = async (id) => {
 
 }
 
-
 const getFreelancerByEmail = async (emailPesquisado) =>{
 
     let dadosFreelancers = await freelancersDAO.getFreelancerByEmail(emailPesquisado)
@@ -241,10 +259,6 @@ const getFreelancerByEmail = async (emailPesquisado) =>{
     }
 
 }
-
-
-
-
 
 module.exports = {
     setInserirFreelancer,

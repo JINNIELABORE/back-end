@@ -154,8 +154,7 @@ const getListarAvaliacoes = async () => {
                 id_avaliador: avaliacao.id_avaliador,
                 tipo_avaliador: avaliacao.tipo_avaliador,
                 id_avaliado: avaliacao.id_avaliado,
-                tipo_avaliado: avaliacao.tipo_avaliado,
-                foto_perfil_avaliador: avaliacao.foto_perfil_avaliador 
+                tipo_avaliado: avaliacao.tipo_avaliado
             }))
             avaliacoesJSON.quantidade = dadosAvaliacoes.length
             avaliacoesJSON.status_code = 200

@@ -93,8 +93,9 @@ const getListarFreelancers = async () => {
                         estrelas,
                         comentario,
                         id_avaliador: freelancer.id_avaliador,
-                        nome_avaliador, // Nome do avaliador
-                        tipo_avaliador: freelancer.tipo_avaliador
+                        nome_avaliador,
+                        tipo_avaliador: freelancer.tipo_avaliador,
+                        foto_perfil_avaliador: freelancer.foto_perfil_avaliador 
                     });
                 }
             });

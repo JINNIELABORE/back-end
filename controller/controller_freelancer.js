@@ -61,13 +61,13 @@ const setInserirFreelancer = async (dadosFreelancer, contentType) => {
 }
 
 const getListarFreelancers = async () => {
-    let freelancersJSON = {}
-    let dadosFreelancers = await freelancersDAO.selectAllFreelancers()
+    let freelancersJSON = {};
+    let dadosFreelancers = await freelancersDAO.selectAllFreelancers();
 
     if (dadosFreelancers) {
         if (dadosFreelancers.length > 0) {
             // Organize os dados para incluir as avaliações, categorias e habilidades junto com os freelancers
-            const freelancersMap = {}
+            const freelancersMap = {};
 
             dadosFreelancers.forEach(freelancer => {
                 const { 
@@ -75,7 +75,7 @@ const getListarFreelancers = async () => {
                     email_freelancer, is_premium, id_avaliacao, estrelas, 
                     comentario, nome_avaliador, id_categoria, nome_categoria,
                     id_habilidade, nome_habilidade 
-                } = freelancer
+                } = freelancer;
 
                 // Adiciona os freelancers se ainda não existir no mapa
                 if (!freelancersMap[id]) {
@@ -89,7 +89,7 @@ const getListarFreelancers = async () => {
                         categorias: [],
                         habilidades: [],
                         avaliacao: []
-                    }
+                    };
                 }
 
                 // Adiciona a categoria ao freelancer, se ela existir
@@ -97,7 +97,7 @@ const getListarFreelancers = async () => {
                     freelancersMap[id].categorias.push({
                         id_categoria,
                         nome_categoria
-                    })
+                    });
                 }
 
                 // Adiciona a habilidade ao freelancer, se ela existir
@@ -105,7 +105,7 @@ const getListarFreelancers = async () => {
                     freelancersMap[id].habilidades.push({
                         id_habilidade,
                         nome_habilidade
-                    })
+                    });
                 }
 
                 // Adiciona a avaliação ao freelancer, se ela existir
@@ -115,23 +115,23 @@ const getListarFreelancers = async () => {
                         estrelas,
                         comentario,
                         id_avaliador: freelancer.id_avaliador,
-                        nome_avaliador,
+                        nome_avaliador,  // Agora estamos pegando o nome do **avaliador**
                         tipo_avaliador: freelancer.tipo_avaliador
-                    })
+                    });
                 }
-            })
+            });
 
             // Converte o mapa em um array
-            freelancersJSON.freelancers = Object.values(freelancersMap)
-            freelancersJSON.quantidade = freelancersJSON.freelancers.length
-            freelancersJSON.status_code = 200
+            freelancersJSON.freelancers = Object.values(freelancersMap);
+            freelancersJSON.quantidade = freelancersJSON.freelancers.length;
+            freelancersJSON.status_code = 200;
 
-            return freelancersJSON
+            return freelancersJSON;
         } else {
-            return { message: 'Nenhum freelancer encontrado', status_code: 404 }
+            return { message: 'Nenhum freelancer encontrado', status_code: 404 };
         }
     } else {
-        return { message: 'Erro interno do servidor', status_code: 500 }
+        return { message: 'Erro interno do servidor', status_code: 500 };
     }
 }
 

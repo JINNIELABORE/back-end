@@ -65,11 +65,11 @@ const selectAllClientes = async () => {
         let sql = `
             SELECT f.*, a.id AS id_avaliacao, a.estrelas, a.comentario, 
                    au.id_avaliador, au.tipo_avaliador, au.id_avaliado, au.tipo_avaliado,
-                   f_avaliador.nome_cliente AS nome_avaliador
+                   f_avaliador.nome_freelancer AS nome_avaliador
             FROM cadastro_cliente f
             LEFT JOIN avaliacao_usuario au ON au.id_avaliado = f.id AND au.tipo_avaliado = 'cliente'
             LEFT JOIN avaliacao a ON a.id = au.id_avaliacao
-            LEFT JOIN cadastro_cliente f_avaliador ON f_avaliador.id = au.id_avaliador
+            LEFT JOIN cadastro_freelancer f_avaliador ON f_avaliador.id = au.id_avaliador
         `
 
         let rsClientes = await prisma.$queryRawUnsafe(sql)

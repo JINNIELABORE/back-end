@@ -72,7 +72,7 @@ const getListarFreelancers = async () => {
             dadosFreelancers.forEach(freelancer => {
                 const { 
                     id, nome_freelancer, data_nascimento, cpf_freelancer, 
-                    email_freelancer, is_premium, id_avaliacao, estrelas, 
+                    email_freelancer, senha_freelancer, is_premium, id_avaliacao, estrelas, 
                     comentario, nome_avaliador, id_categoria, nome_categoria,
                     id_habilidade, nome_habilidade 
                 } = freelancer;
@@ -85,6 +85,7 @@ const getListarFreelancers = async () => {
                         data_nascimento,
                         cpf_freelancer: cpf_freelancer.toString(),
                         email_freelancer,
+                        senha_freelancer,
                         is_premium,
                         categorias: [],
                         habilidades: [],

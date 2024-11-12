@@ -72,7 +72,7 @@ const selectAllClientes = async () => {
                    au.id_avaliado, 
                    au.tipo_avaliado,
                    f_avaliador.nome_freelancer AS nome_avaliador,
-                   fp.foto_perfil -- Aqui estamos adicionando a foto do cliente
+                   fp.foto_perfil
             FROM cadastro_cliente f
             LEFT JOIN avaliacao_usuario au ON au.id_avaliado = f.id AND au.tipo_avaliado = 'cliente'
             LEFT JOIN avaliacao a ON a.id = au.id_avaliacao

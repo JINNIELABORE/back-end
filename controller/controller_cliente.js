@@ -85,8 +85,7 @@ const getListarClientes = async () => {
                         comentario,
                         id_avaliador: cliente.id_avaliador,
                         nome_avaliador,
-                        tipo_avaliador: cliente.tipo_avaliador,
-                        foto_perfil_avaliador: cliente.foto_perfil_avaliador 
+                        tipo_avaliador: cliente.tipo_avaliador
                     })
                 }
             })

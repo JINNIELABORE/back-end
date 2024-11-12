@@ -71,9 +71,9 @@ const getListarFreelancers = async () => {
             dadosFreelancers.forEach(freelancer => {
                 const { 
                     id, nome_freelancer, data_nascimento, cpf_freelancer, 
-                    email_freelancer, senha_freelancer, is_premium, foto_perfil, id_avaliacao, estrelas, 
-                    comentario, nome_avaliador, id_categoria, nome_categoria,
-                    id_habilidade, nome_habilidade
+                    email_freelancer, senha_freelancer, is_premium, foto_perfil, 
+                    id_avaliacao, estrelas, comentario, nome_avaliador, id_categoria, nome_categoria,
+                    id_habilidade, nome_habilidade, id_avaliador, tipo_avaliador
                 } = freelancer;
 
                 // Adiciona os freelancers se ainda não existir no mapa
@@ -115,16 +115,21 @@ const getListarFreelancers = async () => {
                     }
                 }
 
-                // Adiciona a avaliação ao freelancer, se ela existir
+                // Adiciona a avaliação ao freelancer, se ela existir e ainda não tiver sido adicionada
                 if (id_avaliacao) {
-                    freelancersMap[id].avaliacao.push({
-                        id: id_avaliacao,
-                        estrelas,
-                        comentario,
-                        id_avaliador: freelancer.id_avaliador,
-                        nome_avaliador,  
-                        tipo_avaliador: freelancer.tipo_avaliador
-                    });
+                    const avaliacaoExistente = freelancersMap[id].avaliacao.some(avaliacao => 
+                        avaliacao.id === id_avaliacao && avaliacao.id_avaliador === id_avaliador
+                    );
+                    if (!avaliacaoExistente) {
+                        freelancersMap[id].avaliacao.push({
+                            id: id_avaliacao,
+                            estrelas,
+                            comentario,
+                            id_avaliador,
+                            nome_avaliador,  
+                            tipo_avaliador
+                        });
+                    }
                 }
             });
 

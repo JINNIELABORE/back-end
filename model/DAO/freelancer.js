@@ -78,7 +78,7 @@ const selectAllFreelancers = async () => {
                    fp.foto_perfil
             FROM cadastro_freelancer f
             LEFT JOIN avaliacao_usuario au ON au.id_avaliado = f.id AND au.tipo_avaliado = 'freelancer'
-            LEFT JOIN avaliacao a ON a.id = au.id_avaliacao
+            LEFT JOIN avaliacao a ON a.id = au.id_avaliacao -- Pega os dados da avaliação
             LEFT JOIN cadastro_cliente f_avaliador ON f_avaliador.id = au.id_avaliador
             LEFT JOIN freelancer_categoria fc ON fc.id_freelancer = f.id
             LEFT JOIN categorias c ON c.id = fc.id_categoria
@@ -89,50 +89,13 @@ const selectAllFreelancers = async () => {
 
         let rsFreelancers = await prisma.$queryRawUnsafe(sql);
 
-        // Pós-processamento: Agrupar as categorias, habilidades e avaliações
-        const freelancers = rsFreelancers.reduce((acc, freelancer) => {
-            // Verifica se o freelancer já existe no acumulador
-            let f = acc.find(f => f.id === freelancer.id);
-            if (!f) {
-                f = {
-                    ...freelancer,
-                    categorias: [],
-                    habilidades: [],
-                    avaliacao: []
-                };
-                acc.push(f);
-            }
+        return rsFreelancers;
 
-            // Adiciona categorias, habilidades e avaliações sem duplicação
-            if (freelancer.nome_categoria && !f.categorias.some(cat => cat.nome_categoria === freelancer.nome_categoria)) {
-                f.categorias.push({ id_categoria: freelancer.id_categoria, nome_categoria: freelancer.nome_categoria });
-            }
-
-            if (freelancer.nome_habilidade && !f.habilidades.some(hab => hab.nome_habilidade === freelancer.nome_habilidade)) {
-                f.habilidades.push({ id_habilidade: freelancer.id_habilidade, nome_habilidade: freelancer.nome_habilidade });
-            }
-
-            if (freelancer.id_avaliacao) {
-                f.avaliacao.push({
-                    id: freelancer.id_avaliacao,
-                    estrelas: freelancer.estrelas,
-                    comentario: freelancer.comentario,
-                    id_avaliador: freelancer.id_avaliador,
-                    nome_avaliador: freelancer.nome_avaliador,
-                    tipo_avaliador: freelancer.tipo_avaliador
-                });
-            }
-
-            return acc;
-        }, []);
-
-        return freelancers;
     } catch (error) {
         console.error('Database Error:', error);
         return false;
     }
-};
-
+}
 
 const selectByIdFreelancer = async (id) => {
     try {

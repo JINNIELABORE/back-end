@@ -146,7 +146,6 @@ create table avaliacao (
     comentario text not null 
 );
 
--- Tabela Intermediária para Associar Avaliações a Usuários
 create table avaliacao_usuario (
     id int not null auto_increment primary key,
     id_avaliacao int not null,

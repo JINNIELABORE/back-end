@@ -117,7 +117,7 @@ const getListarFreelancers = async () => {
                         estrelas,
                         comentario,
                         id_avaliador: freelancer.id_avaliador,
-                        nome_avaliador,  // Agora estamos pegando o nome do **avaliador**
+                        nome_avaliador,  
                         tipo_avaliador: freelancer.tipo_avaliador
                     })
                 }

@@ -99,19 +99,16 @@ const updateAvaliacao = async (idAvaliacao, dadosAvaliacao) => {
 }
 
 const deleteAvaliacao = async (id) => {
-
     try {
-        let sql = `delete from avaliacao where id = ${id}`
-
-        let rsAvaliacao = await prisma.$queryRawUnsafe(sql)
-
-        return rsAvaliacao
-
+        let sql = `DELETE FROM avaliacao WHERE id = ${id}`;
+        await prisma.$queryRawUnsafe(sql);
+        return true;
     } catch (error) {
-        return false
+        console.error('Erro ao excluir avaliação:', error);
+        return false;
     }
+};
 
-}
 
 const selectAllAvaliacoesComUsuarios = async () => {
     try {

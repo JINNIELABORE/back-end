@@ -29,6 +29,25 @@ const insertFotoPerfil = async (dadosFotoPerfil) => {
     }
 }
 
+const checkFotoPerfilExistente = async (id_cliente, id_freelancer) => {
+    try {
+        let sql = `SELECT * FROM foto_perfil WHERE `;
+        
+        if (id_cliente) {
+            sql += `id_cliente = ${id_cliente}`;
+        } else if (id_freelancer) {
+            sql += `id_freelancer = ${id_freelancer}`;
+        }
+        
+        const result = await prisma.$queryRawUnsafe(sql);
+        
+        return result.length > 0; // Retorna true se já existir uma foto de perfil
+    } catch (error) {
+        console.error("Erro ao verificar foto de perfil existente:", error);
+        return false;
+    }
+}
+
 const selectId = async () => {
     try {
         let sql = 'select CAST(id as DECIMAL) as id FROM foto_perfil order by id desc limit 1'
@@ -105,5 +124,6 @@ module.exports = {
     updateFotoPerfil,
     deleteFotoPerfil,
     selectAllFotoPerfis,
-    selectByIdFotoPerfil
+    selectByIdFotoPerfil,
+    checkFotoPerfilExistente
 }

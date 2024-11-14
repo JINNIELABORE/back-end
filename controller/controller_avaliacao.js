@@ -107,37 +107,67 @@ const setAtualizarAvaliacao = async (dadosAvaliacao, contentType, id) => {
 }
 
 const setExcluirAvaliacao = async (id) => {
-
     try {
-
-        let idAvaliacao = id
-
-        let validaAvaliacao = await getBuscarAvaliacao(idAvaliacao)
-
-        let dadosAvaliacao = await avaliacaoDAO.deleteAvaliacao(idAvaliacao)
-
-        if (idAvaliacao == '' || idAvaliacao == undefined || isNaN(idAvaliacao)) {
-
-            return message.ERROR_INVALID_ID //400
-
-        } else if (validaAvaliacao.status == false) {
-            return message.ERROR_NOT_FOUND
-
-        } else {
-
-            if (dadosAvaliacao)
-                return message.SUCESS_DELETE_ITEM // 200
-            else
-                return message.ERROR_INTERNAL_SERVER_DB
-
+        // Verificação básica de ID válido
+        if (isNaN(id) || id <= 0) {
+            return {
+                status: message.ERROR_INVALID_ID.status,
+                status_code: message.ERROR_INVALID_ID.status_code,
+                message: message.ERROR_INVALID_ID.message
+            };
         }
 
+        // Verificar se a avaliação existe
+        let validaAvaliacao = await avaliacaoDAO.selectByIdAvaliacao(id);
+        if (!validaAvaliacao) {
+            return {
+                status: message.ERROR_NOT_FOUND.status,
+                status_code: message.ERROR_NOT_FOUND.status_code,
+                message: message.ERROR_NOT_FOUND.message
+            };
+        }
+
+        // Excluir registros da tabela intermediária
+        let resultadoIntermediaria = await avaliacaoUsuarioDAO.deleteAvaliacaoUsuario(id);
+
+        if (!resultadoIntermediaria) {
+            return {
+                status: message.ERROR_INTERNAL_SERVER_DB.status,
+                status_code: message.ERROR_INTERNAL_SERVER_DB.status_code,
+                message: "Erro ao excluir os registros da tabela intermediária"
+            };
+        }
+
+        // Agora, excluir a avaliação
+        let resultadoAvaliacao = await avaliacaoDAO.deleteAvaliacao(id);
+
+        if (resultadoAvaliacao) {
+            return {
+                status: message.SUCESS_DELETE_ITEM.status,
+                status_code: message.SUCESS_DELETE_ITEM.status_code,
+                message: message.SUCESS_DELETE_ITEM.message
+            };
+        } else {
+            return {
+                status: message.ERROR_INTERNAL_SERVER_DB.status,
+                status_code: message.ERROR_INTERNAL_SERVER_DB.status_code,
+                message: "Erro ao excluir avaliação"
+            };
+        }
 
     } catch (error) {
-        return message.ERROR_INTERNAL_SERVER
+        console.error(error);
+        return {
+            status: message.ERROR_INTERNAL_SERVER.status,
+            status_code: message.ERROR_INTERNAL_SERVER.status_code,
+            message: message.ERROR_INTERNAL_SERVER.message
+        };
     }
+};
 
-}
+
+
+
 
 const getListarAvaliacoes = async () => {
     let avaliacoesJSON = {}

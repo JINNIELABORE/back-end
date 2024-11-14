@@ -10,31 +10,56 @@ const setInserirNovaFotoPerfil = async (dadosFotoPerfil, contentType) => {
 
             // Verifica se a foto está presente e se apenas um dos IDs (cliente ou freelancer) está preenchido
             if (!dadosFotoPerfil.foto_perfil || 
-                (dadosFotoPerfil.id_cliente && dadosFotoPerfil.id_freelancer)) {
-                return message.ERROR_REQUIRED_FIELDS // 400
+                (dadosFotoPerfil.id_cliente && dadosFotoPerfil.id_freelancer) || 
+                (!dadosFotoPerfil.id_cliente && !dadosFotoPerfil.id_freelancer)) {
+                return {
+                    status: 'error',
+                    status_code: 400,
+                    message: "Campos obrigatórios estão faltando ou IDs inválidos."
+                } // 400
             } else {
+                // Verifica se já existe uma foto de perfil associada ao cliente ou freelancer
+                let fotoExistente = await fotoPerfilDAO.checkFotoPerfilExistente(dadosFotoPerfil.id_cliente, dadosFotoPerfil.id_freelancer);
+                
+                if (fotoExistente) {
+                    return { 
+                        status: 'error',
+                        status_code: 409, // 409 Conflict
+                        message: "Usuário já possui uma foto de perfil cadastrada." 
+                    };
+                }
+
                 // Encaminha os dados para o DAO inserir
-                let novaFotoPerfil = await fotoPerfilDAO.insertFotoPerfil(dadosFotoPerfil)
+                let novaFotoPerfil = await fotoPerfilDAO.insertFotoPerfil(dadosFotoPerfil);
 
                 if (novaFotoPerfil) {
-                    let id = await fotoPerfilDAO.selectId()
-                    novaFotoPerfilJSON.status = message.SUCESS_CREATED_ITEM.status
-                    novaFotoPerfilJSON.status_code = message.SUCESS_CREATED_ITEM.status_code
-                    novaFotoPerfilJSON.message = message.SUCESS_CREATED_ITEM.message
-                    novaFotoPerfilJSON.id = parseInt(id)
-                    novaFotoPerfilJSON.foto_perfil = dadosFotoPerfil
+                    let id = await fotoPerfilDAO.selectId();
+                    novaFotoPerfilJSON.status = 'success';
+                    novaFotoPerfilJSON.status_code = 201; // 201 Created
+                    novaFotoPerfilJSON.message = "Foto de perfil inserida com sucesso.";
+                    novaFotoPerfilJSON.id = parseInt(id);
+                    novaFotoPerfilJSON.foto_perfil = dadosFotoPerfil;
 
-                    return novaFotoPerfilJSON // 201
+                    return novaFotoPerfilJSON; // 201
                 } else {
-                    return message.ERROR_INTERNAL_SERVER_DB // 500
+                    return {
+                        status: 'error',
+                        status_code: 500,
+                        message: "Erro interno ao tentar inserir a foto de perfil."
+                    };
                 }
             }
         }
     } catch (error) {
-        console.error("Erro ao inserir nova foto de perfil:", error)
-        return message.ERROR_INTERNAL_SERVER // 500 erro na camada da controller
+        console.error("Erro ao inserir nova foto de perfil:", error);
+        return {
+            status: 'error',
+            status_code: 500,
+            message: "Erro ao processar a requisição na camada da controller."
+        }; // 500 erro na camada da controller
     }
 }
+
 
 const setAtualizarFotoPerfil = async (dadosFotoPerfil, contentType, id) => {
     try {

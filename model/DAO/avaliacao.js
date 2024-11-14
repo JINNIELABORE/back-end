@@ -78,15 +78,18 @@ const selectByIdAvaliacao = async (id) => {
     }
 }
 
-const updateAvaliacao = async (idAvaliacao, dadosAvaliacao) => {
+const updateAvaliacao = async (idAvaliacaoUsuario, dadosAvaliacaoUsuario) => {
 
     let sql
 
     try {
-        sql = `update avaliacao set estrelas = '${dadosAvaliacao.estrelas}', 
-                                           comentario = '${dadosAvaliacao.comentario}'
-                                           where id = ${idAvaliacao}`
+        sql = `update avaliacao_usuario set id = '${dadosAvaliacaoUsuario.id_avaliacao}',
+                                                 '${dadosAvaliacaoUsuario.id_avaliador}',
+                                                 '${dadosAvaliacaoUsuario.tipo_avaliador}',
+                                                 '${dadosAvaliacaoUsuario.id_avaliado}',
+                                                 '${dadosAvaliacaoUsuario.tipo_avaliado}' where id = ${idAvaliacaoUsuario}`
 
+                                                    
         let result = await prisma.$executeRawUnsafe(sql)
         
         return result
@@ -97,7 +100,6 @@ const updateAvaliacao = async (idAvaliacao, dadosAvaliacao) => {
     }
 
 }
-
 const deleteAvaliacao = async (id) => {
     try {
         let sql = `DELETE FROM avaliacao WHERE id = ${id}`;

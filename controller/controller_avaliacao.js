@@ -105,7 +105,6 @@ const setAtualizarAvaliacao = async (dadosAvaliacao, contentType, id) => {
         return message.ERROR_INTERNAL_SERVER //500 erro na camada da controller
     }
 }
-
 const setExcluirAvaliacao = async (id) => {
     try {
         // Verificação básica de ID válido

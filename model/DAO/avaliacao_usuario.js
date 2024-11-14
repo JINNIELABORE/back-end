@@ -73,7 +73,7 @@ const updateAvaliacaoUsuario = async (idAvaliacaoUsuario, dadosAvaliacaoUsuario)
 
 const deleteAvaliacaoUsuario = async (id) => {
     try {
-        let sql = `DELETE FROM avaliacao_usuario WHERE avaliacao_id = ${id}`;
+        let sql = `DELETE FROM avaliacao_usuario WHERE id_avaliacao = ${id}`;  // Corrigido o nome da coluna
         await prisma.$queryRawUnsafe(sql);
         return true;
     } catch (error) {
@@ -81,6 +81,7 @@ const deleteAvaliacaoUsuario = async (id) => {
         return false;
     }
 };
+
 
 
 

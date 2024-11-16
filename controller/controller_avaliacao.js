@@ -68,41 +68,55 @@ const setInserirNovaAvaliacao = async (dadosAvaliacao, contentType) => {
 const setAtualizarAvaliacao = async (dadosAvaliacao, contentType, id) => {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
-            let updateAvaliacaoJSON = {}
+            let updateAvaliacaoJSON = {};
 
             if (
                 dadosAvaliacao.estrelas == '' || dadosAvaliacao.estrelas == undefined || dadosAvaliacao.estrelas == null || 
                 dadosAvaliacao.comentario == '' || dadosAvaliacao.comentario == undefined || dadosAvaliacao.comentario == null
             ) {
-                return message.ERROR_REQUIRED_FIELDS//400
-
+                return message.ERROR_REQUIRED_FIELDS; // 400
             } else {
-               
-                let avaliacao = await avaliacaoDAO.updateAvaliacao(id, dadosAvaliacao)
+                // Atualiza os dados na tabela "avaliacao"
+                let avaliacao = await avaliacaoDAO.updateAvaliacao(id, dadosAvaliacao);
 
                 if (avaliacao) {
-                    let updatedAvaliacao = await avaliacaoDAO.selectByIdAvaliacao(id) 
-                    let updatedId = updatedAvaliacao[0].id 
+                    // Agora, atualiza a relação na tabela "avaliacao_usuario"
+                    let dadosAvaliacaoUsuario = {
+                        id_avaliacao: id,
+                        id_avaliador: dadosAvaliacao.id_avaliador,
+                        tipo_avaliador: dadosAvaliacao.tipo_avaliador,
+                        id_avaliado: dadosAvaliacao.id_avaliado,
+                        tipo_avaliado: dadosAvaliacao.tipo_avaliado
+                    };
 
-                    updateAvaliacaoJSON.status = message.SUCESS_UPDATE_ITEM.status
-                    updateAvaliacaoJSON.status_code = message.SUCESS_UPDATE_ITEM.status_code
-                    updateAvaliacaoJSON.message = message.SUCESS_UPDATE_ITEM.message
-                    updateAvaliacaoJSON.id = updatedId // Usa o id atualizado aqui
-                    updateAvaliacaoJSON.avaliacao = dadosAvaliacao
+                    let avaliacaoUsuarioAtualizada = await avaliacaoUsuarioDAO.updateAvaliacaoUsuario(id, dadosAvaliacaoUsuario);
 
-                    return updateAvaliacaoJSON
+                    if (avaliacaoUsuarioAtualizada) {
+                        let updatedAvaliacao = await avaliacaoDAO.selectByIdAvaliacao(id); // Obtém a avaliação atualizada
+                        let updatedId = updatedAvaliacao[0].id;
 
+                        updateAvaliacaoJSON.status = message.SUCESS_UPDATE_ITEM.status;
+                        updateAvaliacaoJSON.status_code = message.SUCESS_UPDATE_ITEM.status_code;
+                        updateAvaliacaoJSON.message = message.SUCESS_UPDATE_ITEM.message;
+                        updateAvaliacaoJSON.id = updatedId; // ID atualizado da avaliação
+                        updateAvaliacaoJSON.avaliacao = dadosAvaliacao;
+
+                        return updateAvaliacaoJSON;
+                    } else {
+                        return message.ERROR_INTERNAL_SERVER_DB; // Erro ao atualizar avaliação_usuario
+                    }
                 } else {
-                    return message.ERROR_INTERNAL_SERVER_DB // 500
+                    return message.ERROR_INTERNAL_SERVER_DB; // Erro ao atualizar avaliação
                 }
             }
-
         }
 
     } catch (error) {
-        return message.ERROR_INTERNAL_SERVER //500 erro na camada da controller
+        console.error(error);
+        return message.ERROR_INTERNAL_SERVER; // 500 - Erro na camada de controller
     }
-}
+};
+
 
 const setExcluirAvaliacao = async (id) => {
     try {

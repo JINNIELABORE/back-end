@@ -49,31 +49,29 @@ const selectId = async () => {
 }
 
 const updateAvaliacaoUsuario = async (idAvaliacaoUsuario, dadosAvaliacaoUsuario) => {
-    try {
-        const sql = `UPDATE avaliacao_usuario SET 
-                        id_avaliacao = ?, 
-                        id_avaliador = ?, 
-                        tipo_avaliador = ?, 
-                        id_avaliado = ?, 
-                        tipo_avaliado = ? 
-                     WHERE id = ?`
 
-        const result = await prisma.$executeRawUnsafe(sql, 
-            dadosAvaliacaoUsuario.id_avaliacao,
-            dadosAvaliacaoUsuario.id_avaliador,
-            dadosAvaliacaoUsuario.tipo_avaliador,
-            dadosAvaliacaoUsuario.id_avaliado,
-            dadosAvaliacaoUsuario.tipo_avaliado,
-            idAvaliacaoUsuario
-        )
+    let sql
+
+    try {
+        sql = `UPDATE avaliacao_usuario SET 
+                                        id_avaliacao = '${dadosAvaliacaoUsuario.id_avaliacao}',
+                                        id_avaliador = '${dadosAvaliacaoUsuario.id_avaliador}',
+                                        tipo_avaliador = '${dadosAvaliacaoUsuario.tipo_avaliador}',
+                                        id_avaliado = '${dadosAvaliacaoUsuario.id_avaliado}',
+                                        tipo_avaliado = '${dadosAvaliacaoUsuario.tipo_avaliado}'
+            WHERE id = ${idAvaliacaoUsuario}`
+
+                                                    
+        let result = await prisma.$executeRawUnsafe(sql)
         
         return result
+
     } catch (error) {
-        console.error('Erro no updateAvaliacaoUsuario:', error)
+
         return false
     }
-}
 
+}
 
 const deleteAvaliacaoUsuario = async (id) => {
     try {

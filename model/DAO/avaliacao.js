@@ -78,29 +78,28 @@ const selectByIdAvaliacao = async (id) => {
     }
 }
 
-const updateAvaliacao = async (idAvaliacaoUsuario, dadosAvaliacaoUsuario) => {
-
-    let sql
-
+const updateAvaliacao = async (id, dadosAvaliacao) => {
     try {
-        sql = `UPDATE avaliacao_usuario SET 
-                                            id_avaliacao = '${dadosAvaliacaoUsuario.id_avaliacao}',
-                                            id_avaliador = '${dadosAvaliacaoUsuario.id_avaliador}',
-                                            tipo_avaliador = '${dadosAvaliacaoUsuario.tipo_avaliador}',
-                                            id_avaliado = '${dadosAvaliacaoUsuario.id_avaliado}',
-                                            tipo_avaliado = '${dadosAvaliacaoUsuario.tipo_avaliado}'
-                WHERE id = ${idAvaliacaoUsuario}`
+        let sql = `UPDATE avaliacao SET 
+                        estrelas = '${dadosAvaliacao.estrelas}', 
+                        comentario = '${dadosAvaliacao.comentario}' 
+                    WHERE id = ${id}`;
 
-                                                    
-        let result = await prisma.$executeRawUnsafe(sql)
-        
-        return result
+        console.log('SQL para atualização:', sql);  // Verifique o SQL gerado
 
+        let result = await prisma.$executeRawUnsafe(sql);
+
+        if (result) {
+            return true;
+        } else {
+            return false;
+        }
     } catch (error) {
-
-        return false
+        console.error('Erro ao atualizar avaliação:', error);
+        return false;
     }
 }
+
 
 const deleteAvaliacao = async (id) => {
     try {

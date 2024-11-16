@@ -68,23 +68,25 @@ const setInserirNovaAvaliacao = async (dadosAvaliacao, contentType) => {
 const setAtualizarAvaliacao = async (dadosAvaliacao, contentType, id) => {
     try {
         if (String(contentType).toLowerCase() === 'application/json') {
-            let updateAvaliacaoJSON = {}
+            let updateAvaliacaoJSON = {};
 
             // Verifica se os campos obrigatórios estão preenchidos
             if (
-                dadosAvaliacao.estrelas === '' || dadosAvaliacao.estrelas == undefined || dadosAvaliacao.estrelas == null || 
-                dadosAvaliacao.comentario === '' || dadosAvaliacao.comentario == undefined || dadosAvaliacao.comentario == null || 
-                dadosAvaliacao.id_avaliador === '' || dadosAvaliacao.id_avaliador == undefined || dadosAvaliacao.id_avaliador == null || 
+                dadosAvaliacao.estrelas === '' || dadosAvaliacao.estrelas == undefined || dadosAvaliacao.estrelas == null ||
+                dadosAvaliacao.comentario === '' || dadosAvaliacao.comentario == undefined || dadosAvaliacao.comentario == null ||
+                dadosAvaliacao.id_avaliador === '' || dadosAvaliacao.id_avaliador == undefined || dadosAvaliacao.id_avaliador == null ||
                 dadosAvaliacao.id_avaliado === '' || dadosAvaliacao.id_avaliado == undefined || dadosAvaliacao.id_avaliado == null
             ) {
-                return message.ERROR_REQUIRED_FIELDS  // 400
+                return message.ERROR_REQUIRED_FIELDS;  // 400
             } else {
                 // Atualiza a avaliação
-                let avaliacaoAtualizada = await avaliacaoDAO.updateAvaliacao(id, dadosAvaliacao)
+                console.log('Dados para atualizar a avaliação:', dadosAvaliacao);  // Verifique os dados
+
+                let avaliacaoAtualizada = await avaliacaoDAO.updateAvaliacao(id, dadosAvaliacao);
 
                 if (avaliacaoAtualizada) {
-                    let updatedAvaliacao = await avaliacaoDAO.selectById(id)
-                    let updatedId = updatedAvaliacao[0].id
+                    let updatedAvaliacao = await avaliacaoDAO.selectByIdAvaliacao(id);
+                    let updatedId = updatedAvaliacao[0].id;
 
                     // Agora atualiza a tabela intermediária 'avaliacao_usuario'
                     let dadosAvaliacaoUsuario = {
@@ -93,16 +95,15 @@ const setAtualizarAvaliacao = async (dadosAvaliacao, contentType, id) => {
                         tipo_avaliador: dadosAvaliacao.tipo_avaliador,
                         id_avaliado: dadosAvaliacao.id_avaliado,
                         tipo_avaliado: dadosAvaliacao.tipo_avaliado
-                    }
+                    };
 
-                    let resultadoAvaliacaoUsuario = await avaliacaoUsuarioDAO.updateAvaliacaoUsuario(updatedId, dadosAvaliacaoUsuario)
+                    let resultadoAvaliacaoUsuario = await avaliacaoUsuarioDAO.updateAvaliacaoUsuario(updatedId, dadosAvaliacaoUsuario);
                     if (resultadoAvaliacaoUsuario) {
-                        // Se a atualização na tabela 'avaliacao_usuario' for bem-sucedida
-                        updateAvaliacaoJSON.status = true
-                        updateAvaliacaoJSON.status_code = 200
-                        updateAvaliacaoJSON.message = "A avaliação foi atualizada com sucesso!"
-                        updateAvaliacaoJSON.id = parseInt(updatedId)
-                        
+                        updateAvaliacaoJSON.status = true;
+                        updateAvaliacaoJSON.status_code = 200;
+                        updateAvaliacaoJSON.message = "A avaliação foi atualizada com sucesso!";
+                        updateAvaliacaoJSON.id = parseInt(updatedId);
+
                         // Corrigido para retornar 'avaliacao' como um array
                         updateAvaliacaoJSON.avaliacao = [{
                             estrelas: dadosAvaliacao.estrelas,
@@ -111,24 +112,25 @@ const setAtualizarAvaliacao = async (dadosAvaliacao, contentType, id) => {
                             tipo_avaliador: dadosAvaliacao.tipo_avaliador,
                             id_avaliado: dadosAvaliacao.id_avaliado,
                             tipo_avaliado: dadosAvaliacao.tipo_avaliado
-                        }]
+                        }];
                         
-                        return updateAvaliacaoJSON // 200
+                        return updateAvaliacaoJSON;  // 200
                     } else {
-                        console.log("Erro ao atualizar na tabela 'avaliacao_usuario'.")
-                        return message.ERROR_INTERNAL_SERVER_DB  // 500
+                        console.log("Erro ao atualizar na tabela 'avaliacao_usuario'.");
+                        return message.ERROR_INTERNAL_SERVER_DB;  // 500
                     }
                 } else {
-                    console.log("Erro ao atualizar avaliação no banco de dados.")
-                    return message.ERROR_INTERNAL_SERVER_DB  // 500
+                    console.log("Erro ao atualizar avaliação no banco de dados.");
+                    return message.ERROR_INTERNAL_SERVER_DB;  // 500
                 }
             }
         }
     } catch (error) {
-        console.log(error)
-        return message.ERROR_INTERNAL_SERVER  // 500
+        console.log(error);
+        return message.ERROR_INTERNAL_SERVER;  // 500
     }
 }
+
 
 const setExcluirAvaliacao = async (id) => {
     try {

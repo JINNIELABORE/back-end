@@ -26,7 +26,7 @@ const insertAvaliacaoUsuario = async (dadosAvaliacaoUsuario) => {
         //Cria a variável SQL
 
     } catch (error) {
-        console.log(error);
+        console.log(error)
         return false
     }
 
@@ -53,11 +53,13 @@ const updateAvaliacaoUsuario = async (idAvaliacaoUsuario, dadosAvaliacaoUsuario)
     let sql
 
     try {
-        sql = `update avaliacao_usuario set id = '${dadosAvaliacaoUsuario.id_avaliacao}',
-                                                 '${dadosAvaliacaoUsuario.id_avaliador}',
-                                                 '${dadosAvaliacaoUsuario.tipo_avaliador}',
-                                                 '${dadosAvaliacaoUsuario.id_avaliado}',
-                                                 '${dadosAvaliacaoUsuario.tipo_avaliado}' where id = ${idAvaliacaoUsuario}`
+        sql = `UPDATE avaliacao_usuario SET 
+                                            id_avaliacao = '${dadosAvaliacaoUsuario.id_avaliacao}',
+                                            id_avaliador = '${dadosAvaliacaoUsuario.id_avaliador}',
+                                            tipo_avaliador = '${dadosAvaliacaoUsuario.tipo_avaliador}',
+                                            id_avaliado = '${dadosAvaliacaoUsuario.id_avaliado}',
+                                            tipo_avaliado = '${dadosAvaliacaoUsuario.tipo_avaliado}'
+                WHERE id = ${idAvaliacaoUsuario}`
 
                                                     
         let result = await prisma.$executeRawUnsafe(sql)
@@ -73,14 +75,14 @@ const updateAvaliacaoUsuario = async (idAvaliacaoUsuario, dadosAvaliacaoUsuario)
 
 const deleteAvaliacaoUsuario = async (id) => {
     try {
-        let sql = `DELETE FROM avaliacao_usuario WHERE id_avaliacao = ${id}`;  // Corrigido o nome da coluna
-        await prisma.$queryRawUnsafe(sql);
-        return true;
+        let sql = `DELETE FROM avaliacao_usuario WHERE id_avaliacao = ${id}` 
+        await prisma.$queryRawUnsafe(sql)
+        return true
     } catch (error) {
-        console.error('Erro ao excluir avaliação do usuário:', error);
-        return false;
+        console.error('Erro ao excluir avaliação do usuário:', error)
+        return false
     }
-};
+}
 
 
 

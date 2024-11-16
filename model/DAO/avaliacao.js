@@ -83,11 +83,13 @@ const updateAvaliacao = async (idAvaliacaoUsuario, dadosAvaliacaoUsuario) => {
     let sql
 
     try {
-        sql = `update avaliacao_usuario set id = '${dadosAvaliacaoUsuario.id_avaliacao}',
-                                                 '${dadosAvaliacaoUsuario.id_avaliador}',
-                                                 '${dadosAvaliacaoUsuario.tipo_avaliador}',
-                                                 '${dadosAvaliacaoUsuario.id_avaliado}',
-                                                 '${dadosAvaliacaoUsuario.tipo_avaliado}' where id = ${idAvaliacaoUsuario}`
+        sql = `UPDATE avaliacao_usuario SET 
+                                            id_avaliacao = '${dadosAvaliacaoUsuario.id_avaliacao}',
+                                            id_avaliador = '${dadosAvaliacaoUsuario.id_avaliador}',
+                                            tipo_avaliador = '${dadosAvaliacaoUsuario.tipo_avaliador}',
+                                            id_avaliado = '${dadosAvaliacaoUsuario.id_avaliado}',
+                                            tipo_avaliado = '${dadosAvaliacaoUsuario.tipo_avaliado}'
+                WHERE id = ${idAvaliacaoUsuario}`
 
                                                     
         let result = await prisma.$executeRawUnsafe(sql)
@@ -98,18 +100,18 @@ const updateAvaliacao = async (idAvaliacaoUsuario, dadosAvaliacaoUsuario) => {
 
         return false
     }
-
 }
+
 const deleteAvaliacao = async (id) => {
     try {
-        let sql = `DELETE FROM avaliacao WHERE id = ${id}`;
-        await prisma.$queryRawUnsafe(sql);
-        return true;
+        let sql = `DELETE FROM avaliacao WHERE id = ${id}`
+        await prisma.$queryRawUnsafe(sql)
+        return true
     } catch (error) {
-        console.error('Erro ao excluir avaliação:', error);
-        return false;
+        console.error('Erro ao excluir avaliação:', error)
+        return false
     }
-};
+}
 
 
 const selectAllAvaliacoesComUsuarios = async () => {
@@ -131,15 +133,15 @@ const selectAllAvaliacoesComUsuarios = async () => {
             LEFT JOIN 
                 foto_perfil fp ON 
                     (au.tipo_avaliador = 'cliente' AND fp.id_cliente = au.id_avaliador) OR 
-                    (au.tipo_avaliador = 'freelancer' AND fp.id_freelancer = au.id_avaliador);
-        `;
+                    (au.tipo_avaliador = 'freelancer' AND fp.id_freelancer = au.id_avaliador)
+        `
 
-        let rsAvaliacoes = await prisma.$queryRawUnsafe(sql);
-        return rsAvaliacoes;
+        let rsAvaliacoes = await prisma.$queryRawUnsafe(sql)
+        return rsAvaliacoes
 
     } catch (error) {
-        console.error('Database Error:', error);
-        return false;
+        console.error('Database Error:', error)
+        return false
     }
 }
 

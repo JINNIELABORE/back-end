@@ -1,5 +1,5 @@
 const avaliacaoDAO = require('../model/DAO/avaliacao.js')
-const avaliacaoUsuarioDAO = require('../model/DAO/avaliacao_usuario.js')  // Adicionando o DAO para avaliação_usuario
+const avaliacaoUsuarioDAO = require('../model/DAO/avaliacao_usuario.js')
 const message = require('../modulo/config.js')
 
 const setInserirNovaAvaliacao = async (dadosAvaliacao, contentType) => {
@@ -65,8 +65,6 @@ const setInserirNovaAvaliacao = async (dadosAvaliacao, contentType) => {
     }
 }
 
-
-
 const setAtualizarAvaliacao = async (dadosAvaliacao, contentType, id) => {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
@@ -105,6 +103,7 @@ const setAtualizarAvaliacao = async (dadosAvaliacao, contentType, id) => {
         return message.ERROR_INTERNAL_SERVER //500 erro na camada da controller
     }
 }
+
 const setExcluirAvaliacao = async (id) => {
     try {
         // Verificação básica de ID válido
@@ -113,60 +112,56 @@ const setExcluirAvaliacao = async (id) => {
                 status: message.ERROR_INVALID_ID.status,
                 status_code: message.ERROR_INVALID_ID.status_code,
                 message: message.ERROR_INVALID_ID.message
-            };
+            }
         }
 
         // Verificar se a avaliação existe
-        let validaAvaliacao = await avaliacaoDAO.selectByIdAvaliacao(id);
+        let validaAvaliacao = await avaliacaoDAO.selectByIdAvaliacao(id)
         if (!validaAvaliacao) {
             return {
                 status: message.ERROR_NOT_FOUND.status,
                 status_code: message.ERROR_NOT_FOUND.status_code,
                 message: message.ERROR_NOT_FOUND.message
-            };
+            }
         }
 
         // Excluir registros da tabela intermediária
-        let resultadoIntermediaria = await avaliacaoUsuarioDAO.deleteAvaliacaoUsuario(id);
+        let resultadoIntermediaria = await avaliacaoUsuarioDAO.deleteAvaliacaoUsuario(id)
 
         if (!resultadoIntermediaria) {
             return {
                 status: message.ERROR_INTERNAL_SERVER_DB.status,
                 status_code: message.ERROR_INTERNAL_SERVER_DB.status_code,
                 message: "Erro ao excluir os registros da tabela intermediária"
-            };
+            }
         }
 
         // Agora, excluir a avaliação
-        let resultadoAvaliacao = await avaliacaoDAO.deleteAvaliacao(id);
+        let resultadoAvaliacao = await avaliacaoDAO.deleteAvaliacao(id)
 
         if (resultadoAvaliacao) {
             return {
                 status: message.SUCESS_DELETE_ITEM.status,
                 status_code: message.SUCESS_DELETE_ITEM.status_code,
                 message: message.SUCESS_DELETE_ITEM.message
-            };
+            }
         } else {
             return {
                 status: message.ERROR_INTERNAL_SERVER_DB.status,
                 status_code: message.ERROR_INTERNAL_SERVER_DB.status_code,
                 message: "Erro ao excluir avaliação"
-            };
+            }
         }
 
     } catch (error) {
-        console.error(error);
+        console.error(error)
         return {
             status: message.ERROR_INTERNAL_SERVER.status,
             status_code: message.ERROR_INTERNAL_SERVER.status_code,
             message: message.ERROR_INTERNAL_SERVER.message
-        };
+        }
     }
-};
-
-
-
-
+}
 
 const getListarAvaliacoes = async () => {
     let avaliacoesJSON = {}
@@ -231,8 +226,6 @@ const getBuscarAvaliacao = async (id) => {
         }
     }
 }
-
-
 
 module.exports = {
     setInserirNovaAvaliacao,

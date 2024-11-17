@@ -73,22 +73,31 @@ const selectAllClientes = async () => {
                au.tipo_avaliado,
                f_avaliador.nome_freelancer AS nome_avaliador,
                fp.foto_perfil,
-               d.descricao AS descricao_cliente
+               d.descricao AS descricao_cliente,
+               p.id AS id_projeto,
+               p.nome_projeto,
+               p.descricao_projeto,
+               p.orcamento,
+               p.id_nivel_experiencia,
+               ne.nivel_experiencia AS nome_experiencia,  -- Nome da experiência
+               p.id_cliente AS id_cliente_projeto
         FROM cadastro_cliente f
         LEFT JOIN avaliacao_usuario au ON au.id_avaliado = f.id AND au.tipo_avaliado = 'cliente'
-        LEFT JOIN avaliacao a ON a.id = au.id_avaliacao -- Pega os dados da avaliação
+        LEFT JOIN avaliacao a ON a.id = au.id_avaliacao
         LEFT JOIN cadastro_freelancer f_avaliador ON f_avaliador.id = au.id_avaliador
         LEFT JOIN foto_perfil fp ON fp.id_cliente = f.id
-        LEFT JOIN descricao_perfil d ON d.id_cliente = f.id -- Inclui a descrição do cliente
-        `;
+        LEFT JOIN descricao_perfil d ON d.id_cliente = f.id
+        LEFT JOIN publicacao_projetos p ON p.id_cliente = f.id
+        LEFT JOIN nivel_experiencia ne ON ne.id = p.id_nivel_experiencia  -- JOIN para pegar o nome da experiência
+        `
 
-        let rsClientes = await prisma.$queryRawUnsafe(sql);
+        let rsClientes = await prisma.$queryRawUnsafe(sql)
 
-        return rsClientes;
+        return rsClientes
 
     } catch (error) {
-        console.error('Database Error:', error);
-        return false;
+        console.error('Database Error:', error)
+        return false
     }
 }
 

@@ -77,12 +77,14 @@ nivel_experiencia varchar(20)
 );
 
 create table publicacao_projetos(
-id int not null auto_increment primary key ,
+id int not null auto_increment primary key,
+id_cliente int not null,
 nome_projeto varchar(50),
 descricao_projeto varchar(150),
 orcamento double not null,
 id_nivel_experiencia int not null,
 
+foreign key (id_cliente) references cadastro_cliente(id),
 foreign key (id_nivel_experiencia) references nivel_experiencia(id)
 );
 
@@ -241,11 +243,11 @@ VALUES
 ('Sênior');
 
 -- Inserindo Projetos
-INSERT INTO publicacao_projetos (nome_projeto, descricao_projeto, orcamento, id_nivel_experiencia)
+INSERT INTO publicacao_projetos (id_cliente, nome_projeto, descricao_projeto, orcamento, id_nivel_experiencia)
 VALUES 
-('Site Institucional', 'Desenvolvimento de site para empresa de TI', 5000.00, 1),
-('Aplicativo Mobile', 'Aplicativo de agendamento para clínicas', 8000.00, 2),
-('Análise de Dados', 'Projeto de análise de dados de vendas', 7000.00, 3);
+(1, 'Site Institucional', 'Desenvolvimento de site para empresa de TI', 5000.00, 1),
+(2, 'Aplicativo Mobile', 'Aplicativo de agendamento para clínicas', 8000.00, 2),
+(3, 'Análise de Dados', 'Projeto de análise de dados de vendas', 7000.00, 3);
 
 -- Inserindo Categoria em Publicação de Projetos
 INSERT INTO categoria_publicacao_projetos (id_projeto, id_categoria)

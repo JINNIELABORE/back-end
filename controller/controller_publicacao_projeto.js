@@ -10,6 +10,7 @@ const setInserirNovaPublicacaoProjeto = async (dadosPublicacaoProjeto, contentTy
             let novaPublicacaoProjetoJSON = {}
 
             if (
+                dadosPublicacaoProjeto.id_cliente === '' || dadosPublicacaoProjeto.id_cliente === undefined || dadosPublicacaoProjeto.id_cliente === null ||
                 dadosPublicacaoProjeto.nome_projeto === '' || dadosPublicacaoProjeto.nome_projeto === undefined || dadosPublicacaoProjeto.nome_projeto === null || dadosPublicacaoProjeto.nome_projeto.length > 50 ||
                 dadosPublicacaoProjeto.descricao_projeto === '' || dadosPublicacaoProjeto.descricao_projeto === undefined || dadosPublicacaoProjeto.descricao_projeto === null || dadosPublicacaoProjeto.descricao_projeto.length > 150 ||
                 dadosPublicacaoProjeto.orcamento === '' || dadosPublicacaoProjeto.orcamento === undefined || dadosPublicacaoProjeto.orcamento === null ||
@@ -59,8 +60,8 @@ const setInserirNovaPublicacaoProjeto = async (dadosPublicacaoProjeto, contentTy
                         descricao_projeto: dadosPublicacaoProjeto.descricao_projeto,
                         orcamento: dadosPublicacaoProjeto.orcamento,
                         id_nivel_experiencia: dadosPublicacaoProjeto.id_nivel_experiencia,
-                        categoria: categoriasProjeto, // Agora estamos retornando os nomes
-                        habilidade: habilidadesProjeto  // Agora estamos retornando os nomes
+                        categoria: categoriasProjeto,
+                        habilidade: habilidadesProjeto 
                     }
 
                     return novaPublicacaoProjetoJSON // 201
@@ -219,24 +220,24 @@ const getListarPublicacaoProjetos = async () => {
 
             dadosPublicacaoProjetos.forEach(projeto => {
                 const { 
-                    id, nome_projeto, descricao_projeto, orcamento, id_nivel_experiencia, 
-                    nome_categoria, nome_habilidade 
+                    id, id_cliente, nome_cliente, nome_projeto, descricao_projeto, orcamento, 
+                    nivel_experiencia, nome_categoria, nome_habilidade 
                 } = projeto
 
-                // Adiciona o projeto se ainda não existir no mapa
                 if (!publicacaoProjetosMap[id]) {
                     publicacaoProjetosMap[id] = {
                         id,
+                        id_cliente,
+                        nome_cliente, 
                         nome_projeto,
                         descricao_projeto,
                         orcamento,
-                        id_nivel_experiencia,
-                        categorias: [], // Lista de categorias do projeto
-                        habilidades: [] // Lista de habilidades do projeto
+                        nivel_experiencia, 
+                        categorias: [], 
+                        habilidades: []
                     }
                 }
 
-                // Adiciona a categoria ao projeto
                 if (nome_categoria) {
                     const categoriaExistente = publicacaoProjetosMap[id].categorias.some(categoria => categoria.nome_categoria === nome_categoria)
                     if (!categoriaExistente) {
@@ -246,7 +247,6 @@ const getListarPublicacaoProjetos = async () => {
                     }
                 }
 
-                // Adiciona a habilidade ao projeto
                 if (nome_habilidade) {
                     const habilidadeExistente = publicacaoProjetosMap[id].habilidades.some(habilidade => habilidade.nome_habilidade === nome_habilidade)
                     if (!habilidadeExistente) {
@@ -257,7 +257,6 @@ const getListarPublicacaoProjetos = async () => {
                 }
             })
 
-            // Converte o mapa em um array
             publicacaoProjetosJSON.projetos = Object.values(publicacaoProjetosMap)
             publicacaoProjetosJSON.quantidade = publicacaoProjetosJSON.projetos.length
             publicacaoProjetosJSON.status_code = 200

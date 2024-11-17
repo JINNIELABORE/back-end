@@ -8,11 +8,13 @@ const insertPublicacaoProjeto = async (dadosPublicacaoProjeto) => {
         let sql
 
         sql = `insert into publicacao_projetos (
+                                            id_cliente,            
                                             nome_projeto, 
                                             descricao_projeto,
                                             orcamento,
                                             id_nivel_experiencia
                                             ) values(
+                                            '${dadosPublicacaoProjeto.id_cliente}',
                                             '${dadosPublicacaoProjeto.nome_projeto}',
                                             '${dadosPublicacaoProjeto.descricao_projeto}',
                                             '${dadosPublicacaoProjeto.orcamento}',
@@ -55,21 +57,25 @@ const selectAllPublicacaoProjetos = async () => {
     try {
         let sql = `
             SELECT p.*, 
-                   c.nome_categoria, 
-                   h.nome_habilidade 
+                   c.nome_cliente, 
+                   cat.nome_categoria, 
+                   hab.nome_habilidade, 
+                   ne.nivel_experiencia  -- Adiciona o nome da experiência
             FROM publicacao_projetos p
             LEFT JOIN categoria_publicacao_projetos cp ON cp.id_projeto = p.id
-            LEFT JOIN categorias c ON c.id = cp.id_categoria
+            LEFT JOIN categorias cat ON cat.id = cp.id_categoria
             LEFT JOIN habilidade_publicacao_projetos hp ON hp.id_projeto = p.id
-            LEFT JOIN habilidades h ON h.id = hp.id_habilidade
-        `;
+            LEFT JOIN habilidades hab ON hab.id = hp.id_habilidade
+            LEFT JOIN cadastro_cliente c ON c.id = p.id_cliente
+            LEFT JOIN nivel_experiencia ne ON ne.id = p.id_nivel_experiencia  -- JOIN para pegar o nome da experiência
+        `
 
-        let rsPublicacaoProjetos = await prisma.$queryRawUnsafe(sql);
+        let rsPublicacaoProjetos = await prisma.$queryRawUnsafe(sql)
 
-        return rsPublicacaoProjetos;
+        return rsPublicacaoProjetos
     } catch (error) {
-        console.error("Error fetching publicacao projetos: ", error);
-        return false;
+        console.error("Error fetching publicacao projetos: ", error)
+        return false
     }
 }
 
@@ -93,7 +99,9 @@ const updatePublicacaoProjeto = async (idPublicacaoProjeto, dadosPublicacaoProje
     let sql
 
     try {
-        sql = `update publicacao_projetos set nome_projeto = '${dadosPublicacaoProjeto.nome_projeto}', 
+        sql = `update publicacao_projetos set 
+                                           id_cliente = '${dadosPublicacaoProjeto.id_cliente}'
+                                           nome_projeto = '${dadosPublicacaoProjeto.nome_projeto}', 
                                            descricao_projeto = '${dadosPublicacaoProjeto.descricao_projeto}',
                                            orcamento = '${dadosPublicacaoProjeto.orcamento}',
                                            id_nivel_experiencia = '${dadosPublicacaoProjeto.id_nivel_experiencia}' where id = ${idPublicacaoProjeto}`

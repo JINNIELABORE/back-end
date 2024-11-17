@@ -56,17 +56,16 @@ const getListarClientes = async () => {
 
     if (dadosClientes) {
         if (dadosClientes.length > 0) {
-            // Organize os dados para incluir as avaliações e a descrição junto com os Clientes
             const clientesMap = {}
 
             dadosClientes.forEach(cliente => {
                 const { 
                     id, nome_cliente, data_nascimento, cnpj_cliente, 
                     email_cliente, senha_cliente, is_premium, foto_perfil, 
-                    id_avaliacao, estrelas, comentario, nome_avaliador, descricao_cliente
+                    id_avaliacao, estrelas, comentario, nome_avaliador, descricao_cliente,
+                    id_projeto, nome_projeto, descricao_projeto, orcamento, nome_experiencia 
                 } = cliente
 
-                // Adiciona os Clientes se ainda não existir no mapa
                 if (!clientesMap[id]) {
                     clientesMap[id] = {
                         id,
@@ -78,11 +77,11 @@ const getListarClientes = async () => {
                         foto_perfil,
                         descricao_cliente: descricao_cliente, 
                         is_premium, 
-                        avaliacao: [] 
+                        avaliacao: [],
+                        projetos: [] 
                     }
                 }
 
-                // Adiciona a avaliação ao cliente, se ela existir
                 if (id_avaliacao) {
                     clientesMap[id].avaliacao.push({
                         id: id_avaliacao,
@@ -93,9 +92,18 @@ const getListarClientes = async () => {
                         tipo_avaliador: cliente.tipo_avaliador
                     })
                 }
+
+                if (id_projeto) {
+                    clientesMap[id].projetos.push({
+                        id_projeto,
+                        nome_projeto,
+                        descricao_projeto,
+                        orcamento,
+                        nome_experiencia 
+                    })
+                }
             })
 
-            // Converte o mapa em um array
             clientesJSON.clientes = Object.values(clientesMap)
             clientesJSON.quantidade = clientesJSON.clientes.length
             clientesJSON.status_code = 200
@@ -108,7 +116,6 @@ const getListarClientes = async () => {
         return { message: 'Erro interno do servidor', status_code: 500 }
     }
 }
-
 
 const getBuscarCliente = async (id) => {
     let idCliente = id

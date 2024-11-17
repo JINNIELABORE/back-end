@@ -38,23 +38,23 @@ const selectId = async () => {
     }
 }
 
-const updatePortfolioFreelancer = async (idPortfolioFreelancer, dadosPortfolioFreelancer) => {
-
+const updatePortfolioFreelancer = async (idPortfolio, idFreelancer) => {
     let sql
 
     try {
-            sql = `update portfolio_freelancer set 
-                                                    id_portfolio = '${dadosPortfolioFreelancer.id_portfolio}', 
-                                                    id_freelancer = '${dadosPortfolioFreelancer.id_freelancer}'
-                                                    where id = ${idPortfolioFreelancer}`
+        // Atualiza a tabela intermediária "portfolio_freelancer" com o novo id_freelancer
+        sql = `update portfolio_freelancer set id_freelancer = '${idFreelancer}' where id_portfolio = ${idPortfolio}`
+
         let result = await prisma.$executeRawUnsafe(sql)
         
-        return result
+        return result // Se for bem-sucedido, retorna verdadeiro
 
     } catch (error) {
+        console.error("Erro ao atualizar associação portfolio-freelancer:", error)
         return false
     }
 }
+
 
 const deletePortfolioFreelancer = async (id) => {
 

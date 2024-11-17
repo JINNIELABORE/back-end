@@ -1,4 +1,6 @@
 const publicacaoProjetoDAO = require('../model/DAO/publicacao_projeto.js')
+const categoriaProjetoDAO = require('../model/DAO/categoria_publicacao_projeto.js')
+const habilidadeProjetoDAO = require('../model/DAO/habilidade_publicacao_projeto.js')
 
 const message = require('../modulo/config.js')
 
@@ -39,7 +41,7 @@ const setInserirNovaPublicacaoProjeto = async (dadosPublicacaoProjeto, contentTy
         }
 
     } catch (error) {
-        console.log(error);
+        console.log(error)
         return message.ERROR_INTERNAL_SERVER
     }
 }
@@ -86,37 +88,72 @@ const setAtualizarPublicacaoProjeto = async (dadosPublicacaoProjeto, contentType
 }
 
 const setExcluirPublicacaoProjeto = async (id) => {
-
     try {
-
-        let idPublicacaoProjeto = id
-
-        let validaPublicacaoProjeto = await getBuscarPublicacaoProjeto(idPublicacaoProjeto)
-
-        let dadosPublicacaoProjeto = await publicacaoProjetoDAO.deletePublicacaoProjeto(idPublicacaoProjeto)
-
-        if (idPublicacaoProjeto == '' || idPublicacaoProjeto == undefined || isNaN(idPublicacaoProjeto)) {
-
-            return message.ERROR_INVALID_ID //400
-
-        } else if (validaPublicacaoProjeto.status == false) {
-            return message.ERROR_NOT_FOUND
-
-        } else {
-
-            if (dadosPublicacaoProjeto)
-                return message.SUCESS_DELETE_ITEM // 200
-            else
-                return message.ERROR_INTERNAL_SERVER_DB
-
+        // Verificar se o ID é válido
+        if (isNaN(id) || id <= 0) {
+            return {
+                status: message.ERROR_INVALID_ID.status,
+                status_code: message.ERROR_INVALID_ID.status_code,
+                message: message.ERROR_INVALID_ID.message
+            }
         }
 
+        // Verificar se o projeto existe
+        let validaPublicacaoProjeto = await getBuscarPublicacaoProjeto(id)
+        if (!validaPublicacaoProjeto) {
+            return {
+                status: message.ERROR_NOT_FOUND.status,
+                status_code: message.ERROR_NOT_FOUND.status_code,
+                message: message.ERROR_NOT_FOUND.message
+            }
+        }
+
+        // Excluir as associações de habilidades do projeto
+        let resultadoHabilidade = await habilidadeProjetoDAO.deleteHabilidadeProjeto(id)
+        if (!resultadoHabilidade) {
+            return {
+                status: message.ERROR_INTERNAL_SERVER_DB.status,
+                status_code: message.ERROR_INTERNAL_SERVER_DB.status_code,
+                message: "Erro ao excluir as associações de habilidades do projeto"
+            }
+        }
+
+        // Excluir as associações de categorias do projeto
+        let resultadoCategoria = await categoriaProjetoDAO.deleteCategoriaProjeto(id)
+        if (!resultadoCategoria) {
+            return {
+                status: message.ERROR_INTERNAL_SERVER_DB.status,
+                status_code: message.ERROR_INTERNAL_SERVER_DB.status_code,
+                message: "Erro ao excluir as associações de categorias do projeto"
+            }
+        }
+
+        // Excluir o próprio projeto
+        let resultadoProjeto = await publicacaoProjetoDAO.deletePublicacaoProjeto(id)
+        if (resultadoProjeto) {
+            return {
+                status: message.SUCESS_DELETE_ITEM.status,
+                status_code: message.SUCESS_DELETE_ITEM.status_code,
+                message: message.SUCESS_DELETE_ITEM.message
+            }
+        } else {
+            return {
+                status: message.ERROR_INTERNAL_SERVER_DB.status,
+                status_code: message.ERROR_INTERNAL_SERVER_DB.status_code,
+                message: "Erro ao excluir o projeto"
+            }
+        }
 
     } catch (error) {
-        return message.ERROR_INTERNAL_SERVER
+        console.error(error)
+        return {
+            status: message.ERROR_INTERNAL_SERVER.status,
+            status_code: message.ERROR_INTERNAL_SERVER.status_code,
+            message: message.ERROR_INTERNAL_SERVER.message
+        }
     }
-
 }
+
 
 const getListarPublicacaoProjetos = async () => {
 

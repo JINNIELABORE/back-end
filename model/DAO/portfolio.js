@@ -91,18 +91,25 @@ const selectByIdPortfolio = async (id) => {
 
 
 }
+
 const selectAllPortfolios = async () => {
     try {
-        let sql = 'select * from portfolio'
+        let sql = `
+            SELECT p.id, p.arquivo, pf.id_freelancer
+            FROM portfolio p
+            LEFT JOIN portfolio_freelancer pf ON p.id = pf.id_portfolio
+        `;
 
-        let rsPortfolio = await prisma.$queryRawUnsafe(sql)
+        // Executando a query e retornando o resultado
+        let result = await prisma.$queryRawUnsafe(sql);
 
-        return rsPortfolio ? rsPortfolio : false
+        return result;
     } catch (error) {
-        console.error("Erro ao listar todos os arquivos do portfólio:", error)
-        return false
+        console.error('Erro ao selecionar portfolios:', error);
+        return false;
     }
 }
+
 
 module.exports = {
     insertPortfolio,

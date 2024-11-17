@@ -60,7 +60,7 @@ const deleteCategoriaProjeto = async (id) => {
 
     try {
 
-        let sql = `delete from categoria_publicacao_projetos where id = ${id}`
+        let sql = `delete from categoria_publicacao_projetos where id_projeto = ${id}`
 
         let rsCategoriaProjetos = await prisma.$queryRawUnsafe(sql)
 
@@ -99,6 +99,21 @@ const selectAllCategoriaProjetos = async () => {
     }
 }
 
+const getCategoriasPorProjeto = async (idProjeto) => {
+    try {
+        let sql = `
+            SELECT c.nome_categoria
+            FROM categoria_publicacao_projetos cp
+            INNER JOIN categorias c ON c.id = cp.id_categoria
+            WHERE cp.id_projeto = ${idProjeto}
+        `
+        let result = await prisma.$queryRawUnsafe(sql)
+        return result.map(item => item.nome_categoria) // Retorna uma lista com os nomes das categorias
+    } catch (error) {
+        console.error("Erro ao buscar categorias do projeto:", error)
+        return false
+    }
+}
 
 module.exports = {
     insertCategoriaProjeto,
@@ -106,5 +121,6 @@ module.exports = {
     updateCategoriaProjeto,
     deleteCategoriaProjeto,
     selectAllCategoriaProjetos,
-    selectByIdCategoriaProjeto
+    selectByIdCategoriaProjeto,
+    getCategoriasPorProjeto
 }

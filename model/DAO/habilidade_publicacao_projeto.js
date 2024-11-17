@@ -60,7 +60,7 @@ const deleteHabilidadeProjeto = async (id) => {
 
     try {
 
-        let sql = `delete from habilidade_publicacao_projetos where id = ${id}`
+        let sql = `delete from habilidade_publicacao_projetos where id_projeto = ${id}`
 
         let rsHabilidadeProjetos = await prisma.$queryRawUnsafe(sql)
 
@@ -99,6 +99,21 @@ const selectAllHabilidadeProjetos = async () => {
     }
 }
 
+const getHabilidadesPorProjeto = async (idProjeto) => {
+    try {
+        let sql = `
+            SELECT h.nome_habilidade
+            FROM habilidade_publicacao_projetos hp
+            INNER JOIN habilidades h ON h.id = hp.id_habilidade
+            WHERE hp.id_projeto = ${idProjeto}
+        `
+        let result = await prisma.$queryRawUnsafe(sql)
+        return result.map(item => item.nome_habilidade) // Retorna uma lista com os nomes das habilidades
+    } catch (error) {
+        console.error("Erro ao buscar habilidades do projeto:", error)
+        return false
+    }
+}
 
 module.exports = {
     insertHabilidadeProjeto,
@@ -106,5 +121,6 @@ module.exports = {
     updateHabilidadeProjeto,
     deleteHabilidadeProjeto,
     selectAllHabilidadeProjetos,
-    selectByIdHabilidadeProjeto
+    selectByIdHabilidadeProjeto,
+    getHabilidadesPorProjeto
 }

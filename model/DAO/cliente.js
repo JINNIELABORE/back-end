@@ -64,20 +64,22 @@ const selectAllClientes = async () => {
     try {
         let sql = `
         SELECT f.*, 
-        a.id AS id_avaliacao, 
-        a.estrelas, 
-        a.comentario, 
-        au.id_avaliador, 
-        au.tipo_avaliador, 
-        au.id_avaliado, 
-        au.tipo_avaliado,
-        f_avaliador.nome_freelancer AS nome_avaliador,
-        fp.foto_perfil
- FROM cadastro_cliente f
- LEFT JOIN avaliacao_usuario au ON au.id_avaliado = f.id AND au.tipo_avaliado = 'cliente'
- LEFT JOIN avaliacao a ON a.id = au.id_avaliacao -- Pega os dados da avaliação
- LEFT JOIN cadastro_freelancer f_avaliador ON f_avaliador.id = au.id_avaliador
- LEFT JOIN foto_perfil fp ON fp.id_freelancer = f.id
+               a.id AS id_avaliacao, 
+               a.estrelas, 
+               a.comentario, 
+               au.id_avaliador, 
+               au.tipo_avaliador, 
+               au.id_avaliado, 
+               au.tipo_avaliado,
+               f_avaliador.nome_freelancer AS nome_avaliador,
+               fp.foto_perfil,
+               d.descricao AS descricao_cliente
+        FROM cadastro_cliente f
+        LEFT JOIN avaliacao_usuario au ON au.id_avaliado = f.id AND au.tipo_avaliado = 'cliente'
+        LEFT JOIN avaliacao a ON a.id = au.id_avaliacao -- Pega os dados da avaliação
+        LEFT JOIN cadastro_freelancer f_avaliador ON f_avaliador.id = au.id_avaliador
+        LEFT JOIN foto_perfil fp ON fp.id_cliente = f.id
+        LEFT JOIN descricao_perfil d ON d.id_cliente = f.id -- Inclui a descrição do cliente
         `;
 
         let rsClientes = await prisma.$queryRawUnsafe(sql);
@@ -89,7 +91,6 @@ const selectAllClientes = async () => {
         return false;
     }
 }
-
 
 const selectByIdCliente = async (id) => {
     try {

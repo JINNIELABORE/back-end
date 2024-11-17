@@ -53,18 +53,26 @@ const selectId = async () => {
 
 const selectAllPublicacaoProjetos = async () => {
     try {
-        let sql = 'select * from publicacao_projetos'
+        let sql = `
+            SELECT p.*, 
+                   c.nome_categoria, 
+                   h.nome_habilidade 
+            FROM publicacao_projetos p
+            LEFT JOIN categoria_publicacao_projetos cp ON cp.id_projeto = p.id
+            LEFT JOIN categorias c ON c.id = cp.id_categoria
+            LEFT JOIN habilidade_publicacao_projetos hp ON hp.id_projeto = p.id
+            LEFT JOIN habilidades h ON h.id = hp.id_habilidade
+        `;
 
-        let rsPublicacaoProjetos = await prisma.$queryRawUnsafe(sql)
+        let rsPublicacaoProjetos = await prisma.$queryRawUnsafe(sql);
 
-        return rsPublicacaoProjetos
-
+        return rsPublicacaoProjetos;
     } catch (error) {
-
-        return false
-
+        console.error("Error fetching publicacao projetos: ", error);
+        return false;
     }
 }
+
 
 const selectByIdPublicaoProjeto = async (id) => {
     try {

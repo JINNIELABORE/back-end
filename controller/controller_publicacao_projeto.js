@@ -154,28 +154,71 @@ const setExcluirPublicacaoProjeto = async (id) => {
     }
 }
 
-
 const getListarPublicacaoProjetos = async () => {
 
-    //Cria o objeto JSON
-    let publicacaoProjetosJSON = {}
+    // Cria o objeto JSON
+    let publicacaoProjetosJSON = {};
 
-    let dadosPublicacaoProjetos = await publicacaoProjetoDAO.selectAllPublicacaoProjetos()
+    let dadosPublicacaoProjetos = await publicacaoProjetoDAO.selectAllPublicacaoProjetos();
 
     if (dadosPublicacaoProjetos) {
         if (dadosPublicacaoProjetos.length > 0) {
-            publicacaoProjetosJSON.PublicacaoProjetos = dadosPublicacaoProjetos
-            publicacaoProjetosJSON.quantidade = dadosPublicacaoProjetos.length
-            publicacaoProjetosJSON.status_code = 200
+            const publicacaoProjetosMap = {};
 
-            return publicacaoProjetosJSON
+            dadosPublicacaoProjetos.forEach(projeto => {
+                const { 
+                    id, nome_projeto, descricao_projeto, orcamento, id_nivel_experiencia, 
+                    nome_categoria, nome_habilidade 
+                } = projeto;
+
+                // Adiciona o projeto se ainda não existir no mapa
+                if (!publicacaoProjetosMap[id]) {
+                    publicacaoProjetosMap[id] = {
+                        id,
+                        nome_projeto,
+                        descricao_projeto,
+                        orcamento,
+                        id_nivel_experiencia,
+                        categorias: [], // Lista de categorias do projeto
+                        habilidades: [] // Lista de habilidades do projeto
+                    };
+                }
+
+                // Adiciona a categoria ao projeto
+                if (nome_categoria) {
+                    const categoriaExistente = publicacaoProjetosMap[id].categorias.some(categoria => categoria.nome_categoria === nome_categoria);
+                    if (!categoriaExistente) {
+                        publicacaoProjetosMap[id].categorias.push({
+                            nome_categoria
+                        });
+                    }
+                }
+
+                // Adiciona a habilidade ao projeto
+                if (nome_habilidade) {
+                    const habilidadeExistente = publicacaoProjetosMap[id].habilidades.some(habilidade => habilidade.nome_habilidade === nome_habilidade);
+                    if (!habilidadeExistente) {
+                        publicacaoProjetosMap[id].habilidades.push({
+                            nome_habilidade
+                        });
+                    }
+                }
+            });
+
+            // Converte o mapa em um array
+            publicacaoProjetosJSON.projetos = Object.values(publicacaoProjetosMap);
+            publicacaoProjetosJSON.quantidade = publicacaoProjetosJSON.projetos.length;
+            publicacaoProjetosJSON.status_code = 200;
+
+            return publicacaoProjetosJSON;
         } else {
-            return message.ERROR_NOT_FOUND
+            return { message: 'Nenhum projeto encontrado', status_code: 404 };
         }
     } else {
-        return message.ERROR_INTERNAL_SERVER_DB
+        return { message: 'Erro interno do servidor', status_code: 500 };
     }
 }
+
 
 const getBuscarPublicacaoProjeto = async (id) => {
 

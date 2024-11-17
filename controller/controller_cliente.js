@@ -56,11 +56,15 @@ const getListarClientes = async () => {
 
     if (dadosClientes) {
         if (dadosClientes.length > 0) {
-            // Organize os dados para incluir as avaliações junto com os Clientes
+            // Organize os dados para incluir as avaliações e a descrição junto com os Clientes
             const clientesMap = {}
 
             dadosClientes.forEach(cliente => {
-                const { id, nome_cliente, data_nascimento, cnpj_cliente, email_cliente, senha_cliente, is_premium, foto_perfil, id_avaliacao, estrelas, comentario, nome_avaliador } = cliente
+                const { 
+                    id, nome_cliente, data_nascimento, cnpj_cliente, 
+                    email_cliente, senha_cliente, is_premium, foto_perfil, 
+                    id_avaliacao, estrelas, comentario, nome_avaliador, descricao_cliente
+                } = cliente
 
                 // Adiciona os Clientes se ainda não existir no mapa
                 if (!clientesMap[id]) {
@@ -72,8 +76,9 @@ const getListarClientes = async () => {
                         email_cliente,
                         senha_cliente,
                         foto_perfil,
-                        is_premium,
-                        avaliacao: []
+                        descricao_cliente: descricao_cliente, 
+                        is_premium, 
+                        avaliacao: [] 
                     }
                 }
 
@@ -103,6 +108,7 @@ const getListarClientes = async () => {
         return { message: 'Erro interno do servidor', status_code: 500 }
     }
 }
+
 
 const getBuscarCliente = async (id) => {
     let idCliente = id

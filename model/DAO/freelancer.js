@@ -75,7 +75,10 @@ const selectAllFreelancers = async () => {
                    c.nome_categoria,
                    fh.id_habilidade,
                    h.nome_habilidade,
-                   fp.foto_perfil
+                   fp.foto_perfil,
+                   pf.id_portfolio, 
+                   p.arquivo AS arquivo_portfolio,
+                   dp.descricao AS descricao_freelancer 
             FROM cadastro_freelancer f
             LEFT JOIN avaliacao_usuario au ON au.id_avaliado = f.id AND au.tipo_avaliado = 'freelancer'
             LEFT JOIN avaliacao a ON a.id = au.id_avaliacao -- Pega os dados da avaliação
@@ -85,15 +88,18 @@ const selectAllFreelancers = async () => {
             LEFT JOIN freelancer_habilidade fh ON fh.id_freelancer = f.id
             LEFT JOIN habilidades h ON h.id = fh.id_habilidade
             LEFT JOIN foto_perfil fp ON fp.id_freelancer = f.id
-        `;
+            LEFT JOIN portfolio_freelancer pf ON pf.id_freelancer = f.id
+            LEFT JOIN portfolio p ON p.id = pf.id_portfolio 
+            LEFT JOIN descricao_perfil dp ON dp.id_freelancer = f.id 
+        `
 
-        let rsFreelancers = await prisma.$queryRawUnsafe(sql);
+        let rsFreelancers = await prisma.$queryRawUnsafe(sql)
 
-        return rsFreelancers;
+        return rsFreelancers
 
     } catch (error) {
-        console.error('Database Error:', error);
-        return false;
+        console.error('Database Error:', error)
+        return false
     }
 }
 

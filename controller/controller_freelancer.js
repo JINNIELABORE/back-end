@@ -69,12 +69,12 @@ const getListarFreelancers = async () => {
             const freelancersMap = {}
 
             dadosFreelancers.forEach(freelancer => {
-                const { 
-                    id, nome_freelancer, data_nascimento, cpf_freelancer, 
-                    email_freelancer, senha_freelancer, is_premium, foto_perfil, 
+                const {
+                    id, nome_freelancer, data_nascimento, cpf_freelancer,
+                    email_freelancer, senha_freelancer, is_premium, foto_perfil,
                     id_avaliacao, estrelas, comentario, nome_avaliador, id_categoria, nome_categoria,
                     id_habilidade, nome_habilidade, id_avaliador, tipo_avaliador, id_portfolio, arquivo_portfolio,
-                    descricao_freelancer  
+                    descricao_freelancer, id_projeto, nome_projeto, projeto_status
                 } = freelancer
 
                 if (!freelancersMap[id]) {
@@ -87,11 +87,16 @@ const getListarFreelancers = async () => {
                         senha_freelancer,
                         is_premium,
                         foto_perfil,
-                        descricao: descricao_freelancer, 
-                        categorias: [], 
-                        habilidades: [], 
-                        avaliacao: [], 
-                        portfolio: [] 
+                        descricao: descricao_freelancer,
+                        categorias: [],
+                        habilidades: [],
+                        avaliacao: [],
+                        portfolio: [],
+                        projetos_em_andamento: [],
+                        projetos_finalizados: [],
+                        quantidade_projetos: 0,
+                        quantidade_andamento: 0,
+                        quantidade_finalizados: 0
                     }
                 }
 
@@ -116,7 +121,7 @@ const getListarFreelancers = async () => {
                 }
 
                 if (id_avaliacao) {
-                    const avaliacaoExistente = freelancersMap[id].avaliacao.some(avaliacao => 
+                    const avaliacaoExistente = freelancersMap[id].avaliacao.some(avaliacao =>
                         avaliacao.id === id_avaliacao && avaliacao.id_avaliador === id_avaliador
                     )
                     if (!avaliacaoExistente) {
@@ -125,7 +130,7 @@ const getListarFreelancers = async () => {
                             estrelas,
                             comentario,
                             id_avaliador,
-                            nome_avaliador,  
+                            nome_avaliador,
                             tipo_avaliador
                         })
                     }
@@ -140,9 +145,24 @@ const getListarFreelancers = async () => {
                         })
                     }
                 }
+
+                if (id_projeto && nome_projeto !== null) {
+                    const projeto = { id_projeto, nome_projeto }
+
+                    const isFinalizado = (projeto_status === true || projeto_status === 'true' || projeto_status === 1 || projeto_status === '1')
+
+                    if (!isFinalizado) {
+                        freelancersMap[id].projetos_em_andamento.push(projeto)
+                        freelancersMap[id].quantidade_andamento += 1
+                    } else {
+                        freelancersMap[id].projetos_finalizados.push(projeto)
+                        freelancersMap[id].quantidade_finalizados += 1
+                    }
+
+                    freelancersMap[id].quantidade_projetos += 1
+                }
             })
 
-            // Converte o mapa em um array
             freelancersJSON.freelancers = Object.values(freelancersMap)
             freelancersJSON.quantidade = freelancersJSON.freelancers.length
             freelancersJSON.status_code = 200

@@ -63,7 +63,8 @@ const getListarClientes = async () => {
                     id, nome_cliente, data_nascimento, cnpj_cliente, 
                     email_cliente, senha_cliente, is_premium, foto_perfil, 
                     id_avaliacao, estrelas, comentario, nome_avaliador, descricao_cliente,
-                    id_projeto, nome_projeto, descricao_projeto, orcamento, nome_experiencia 
+                    id_projeto, nome_projeto, descricao_projeto, orcamento, nome_experiencia,
+                    id_cliente_projeto, id_freelancer, nome_freelancer 
                 } = cliente
 
                 if (!clientesMap[id]) {
@@ -78,10 +79,12 @@ const getListarClientes = async () => {
                         descricao_cliente: descricao_cliente, 
                         is_premium, 
                         avaliacao: [],
-                        projetos: [] 
+                        projetos: [],
+                        freelancers: {} // Mapa para armazenar freelancers e a quantidade de projetos
                     }
                 }
 
+                // Adiciona avaliação do cliente
                 if (id_avaliacao) {
                     clientesMap[id].avaliacao.push({
                         id: id_avaliacao,
@@ -93,7 +96,9 @@ const getListarClientes = async () => {
                     })
                 }
 
+                // Adiciona projeto do cliente
                 if (id_projeto) {
+                    // Verifica se já existe o projeto para o cliente
                     clientesMap[id].projetos.push({
                         id_projeto,
                         nome_projeto,
@@ -101,7 +106,26 @@ const getListarClientes = async () => {
                         orcamento,
                         nome_experiencia 
                     })
+
+                    // Agora, vamos contar os freelancers que trabalharam nesse projeto
+                    if (id_freelancer && nome_freelancer) {
+                        // Se o freelancer já foi adicionado ao cliente, aumenta o contador de projetos
+                        if (!clientesMap[id].freelancers[id_freelancer]) {
+                            clientesMap[id].freelancers[id_freelancer] = {
+                                nome_freelancer,
+                                quantidade_projetos: 0
+                            }
+                        }
+
+                        // Aumenta o contador de projetos do freelancer
+                        clientesMap[id].freelancers[id_freelancer].quantidade_projetos += 1
+                    }
                 }
+            })
+
+            // Agora, calculamos o total de freelancers para cada cliente
+            Object.values(clientesMap).forEach(cliente => {
+                cliente.quantidade_freelancers = Object.keys(cliente.freelancers).length
             })
 
             clientesJSON.clientes = Object.values(clientesMap)

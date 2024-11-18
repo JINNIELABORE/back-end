@@ -175,6 +175,16 @@ CREATE TABLE pagamentos (
     FOREIGN KEY (id_cliente) REFERENCES cadastro_cliente(id)
 );
 
+create table freelancer_projeto (
+id int auto_increment not null primary key,
+id_projeto int not null,
+id_freelancer int not null,
+status boolean not null default false, -- false é projeto em andamento e true é projeto finalizado
+
+foreign key (id_projeto) references publicacao_projetos(id),
+foreign key (id_freelancer) references cadastro_freelancer(id)
+);
+
 INSERT INTO avaliacao (estrelas, comentario)
 VALUES (4, 'Muito bom seviço');
 

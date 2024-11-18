@@ -44,6 +44,7 @@ const controllerPortfolio = require('./controller/controller_portfolio.js')
 const controllerPortfolioFreelancer = require('./controller/controller_portfolio_freelancer.js')
 const controllerAvaliacao = require('./controller/controller_avaliacao.js')
 const controllerPagamentos = require('./controller/controller_pagamento.js')
+const controllerFreelancerProjeto = require('./controller/controller_freelancer_projeto')
 
 // Clientes
 
@@ -1037,7 +1038,77 @@ app.delete('/v1/jinni/pagamento/:id', cors(), bodyParserJSON, async (request, re
     response.json(dadosPagamento)
 })
 
+// Freelancer projeto
 
+app.get('/v1/jinni/freelancers/projetos', cors(), async (request, response, next) => {
+    try {
+        let dadosFreelancerProjetos = await controllerFreelancerProjeto.getListarFreelancersProjetos()
+
+        response.status(dadosFreelancerProjetos.status_code)
+        response.json(dadosFreelancerProjetos)
+    } catch (error) {
+        next(error)
+    }
+})
+
+// Rota para buscar um freelancer em um projeto específico
+app.get('/v1/jinni/freelancer/projeto/:id', cors(), async (request, response, next) => {
+    try {
+        let idFreelancerProjeto = request.params.id
+
+        let dadosFreelancerProjeto = await controllerFreelancerProjeto.getBuscarFreelancerProjeto(idFreelancerProjeto)
+
+        response.status(dadosFreelancerProjeto.status_code)
+        response.json(dadosFreelancerProjeto)
+    } catch (error) {
+        next(error)
+    }
+})
+
+// Rota para excluir um freelancer de um projeto
+app.delete('/v1/jinni/freelancer/projeto/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    try {
+        let idFreelancerProjeto = request.params.id
+
+        let resultado = await controllerFreelancerProjeto.setExcluirFreelancerProjeto(idFreelancerProjeto)
+
+        response.status(resultado.status_code)
+        response.json(resultado)
+    } catch (error) {
+        next(error)
+    }
+})
+
+// Rota para atualizar os dados de um freelancer em um projeto
+app.put('/v1/jinni/freelancer/projeto/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    try {
+        let idFreelancerProjeto = request.params.id
+        let contentType = request.headers['content-type']
+        let dadosBody = request.body
+
+        let resultado = await controllerFreelancerProjeto.setAtualizarFreelancerProjeto(dadosBody, contentType, idFreelancerProjeto)
+
+        response.status(resultado.status_code)
+        response.json(resultado)
+    } catch (error) {
+        next(error)
+    }
+})
+
+// Rota para inserir um novo freelancer em um projeto
+app.post('/v1/jinni/freelancer/projeto', cors(), bodyParserJSON, async (request, response, next) => {
+    try {
+        let contentType = request.headers['content-type']
+        let dadosBody = request.body
+
+        let resultado = await controllerFreelancerProjeto.setInserirNovoFreelancerProjeto(dadosBody, contentType)
+
+        response.status(resultado.status_code)
+        response.json(resultado)
+    } catch (error) {
+        next(error)
+    }
+})
 
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')

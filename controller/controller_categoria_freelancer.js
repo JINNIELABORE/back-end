@@ -7,29 +7,49 @@ const { getBuscarCategoria } = require('./controller_categoria.js')
 const setInserirNovaCategoriaFreelancer = async (dadosCategoriaFreelancer, contentType) => {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
-            let novaCategoriaFreelancerJSON = {}
-
             if (
                 dadosCategoriaFreelancer.id_freelancer == undefined || isNaN(dadosCategoriaFreelancer.id_freelancer) || dadosCategoriaFreelancer.id_freelancer == null ||
-                dadosCategoriaFreelancer.id_categoria == undefined || isNaN(dadosCategoriaFreelancer.id_categoria) || dadosCategoriaFreelancer.id_categoria == null
+                dadosCategoriaFreelancer.id_categoria == undefined || !Array.isArray(dadosCategoriaFreelancer.id_categoria) || dadosCategoriaFreelancer.id_categoria.length == 0
             ) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {
-                // Encaminha os dados para o DAO inserir
-                let novaCategoriaFreelancer = await categoriaFreelancerDAO.insertCategoriaFreelancer(dadosCategoriaFreelancer)
+                let resultadoFinal = []
 
-                if (novaCategoriaFreelancer) {
-                    let id = await categoriaFreelancerDAO.selectId()
-                    novaCategoriaFreelancerJSON.status = message.SUCESS_CREATED_ITEM.status
-                    novaCategoriaFreelancerJSON.status_code = message.SUCESS_CREATED_ITEM.status_code
-                    novaCategoriaFreelancerJSON.message = message.SUCESS_CREATED_ITEM.message
-                    novaCategoriaFreelancerJSON.id = parseInt(id)
-                    novaCategoriaFreelancerJSON.categoria_freelancer = dadosCategoriaFreelancer
+                // Loop para processar cada categoria no array
+                for (let categoriaId of dadosCategoriaFreelancer.id_categoria) {
+                    // Cria um objeto para cada categoria
+                    let dados = {
+                        id_freelancer: dadosCategoriaFreelancer.id_freelancer,
+                        id_categoria: categoriaId
+                    }
 
-                    return novaCategoriaFreelancerJSON // 201
-                } else {
-                    return message.ERROR_INTERNAL_SERVER_DB // 500
+                    // Tenta inserir cada categoria no banco de dados
+                    let novaCategoriaFreelancer = await categoriaFreelancerDAO.insertCategoriaFreelancer(dados)
+
+                    if (novaCategoriaFreelancer) {
+                        let id = await categoriaFreelancerDAO.selectId()
+                        let novaCategoriaFreelancerJSON = {
+                            status: message.SUCESS_CREATED_ITEM.status,
+                            status_code: message.SUCESS_CREATED_ITEM.status_code,
+                            message: message.SUCESS_CREATED_ITEM.message,
+                            id: parseInt(id),
+                            categoria_freelancer: dados
+                        }
+
+                        resultadoFinal.push(novaCategoriaFreelancerJSON) // Adiciona o resultado de cada inserção
+                    } else {
+                        // Se falhar a inserção de alguma categoria, retorna erro
+                        return message.ERROR_INTERNAL_SERVER_DB // 500
+                    }
                 }
+
+                // Se todas as inserções forem bem-sucedidas, retorna a lista de categorias inseridas
+                return {
+                    status: message.SUCESS_CREATED_ITEM.status,
+                    status_code: message.SUCESS_CREATED_ITEM.status_code,
+                    message: 'Categorias inseridas com sucesso',
+                    categorias_inseridas: resultadoFinal
+                } // 201
             }
         }
     } catch (error) {
@@ -83,8 +103,6 @@ const setAtualizarCategoriaFreelancer = async (dadosCategoriaFreelancer, content
     }
 }
 
-
-
 const setExcluirCategoriaFreelancer = async (id) => {
     try {
         let idCategoriaFreelancer = id
@@ -114,7 +132,6 @@ const setExcluirCategoriaFreelancer = async (id) => {
         return message.ERROR_INTERNAL_SERVER
     }
 }
-
 
 const getListarCategoriasFreelancers = async () => {
     // Cria o objeto JSON

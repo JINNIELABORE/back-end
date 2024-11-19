@@ -109,15 +109,45 @@ const deleteDenuncia = async (id) => {
 const selectAllDenunciasComUsuarios = async () => {
     try {
         let sql = `
-        select * from denuncia
-        `
+        SELECT 
+            d.id AS denuncia_id,
+            d.arquivo AS denuncia_arquivo,
+            d.descricao AS denuncia_descricao,
+            dis.id_denunciante,
+            dis.tipo_denunciante,
+            dis.id_denunciado,
+            dis.tipo_denunciado,
+            dis.situacao AS disputa_situacao,
+            CASE 
+                WHEN dis.tipo_denunciante = 'cliente' THEN c.nome_cliente
+                ELSE f.nome_freelancer
+            END AS nome_denunciante,
+            CASE 
+                WHEN dis.tipo_denunciante = 'cliente' THEN c.email_cliente
+                ELSE f.email_freelancer
+            END AS email_denunciante,
+            CASE 
+                WHEN dis.tipo_denunciado = 'cliente' THEN c2.nome_cliente
+                ELSE f2.nome_freelancer
+            END AS nome_denunciado,
+            CASE 
+                WHEN dis.tipo_denunciado = 'cliente' THEN c2.email_cliente
+                ELSE f2.email_freelancer
+            END AS email_denunciado
+        FROM denuncia d
+        JOIN disputa dis ON d.id = dis.id_denuncia
+        LEFT JOIN cadastro_cliente c ON dis.id_denunciante = c.id
+        LEFT JOIN cadastro_freelancer f ON dis.id_denunciante = f.id
+        LEFT JOIN cadastro_cliente c2 ON dis.id_denunciado = c2.id
+        LEFT JOIN cadastro_freelancer f2 ON dis.id_denunciado = f2.id
+        `;
 
-        let rsDenuncias = await prisma.$queryRawUnsafe(sql)
-        return rsDenuncias
+        let rsDenuncias = await prisma.$queryRawUnsafe(sql);
+        return rsDenuncias;
 
     } catch (error) {
-        console.error('Database Error:', error)
-        return false
+        console.error('Database Error:', error);
+        return false;
     }
 }
 

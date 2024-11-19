@@ -192,15 +192,17 @@ create table denuncia (
 );
 
 create table disputa (
-	id int not null auto_increment primary key,
-	id_denuncia int not null,
-	id_denunciante int not null,
-	tipo_denunciante enum('cliente', 'freelancer') not null,
-	id_denunciado int not null,
-	tipo_denunciado enum('cliente', 'freelancer') not null,
+    id int not null auto_increment primary key,
+    id_denuncia int not null,
+    id_denunciante int not null,
+    tipo_denunciante enum('cliente', 'freelancer') not null,
+    id_denunciado int not null,
+    tipo_denunciado enum('cliente', 'freelancer') not null,
+    situacao enum('pendente', 'em andamento', 'resolvido') not null default 'pendente',
     
-foreign key (id_denuncia) references denuncia(id)
-);  
+    foreign key (id_denuncia) references denuncia(id)
+);
+  
 
 INSERT INTO avaliacao (estrelas, comentario)
 VALUES (4, 'Muito bom seviço');

@@ -67,6 +67,7 @@ const setAtualizarDenuncia = async (dadosDenuncia, contentType, id) => {
         if (String(contentType).toLowerCase() === 'application/json') {
             let updatedenunciaJSON = {}
 
+            // Verificando se todos os campos obrigatórios foram preenchidos
             if (
                 dadosDenuncia.arquivo === '' || dadosDenuncia.arquivo == undefined || dadosDenuncia.arquivo == null ||
                 dadosDenuncia.descricao === '' || dadosDenuncia.descricao == undefined || dadosDenuncia.descricao == null ||
@@ -75,27 +76,32 @@ const setAtualizarDenuncia = async (dadosDenuncia, contentType, id) => {
             ) {
                 return message.ERROR_REQUIRED_FIELDS  // 400
             } else {
-                console.log('Dados para atualizar a avaliação:', dadosDenuncia) 
+                console.log('Dados para atualizar a denúncia:', dadosDenuncia)
 
+                // Atualizando a denúncia no banco de dados
                 let denunciaAtualizada = await denunciaDAO.updateDenuncia(id, dadosDenuncia)
 
                 if (denunciaAtualizada) {
+                    // Após atualizar a denúncia, buscamos novamente a denúncia atualizada
                     let updatedDenuncia = await denunciaDAO.selectByIdDenuncia(id)
                     let updatedId = updatedDenuncia[0].id
 
+                    // Atualizando os dados de disputa, incluindo a situação
                     let dadosDenunciaUsuario = {
                         id_denuncia: updatedId,
                         id_denunciante: dadosDenuncia.id_denunciante,
                         tipo_denunciante: dadosDenuncia.tipo_denunciante,
                         id_denunciado: dadosDenuncia.id_denunciado,
-                        tipo_denunciado: dadosDenuncia.tipo_denunciado
+                        tipo_denunciado: dadosDenuncia.tipo_denunciado,
+                        situacao: dadosDenuncia.situacao || 'pendente' // Defina uma situação padrão ou com base em sua lógica
                     }
 
+                    // Atualizando a disputa na tabela 'disputa'
                     let resultadoDenunciaUsuario = await disputaDAO.updateDisputa(updatedId, dadosDenunciaUsuario)
                     if (resultadoDenunciaUsuario) {
                         updatedenunciaJSON.status = true
                         updatedenunciaJSON.status_code = 200
-                        updatedenunciaJSON.message = "A avaliação foi atualizada com sucesso!"
+                        updatedenunciaJSON.message = "A denúncia foi atualizada com sucesso!"
                         updatedenunciaJSON.id = parseInt(updatedId)
 
                         updatedenunciaJSON.denuncia = [{
@@ -104,16 +110,17 @@ const setAtualizarDenuncia = async (dadosDenuncia, contentType, id) => {
                             id_denunciante: dadosDenuncia.id_denunciante,
                             tipo_denunciante: dadosDenuncia.tipo_denunciante,
                             id_denunciado: dadosDenuncia.id_denunciado,
-                            tipo_denunciado: dadosDenuncia.tipo_denunciado
+                            tipo_denunciado: dadosDenuncia.tipo_denunciado,
+                            situacao: dadosDenuncia.situacao || 'pendente' // Atualiza a situação conforme necessário
                         }]
                         
                         return updatedenunciaJSON  // 200
                     } else {
-                        console.log("Erro ao atualizar na tabela 'denuncia_usuario'.")
+                        console.log("Erro ao atualizar na tabela 'disputa'.")
                         return message.ERROR_INTERNAL_SERVER_DB  // 500
                     }
                 } else {
-                    console.log("Erro ao atualizar avaliação no banco de dados.")
+                    console.log("Erro ao atualizar denúncia no banco de dados.")
                     return message.ERROR_INTERNAL_SERVER_DB  // 500
                 }
             }
@@ -123,7 +130,6 @@ const setAtualizarDenuncia = async (dadosDenuncia, contentType, id) => {
         return message.ERROR_INTERNAL_SERVER  // 500
     }
 }
-
 
 const setExcluirDenuncia = async (id) => {
     try {
@@ -179,7 +185,6 @@ const setExcluirDenuncia = async (id) => {
         }
     }
 }
-
 const getListarDenuncias = async () => {
     let denunciasJSON = {}
     
@@ -188,25 +193,29 @@ const getListarDenuncias = async () => {
     if (dadosDenuncias) {
         if (dadosDenuncias.length > 0) {
             denunciasJSON.denuncias = dadosDenuncias.map(denuncia => ({
-                id: denuncia.id,
-                arquivo: denuncia.arquivo,
-                descricao: denuncia.descricao,
-                id_denunciante: denuncia.id_denunciante,
+                id: denuncia.denuncia_id,
+                arquivo: denuncia.denuncia_arquivo,
+                descricao: denuncia.denuncia_descricao,
                 tipo_denunciante: denuncia.tipo_denunciante,
-                id_denunciado: denuncia.id_denunciado,
-                tipo_denunciado: denuncia.tipo_denunciado
-            }))
-            denunciasJSON.quantidade = dadosDenuncias.length
-            denunciasJSON.status_code = 200
+                nome_denunciante: denuncia.nome_denunciante,
+                email_denunciante: denuncia.email_denunciante,
+                tipo_denunciado: denuncia.tipo_denunciado,
+                nome_denunciado: denuncia.nome_denunciado,
+                email_denunciado: denuncia.email_denunciado,
+                situacao: denuncia.disputa_situacao
+            }));
+            denunciasJSON.quantidade = dadosDenuncias.length;
+            denunciasJSON.status_code = 200;
 
-            return denunciasJSON
+            return denunciasJSON;
         } else {
-            return message.ERROR_NOT_FOUND
+            return message.ERROR_NOT_FOUND;
         }
     } else {
-        return message.ERROR_INTERNAL_SERVER_DB
+        return message.ERROR_INTERNAL_SERVER_DB;
     }
 }
+
 
 const getBuscarDenuncia = async (id) => {
     let idDenuncia = id

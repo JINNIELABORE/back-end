@@ -58,7 +58,8 @@ const updateDisputa = async (idDisputa, dadosDisputa) => {
                                         id_denunciante = '${dadosDisputa.id_denunciante}',
                                         tipo_denunciante = '${dadosDisputa.tipo_denunciante}',
                                         id_denunciado = '${dadosDisputa.id_denunciado}',
-                                        tipo_denunciado = '${dadosDisputa.tipo_denunciado}'
+                                        tipo_denunciado = '${dadosDisputa.tipo_denunciado}',
+                                        situacao = '${dadosDisputa.situacao}'
             WHERE id = ${idDisputa}`
 
                                                     
@@ -115,9 +116,7 @@ const selectAllDisputa = async () => {
     } catch (error) {
 
         return false
-
     }
-
 }
 
 module.exports = {

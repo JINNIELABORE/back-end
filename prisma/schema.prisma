@@ -88,12 +88,14 @@ model portfolio {
 
 model publicacao_projetos {
   id                   Int     @id @default(autoincrement())
+  id_cliente           Int
   nome_projeto         String? @db.VarChar(50)
   descricao_projeto    String? @db.VarChar(150)
   orcamento            Float
   id_nivel_experiencia Int
 
   @@index([id_nivel_experiencia], map: "id_nivel_experiencia")
+  @@index([id_cliente], map: "id_cliente")
 }
 
 model categoria_publicacao_projetos {
@@ -155,6 +157,16 @@ model pagamentos {
   data_pagamento   DateTime?                   @default(now()) @db.Timestamp(0)
 
   @@index([id_cliente], map: "id_cliente")
+}
+
+model freelancer_projeto {
+  id            Int     @id @default(autoincrement())
+  id_projeto    Int
+  id_freelancer Int
+  status        Boolean @default(false)
+
+  @@index([id_freelancer], map: "id_freelancer")
+  @@index([id_projeto], map: "id_projeto")
 }
 
 enum avaliacao_usuario_tipo_avaliador {

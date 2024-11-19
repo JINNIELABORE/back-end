@@ -45,6 +45,7 @@ const controllerPortfolioFreelancer = require('./controller/controller_portfolio
 const controllerAvaliacao = require('./controller/controller_avaliacao.js')
 const controllerPagamentos = require('./controller/controller_pagamento.js')
 const controllerFreelancerProjeto = require('./controller/controller_freelancer_projeto')
+const controllerDenuncia = require('./controller/controller_denuncia.js')
 
 // Clientes
 
@@ -1108,6 +1109,54 @@ app.post('/v1/jinni/freelancer/projeto', cors(), bodyParserJSON, async (request,
     } catch (error) {
         next(error)
     }
+})
+
+// Denuncia
+
+app.get('/v1/jinni/denuncias', cors(), bodyParserJSON, async (request, response, next) => {
+    let dadosDenuncias = await controllerDenuncia.getListarDenuncias()
+
+    response.status(dadosDenuncias.status_code)
+    response.json(dadosDenuncias)
+})
+
+app.get('/v1/jinni/denuncia/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idDenuncia = request.params.id
+
+    let dadosDenuncia = await controllerDenuncia.getBuscarDenuncia(idDenuncia)
+
+    response.status(dadosDenuncia.status_code)
+    response.json(dadosDenuncia)
+})
+
+app.delete('/v1/jinni/denuncia/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idDenuncia = request.params.id
+
+    let resultado = await controllerDenuncia.setExcluirDenuncia(idDenuncia)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.put('/v1/jinni/denuncia/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idDenuncia = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerDenuncia.setAtualizarDenuncia(dadosBody, contentType, idDenuncia)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.post('/v1/jinni/denuncia', cors(), bodyParserJSON, async (request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerDenuncia.setInserirNovaDenuncia(dadosBody, contentType)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
 })
 
 app.listen(8080, function () {

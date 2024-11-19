@@ -16,7 +16,7 @@ const setInserirNovaDenuncia = async (dadosDenuncia, contentType) => {
             ) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
-                let novaDenuncia = await denunciaDAO.insertdenuncia(dadosDenuncia)
+                let novaDenuncia = await denunciaDAO.insertDenuncia(dadosDenuncia)
                 if (novaDenuncia) {
                     let idDenuncia = await denunciaDAO.selectId() 
 
@@ -28,7 +28,7 @@ const setInserirNovaDenuncia = async (dadosDenuncia, contentType) => {
                         tipo_denunciado: dadosDenuncia.tipo_denunciado
                     }
 
-                    let resultadoDenunciaUsuario = await disputaDAO.insertdenunciaUsuario(dadosDenunciaUsuario)
+                    let resultadoDenunciaUsuario = await disputaDAO.insertDisputa(dadosDenunciaUsuario)
                     if (resultadoDenunciaUsuario) {
                         
                         novaDenunciaJSON.status = true
@@ -65,7 +65,7 @@ const setInserirNovaDenuncia = async (dadosDenuncia, contentType) => {
 const setAtualizarDenuncia = async (dadosDenuncia, contentType, id) => {
     try {
         if (String(contentType).toLowerCase() === 'application/json') {
-            let updatedenunciaJSON = {};
+            let updatedenunciaJSON = {}
 
             if (
                 dadosDenuncia.arquivo === '' || dadosDenuncia.arquivo == undefined || dadosDenuncia.arquivo == null ||
@@ -73,15 +73,15 @@ const setAtualizarDenuncia = async (dadosDenuncia, contentType, id) => {
                 dadosDenuncia.id_denunciante === '' || dadosDenuncia.id_denunciante == undefined || dadosDenuncia.id_denunciante == null ||
                 dadosDenuncia.id_denunciado === '' || dadosDenuncia.id_denunciado == undefined || dadosDenuncia.id_denunciado == null
             ) {
-                return message.ERROR_REQUIRED_FIELDS;  // 400
+                return message.ERROR_REQUIRED_FIELDS  // 400
             } else {
-                console.log('Dados para atualizar a avaliação:', dadosDenuncia);  // Verifique os dados
+                console.log('Dados para atualizar a avaliação:', dadosDenuncia) 
 
-                let denunciaAtualizada = await denunciaDAO.updatedenuncia(id, dadosDenuncia);
+                let denunciaAtualizada = await denunciaDAO.updateDenuncia(id, dadosDenuncia)
 
                 if (denunciaAtualizada) {
-                    let updatedDenuncia = await denunciaDAO.selectByIdDenuncia(id);
-                    let updatedId = updatedDenuncia[0].id;
+                    let updatedDenuncia = await denunciaDAO.selectByIdDenuncia(id)
+                    let updatedId = updatedDenuncia[0].id
 
                     let dadosDenunciaUsuario = {
                         id_denuncia: updatedId,
@@ -89,16 +89,15 @@ const setAtualizarDenuncia = async (dadosDenuncia, contentType, id) => {
                         tipo_denunciante: dadosDenuncia.tipo_denunciante,
                         id_denunciado: dadosDenuncia.id_denunciado,
                         tipo_denunciado: dadosDenuncia.tipo_denunciado
-                    };
+                    }
 
-                    let resultadoDenunciaUsuario = await disputaDAO.updatedenunciaUsuario(updatedId, dadosDenunciaUsuario);
+                    let resultadoDenunciaUsuario = await disputaDAO.updateDisputa(updatedId, dadosDenunciaUsuario)
                     if (resultadoDenunciaUsuario) {
-                        updatedenunciaJSON.status = true;
-                        updatedenunciaJSON.status_code = 200;
-                        updatedenunciaJSON.message = "A avaliação foi atualizada com sucesso!";
-                        updatedenunciaJSON.id = parseInt(updatedId);
+                        updatedenunciaJSON.status = true
+                        updatedenunciaJSON.status_code = 200
+                        updatedenunciaJSON.message = "A avaliação foi atualizada com sucesso!"
+                        updatedenunciaJSON.id = parseInt(updatedId)
 
-                        // Corrigido para retornar 'denuncia' como um array
                         updatedenunciaJSON.denuncia = [{
                             arquivo: dadosDenuncia.arquivo,
                             descricao: dadosDenuncia.descricao,
@@ -106,22 +105,22 @@ const setAtualizarDenuncia = async (dadosDenuncia, contentType, id) => {
                             tipo_denunciante: dadosDenuncia.tipo_denunciante,
                             id_denunciado: dadosDenuncia.id_denunciado,
                             tipo_denunciado: dadosDenuncia.tipo_denunciado
-                        }];
+                        }]
                         
-                        return updatedenunciaJSON;  // 200
+                        return updatedenunciaJSON  // 200
                     } else {
-                        console.log("Erro ao atualizar na tabela 'denuncia_usuario'.");
-                        return message.ERROR_INTERNAL_SERVER_DB;  // 500
+                        console.log("Erro ao atualizar na tabela 'denuncia_usuario'.")
+                        return message.ERROR_INTERNAL_SERVER_DB  // 500
                     }
                 } else {
-                    console.log("Erro ao atualizar avaliação no banco de dados.");
-                    return message.ERROR_INTERNAL_SERVER_DB;  // 500
+                    console.log("Erro ao atualizar avaliação no banco de dados.")
+                    return message.ERROR_INTERNAL_SERVER_DB  // 500
                 }
             }
         }
     } catch (error) {
-        console.log(error);
-        return message.ERROR_INTERNAL_SERVER;  // 500
+        console.log(error)
+        return message.ERROR_INTERNAL_SERVER  // 500
     }
 }
 
@@ -145,7 +144,7 @@ const setExcluirDenuncia = async (id) => {
             }
         }
 
-        let resultadoIntermediaria = await disputaDAO.deleteDenunciaUsuario(id)
+        let resultadoIntermediaria = await disputaDAO.deleteDisputa(id)
 
         if (!resultadoIntermediaria) {
             return {
@@ -155,7 +154,6 @@ const setExcluirDenuncia = async (id) => {
             }
         }
 
-        // Agora, excluir a avaliação
         let resultadoDenuncia = await denunciaDAO.deleteDenuncia(id)
 
         if (resultadoDenuncia) {
@@ -185,7 +183,7 @@ const setExcluirDenuncia = async (id) => {
 const getListarDenuncias = async () => {
     let denunciasJSON = {}
     
-    let dadosDenuncias = await denunciaDAO.selectAlldenunciasComUsuarios()
+    let dadosDenuncias = await denunciaDAO.selectAllDenunciasComUsuarios()
 
     if (dadosDenuncias) {
         if (dadosDenuncias.length > 0) {

@@ -185,6 +185,23 @@ foreign key (id_projeto) references publicacao_projetos(id),
 foreign key (id_freelancer) references cadastro_freelancer(id)
 );
 
+create table denuncia (
+    id int not null auto_increment primary key,
+    arquivo text not null,
+    descricao text not null 
+);
+
+create table disputa (
+	id int not null auto_increment primary key,
+	id_denuncia int not null,
+	id_denunciante int not null,
+	tipo_denunciante enum('cliente', 'freelancer') not null,
+	id_denunciado int not null,
+	tipo_denunciado enum('cliente', 'freelancer') not null,
+    
+foreign key (id_denuncia) references denuncia(id)
+);  
+
 INSERT INTO avaliacao (estrelas, comentario)
 VALUES (4, 'Muito bom seviço');
 

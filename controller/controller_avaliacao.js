@@ -8,21 +8,19 @@ const setInserirNovaAvaliacao = async (dadosAvaliacao, contentType) => {
         if (String(contentType).toLowerCase() === 'application/json') {
             let novaAvaliacaoJSON = {}
 
-            // Verifica se os campos obrigatórios estão preenchidos
             if (
                 dadosAvaliacao.estrelas === '' || dadosAvaliacao.estrelas == undefined || dadosAvaliacao.estrelas == null || 
                 dadosAvaliacao.comentario === '' || dadosAvaliacao.comentario == undefined || dadosAvaliacao.comentario == null || 
                 dadosAvaliacao.id_avaliador === '' || dadosAvaliacao.id_avaliador == undefined || dadosAvaliacao.id_avaliador == null || 
                 dadosAvaliacao.id_avaliado === '' || dadosAvaliacao.id_avaliado == undefined || dadosAvaliacao.id_avaliado == null
             ) {
-                return message.ERROR_REQUIRED_FIELDS  // 400
+                return message.ERROR_REQUIRED_FIELDS
             } else {
                 // Insere a avaliação
                 let novaAvaliacao = await avaliacaoDAO.insertAvaliacao(dadosAvaliacao)
                 if (novaAvaliacao) {
-                    let idAvaliacao = await avaliacaoDAO.selectId()  // Obtém o id da avaliação recém inserida
+                    let idAvaliacao = await avaliacaoDAO.selectId() 
 
-                    // Agora insere na tabela intermediária 'avaliacao_usuario'
                     let dadosAvaliacaoUsuario = {
                         id_avaliacao: idAvaliacao,
                         id_avaliador: dadosAvaliacao.id_avaliador,
@@ -33,13 +31,12 @@ const setInserirNovaAvaliacao = async (dadosAvaliacao, contentType) => {
 
                     let resultadoAvaliacaoUsuario = await avaliacaoUsuarioDAO.insertAvaliacaoUsuario(dadosAvaliacaoUsuario)
                     if (resultadoAvaliacaoUsuario) {
-                        // Se a inserção na tabela 'avaliacao_usuario' for bem-sucedida
+                        
                         novaAvaliacaoJSON.status = true
                         novaAvaliacaoJSON.status_code = 201
                         novaAvaliacaoJSON.message = "O item foi criado com sucesso no banco de dados!"
                         novaAvaliacaoJSON.id = parseInt(idAvaliacao)
                         
-                        // Corrigido para retornar 'avaliacao' como um array
                         novaAvaliacaoJSON.avaliacao = [{
                             estrelas: dadosAvaliacao.estrelas,
                             comentario: dadosAvaliacao.comentario,

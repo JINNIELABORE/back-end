@@ -1,10 +1,7 @@
-//Import da bibiblioteca do prisma client 
 const { PrismaClient } = require('@prisma/client')
 
-//Instanciando a classe PrismaClient
 const prisma = new PrismaClient()
 
-//Função para inserir um Avaliacao no Banco de Dados
 const insertAvaliacao = async (dadosAvaliacao) => {
 
     try {

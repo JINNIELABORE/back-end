@@ -73,10 +73,11 @@ const getListarFreelancers = async () => {
                     id, nome_freelancer, data_nascimento, cpf_freelancer,
                     email_freelancer, senha_freelancer, is_premium, foto_perfil,
                     id_avaliacao, estrelas, comentario, nome_avaliador, id_categoria, nome_categoria,
-                    id_habilidade, nome_habilidade, id_avaliador, tipo_avaliador, id_portfolio, arquivo_portfolio,
+                    icon_categoria, id_habilidade, nome_habilidade, icon_habilidade, id_avaliador, tipo_avaliador, id_portfolio, arquivo_portfolio,
                     descricao_freelancer, id_projeto, nome_projeto, projeto_status
                 } = freelancer
 
+                // Verifica se o freelancer já foi adicionado ao mapa
                 if (!freelancersMap[id]) {
                     freelancersMap[id] = {
                         id,
@@ -100,26 +101,31 @@ const getListarFreelancers = async () => {
                     }
                 }
 
-                if (id_categoria && nome_categoria) {
+                // Adiciona categoria ao freelancer, se não existir
+                if (id_categoria && nome_categoria && icon_categoria) {
                     const categoriaExistente = freelancersMap[id].categorias.some(categoria => categoria.id_categoria === id_categoria)
                     if (!categoriaExistente) {
                         freelancersMap[id].categorias.push({
                             id_categoria,
-                            nome_categoria
+                            nome_categoria,
+                            icon_categoria
                         })
                     }
                 }
 
-                if (id_habilidade && nome_habilidade) {
+                // Adiciona habilidade ao freelancer, se não existir
+                if (id_habilidade && nome_habilidade && icon_habilidade) {
                     const habilidadeExistente = freelancersMap[id].habilidades.some(habilidade => habilidade.id_habilidade === id_habilidade)
                     if (!habilidadeExistente) {
                         freelancersMap[id].habilidades.push({
                             id_habilidade,
-                            nome_habilidade
+                            nome_habilidade,
+                            icon_habilidade
                         })
                     }
                 }
 
+                // Adiciona avaliação ao freelancer
                 if (id_avaliacao) {
                     const avaliacaoExistente = freelancersMap[id].avaliacao.some(avaliacao =>
                         avaliacao.id === id_avaliacao && avaliacao.id_avaliador === id_avaliador
@@ -136,6 +142,7 @@ const getListarFreelancers = async () => {
                     }
                 }
 
+                // Adiciona portfólio ao freelancer
                 if (id_portfolio && arquivo_portfolio) {
                     const portfolioExistente = freelancersMap[id].portfolio.some(portfolio => portfolio.id_portfolio === id_portfolio)
                     if (!portfolioExistente) {
@@ -146,6 +153,7 @@ const getListarFreelancers = async () => {
                     }
                 }
 
+                // Adiciona projetos ao freelancer, separando projetos em andamento e finalizados
                 if (id_projeto && nome_projeto !== null) {
                     const projeto = { id_projeto, nome_projeto }
 
@@ -175,6 +183,7 @@ const getListarFreelancers = async () => {
         return { message: 'Erro interno do servidor', status_code: 500 }
     }
 }
+
 
 const getBuscarFreelancer = async (id) => {
     let idFreelancer = id

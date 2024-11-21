@@ -592,7 +592,7 @@ app.get('/v1/jinni/projetos', cors(), async (request, response, next) => {
     response.json(dadosProjetos)
 })
 
-app.get('/v1/jinni/projeto/:id', cors(), async (request, response, next) => {
+app.get('/v1/jinni/projetos/:id', cors(), async (request, response, next) => {
   
     let idProjeto = request.params.id
 

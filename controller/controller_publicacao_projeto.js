@@ -9,6 +9,7 @@ const setInserirNovaPublicacaoProjeto = async (dadosPublicacaoProjeto, contentTy
         if (String(contentType).toLowerCase() == 'application/json') {
             let novaPublicacaoProjetoJSON = {}
 
+            // Verificar campos obrigatórios
             if (
                 dadosPublicacaoProjeto.id_cliente === '' || dadosPublicacaoProjeto.id_cliente === undefined || dadosPublicacaoProjeto.id_cliente === null ||
                 dadosPublicacaoProjeto.nome_projeto === '' || dadosPublicacaoProjeto.nome_projeto === undefined || dadosPublicacaoProjeto.nome_projeto === null || dadosPublicacaoProjeto.nome_projeto.length > 50 ||
@@ -19,8 +20,14 @@ const setInserirNovaPublicacaoProjeto = async (dadosPublicacaoProjeto, contentTy
             ) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {
+                // Se não foi enviado o valor de 'is_premium', definimos como false
+                const isPremium = dadosPublicacaoProjeto.is_premium !== undefined ? dadosPublicacaoProjeto.is_premium : false;
+                
                 // Inserir o projeto no banco
-                let novaPublicacaoProjeto = await publicacaoProjetoDAO.insertPublicacaoProjeto(dadosPublicacaoProjeto)
+                let novaPublicacaoProjeto = await publicacaoProjetoDAO.insertPublicacaoProjeto({
+                    ...dadosPublicacaoProjeto,
+                    is_premium: isPremium // Adiciona o valor de 'is_premium' na inserção
+                })
 
                 if (novaPublicacaoProjeto) {
                     let idProjeto = await publicacaoProjetoDAO.selectId()
@@ -36,6 +43,7 @@ const setInserirNovaPublicacaoProjeto = async (dadosPublicacaoProjeto, contentTy
                         }
                     }
 
+                    // Inserir as habilidades associadas ao projeto
                     if (dadosPublicacaoProjeto.habilidade && dadosPublicacaoProjeto.habilidade.length > 0) {
                         for (let habilidadeId of dadosPublicacaoProjeto.habilidade) {
                             let dadosHabilidadeProjeto = {
@@ -46,11 +54,11 @@ const setInserirNovaPublicacaoProjeto = async (dadosPublicacaoProjeto, contentTy
                         }
                     }
 
-                    // Agora, buscamos os nomes das categorias e habilidades associadas ao projeto
+                    // Recuperar categorias e habilidades associadas ao projeto
                     let categoriasProjeto = await categoriaProjetoDAO.getCategoriasPorProjeto(idProjeto)
                     let habilidadesProjeto = await habilidadeProjetoDAO.getHabilidadesPorProjeto(idProjeto)
 
-                    // Adiciona os nomes das categorias e habilidades ao retorno
+                    // Preparar a resposta
                     novaPublicacaoProjetoJSON.status = message.SUCESS_CREATED_ITEM.status
                     novaPublicacaoProjetoJSON.status_code = message.SUCESS_CREATED_ITEM.status_code
                     novaPublicacaoProjetoJSON.message = message.SUCESS_CREATED_ITEM.message
@@ -61,7 +69,8 @@ const setInserirNovaPublicacaoProjeto = async (dadosPublicacaoProjeto, contentTy
                         orcamento: dadosPublicacaoProjeto.orcamento,
                         id_nivel_experiencia: dadosPublicacaoProjeto.id_nivel_experiencia,
                         categoria: categoriasProjeto,
-                        habilidade: habilidadesProjeto 
+                        habilidade: habilidadesProjeto,
+                        is_premium: isPremium // Inclui o campo 'is_premium' na resposta
                     }
 
                     return novaPublicacaoProjetoJSON // 201

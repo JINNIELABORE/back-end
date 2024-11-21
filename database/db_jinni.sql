@@ -83,6 +83,7 @@ nome_projeto varchar(50),
 descricao_projeto varchar(150),
 orcamento double not null,
 id_nivel_experiencia int not null,
+is_premium boolean not null default false,
 
 foreign key (id_cliente) references cadastro_cliente(id),
 foreign key (id_nivel_experiencia) references nivel_experiencia(id)

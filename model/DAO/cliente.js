@@ -107,17 +107,46 @@ const selectAllClientes = async () => {
 
 const selectByIdCliente = async (id) => {
     try {
-
-        let sql = `SELECT * FROM cadastro_cliente WHERE id = ${id}`
-
+        let sql = `SELECT f.*, 
+                    a.id AS id_avaliacao, 
+                    a.estrelas, 
+                    a.comentario, 
+                    au.id_avaliador, 
+                    au.tipo_avaliador, 
+                    au.id_avaliado, 
+                    au.tipo_avaliado,
+                    f_avaliador.nome_freelancer AS nome_avaliador,
+                    fp.foto_perfil,
+                    d.descricao AS descricao_cliente,
+                    p.id AS id_projeto,
+                    p.nome_projeto,
+                    p.descricao_projeto,
+                    p.orcamento,
+                    p.id_nivel_experiencia,
+                    ne.nivel_experiencia AS nome_experiencia,
+                    p.id_cliente AS id_cliente_projeto,
+                    pf.id_freelancer, -- Adicionando id_freelancer da tabela de relacionamento
+                    f_rel.nome_freelancer -- Nome do freelancer relacionado ao projeto
+                FROM cadastro_cliente f
+                LEFT JOIN avaliacao_usuario au ON au.id_avaliado = f.id AND au.tipo_avaliado = 'cliente'
+                LEFT JOIN avaliacao a ON a.id = au.id_avaliacao
+                LEFT JOIN cadastro_freelancer f_avaliador ON f_avaliador.id = au.id_avaliador
+                LEFT JOIN foto_perfil fp ON fp.id_cliente = f.id
+                LEFT JOIN descricao_perfil d ON d.id_cliente = f.id
+                LEFT JOIN publicacao_projetos p ON p.id_cliente = f.id
+                LEFT JOIN nivel_experiencia ne ON ne.id = p.id_nivel_experiencia
+                LEFT JOIN freelancer_projeto pf ON pf.id_projeto = p.id
+                LEFT JOIN cadastro_freelancer f_rel ON f_rel.id = pf.id_freelancer
+                WHERE f.id = ${id}`
+        
         let rsCliente = await prisma.$queryRawUnsafe(sql)
 
         return rsCliente
-
     } catch (error) {
         return false
     }
 }
+
 
 const updateCliente = async (idCliente, dadosCliente) => {
 
@@ -152,7 +181,6 @@ const deleteCliente = async (id) => {
     } catch (error) {
         return false
     }
-
 }
 
 // Verifica se o CNPJ já existe no banco de dados

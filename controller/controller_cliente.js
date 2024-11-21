@@ -145,6 +145,7 @@ const getBuscarCliente = async (id) => {
     let idCliente = id
     let clienteJSON = {}
 
+    // Validação do ID
     if (idCliente === '' || idCliente === undefined || isNaN(idCliente)) {
         return { status_code: 400, message: 'ID inválido' }
     } else {
@@ -153,7 +154,7 @@ const getBuscarCliente = async (id) => {
 
             if (dadosCliente) {
                 if (dadosCliente.length > 0) {
-                    // Converte BigInt para string
+                    // Converte BigInt para string para garantir compatibilidade com JSON
                     dadosCliente = dadosCliente.map(cliente => {
                         if (cliente.cnpj_cliente) {
                             cliente.cnpj_cliente = cliente.cnpj_cliente.toString()
@@ -161,7 +162,80 @@ const getBuscarCliente = async (id) => {
                         return cliente
                     })
 
-                    clienteJSON.cliente = dadosCliente
+                    // Organizar os dados do cliente
+                    const clienteMap = {}
+
+                    dadosCliente.forEach(cliente => {
+                        const { 
+                            id, nome_cliente, data_nascimento, cnpj_cliente, 
+                            email_cliente, senha_cliente, is_premium, foto_perfil, 
+                            id_avaliacao, estrelas, comentario, nome_avaliador, descricao_cliente,
+                            id_projeto, nome_projeto, descricao_projeto, orcamento, nome_experiencia,
+                            id_cliente_projeto, id_freelancer, nome_freelancer 
+                        } = cliente
+
+                        if (!clienteMap[id]) {
+                            clienteMap[id] = {
+                                id,
+                                nome_cliente,
+                                data_nascimento,
+                                cnpj_cliente: cnpj_cliente.toString(),
+                                email_cliente,
+                                senha_cliente,
+                                foto_perfil,
+                                descricao_cliente: descricao_cliente, 
+                                is_premium, 
+                                avaliacao: [],
+                                projetos: [],
+                                freelancers: {} // Mapa para armazenar freelancers e a quantidade de projetos
+                            }
+                        }
+
+                        // Adiciona avaliação do cliente
+                        if (id_avaliacao) {
+                            clienteMap[id].avaliacao.push({
+                                id: id_avaliacao,
+                                estrelas,
+                                comentario,
+                                id_avaliador: cliente.id_avaliador,
+                                nome_avaliador,
+                                tipo_avaliador: cliente.tipo_avaliador
+                            })
+                        }
+
+                        // Adiciona projeto do cliente
+                        if (id_projeto) {
+                            // Verifica se já existe o projeto para o cliente
+                            clienteMap[id].projetos.push({
+                                id_projeto,
+                                nome_projeto,
+                                descricao_projeto,
+                                orcamento,
+                                nome_experiencia 
+                            })
+
+                            // Contabiliza freelancers que trabalharam neste projeto
+                            if (id_freelancer && nome_freelancer) {
+                                // Se o freelancer já foi adicionado ao cliente, aumenta o contador de projetos
+                                if (!clienteMap[id].freelancers[id_freelancer]) {
+                                    clienteMap[id].freelancers[id_freelancer] = {
+                                        nome_freelancer,
+                                        quantidade_projetos: 0
+                                    }
+                                }
+
+                                // Aumenta o contador de projetos do freelancer
+                                clienteMap[id].freelancers[id_freelancer].quantidade_projetos += 1
+                            }
+                        }
+                    })
+
+                    // Calcula a quantidade de freelancers para o cliente
+                    Object.values(clienteMap).forEach(cliente => {
+                        cliente.quantidade_freelancers = Object.keys(cliente.freelancers).length
+                    })
+
+                    clienteJSON.cliente = Object.values(clienteMap)
                     clienteJSON.status_code = 200
                     return clienteJSON
                 } else {

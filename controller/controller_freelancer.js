@@ -193,23 +193,110 @@ const getBuscarFreelancer = async (id) => {
         return { status_code: 400, message: 'ID inválido' }
     } else {
         try {
+            // Busca o freelancer pelo ID
             let dadosFreelancer = await freelancersDAO.selectByIdFreelancer(idFreelancer)
 
             if (dadosFreelancer) {
                 if (dadosFreelancer.length > 0) {
-                    // Converte BigInt para string
-                    dadosFreelancer = dadosFreelancer.map(freelancer => {
-                        if (freelancer.cpf_freelancer) {
-                            freelancer.cpf_freelancer = freelancer.cpf_freelancer.toString()
+                    // Inicializa o objeto para o freelancer
+                    const freelancer = {
+                        id: dadosFreelancer[0].id,
+                        nome_freelancer: dadosFreelancer[0].nome_freelancer,
+                        data_nascimento: dadosFreelancer[0].data_nascimento,
+                        cpf_freelancer: dadosFreelancer[0].cpf_freelancer.toString(), // Converte CPF para string
+                        email_freelancer: dadosFreelancer[0].email_freelancer,
+                        senha_freelancer: dadosFreelancer[0].senha_freelancer,
+                        is_premium: dadosFreelancer[0].is_premium,
+                        foto_perfil: dadosFreelancer[0].foto_perfil,
+                        descricao: dadosFreelancer[0].descricao_freelancer, // Descrição do freelancer
+                        categorias: [],
+                        habilidades: [],
+                        avaliacao: [],
+                        portfolio: [],
+                        projetos_em_andamento: [],
+                        projetos_finalizados: [],
+                        quantidade_projetos: 0,
+                        quantidade_andamento: 0,
+                        quantidade_finalizados: 0
+                    }
+
+                    // Agora vamos preencher os dados associados a esse freelancer
+                    dadosFreelancer.forEach(freelancer => {
+                        // Preenchendo categorias
+                        if (freelancer.id_categoria && freelancer.nome_categoria) {
+                            const categoriaExistente = freelancerJSON.categorias.some(categoria => categoria.id_categoria === freelancer.id_categoria)
+                            if (!categoriaExistente) {
+                                freelancerJSON.categorias.push({
+                                    id_categoria: freelancer.id_categoria,
+                                    nome_categoria: freelancer.nome_categoria,
+                                    icon_categoria: freelancer.icon_categoria // Inclui o ícone da categoria
+                                })
+                            }
                         }
-                        return freelancer
+
+                        // Preenchendo habilidades
+                        if (freelancer.id_habilidade && freelancer.nome_habilidade) {
+                            const habilidadeExistente = freelancerJSON.habilidades.some(habilidade => habilidade.id_habilidade === freelancer.id_habilidade)
+                            if (!habilidadeExistente) {
+                                freelancerJSON.habilidades.push({
+                                    id_habilidade: freelancer.id_habilidade,
+                                    nome_habilidade: freelancer.nome_habilidade,
+                                    icon_habilidade: freelancer.icon_habilidade // Inclui o ícone da habilidade
+                                })
+                            }
+                        }
+
+                        // Preenchendo avaliações
+                        if (freelancer.id_avaliacao) {
+                            const avaliacaoExistente = freelancerJSON.avaliacao.some(avaliacao =>
+                                avaliacao.id === freelancer.id_avaliacao && avaliacao.id_avaliador === freelancer.id_avaliador
+                            )
+                            if (!avaliacaoExistente) {
+                                freelancerJSON.avaliacao.push({
+                                    id: freelancer.id_avaliacao,
+                                    estrelas: freelancer.estrelas,
+                                    comentario: freelancer.comentario,
+                                    id_avaliador: freelancer.id_avaliador,
+                                    nome_avaliador: freelancer.nome_avaliador,
+                                    tipo_avaliador: freelancer.tipo_avaliador
+                                })
+                            }
+                        }
+
+                        // Preenchendo portfólio
+                        if (freelancer.id_portfolio && freelancer.arquivo_portfolio) {
+                            const portfolioExistente = freelancerJSON.portfolio.some(portfolio => portfolio.id_portfolio === freelancer.id_portfolio)
+                            if (!portfolioExistente) {
+                                freelancerJSON.portfolio.push({
+                                    id_portfolio: freelancer.id_portfolio,
+                                    arquivo: freelancer.arquivo_portfolio
+                                })
+                            }
+                        }
+
+                        // Preenchendo projetos
+                        if (freelancer.id_projeto && freelancer.nome_projeto !== null) {
+                            const projeto = { id_projeto: freelancer.id_projeto, nome_projeto: freelancer.nome_projeto }
+
+                            const isFinalizado = (freelancer.projeto_status === true || freelancer.projeto_status === 'true' || freelancer.projeto_status === 1 || freelancer.projeto_status === '1')
+
+                            if (!isFinalizado) {
+                                freelancerJSON.projetos_em_andamento.push(projeto)
+                                freelancerJSON.quantidade_andamento += 1
+                            } else {
+                                freelancerJSON.projetos_finalizados.push(projeto)
+                                freelancerJSON.quantidade_finalizados += 1
+                            }
+
+                            freelancerJSON.quantidade_projetos += 1
+                        }
                     })
 
-                    freelancerJSON.freelancer = dadosFreelancer
+                    freelancerJSON.freelancer = freelancer
                     freelancerJSON.status_code = 200
                     return freelancerJSON
                 } else {
-                    return { status_code: 404, message: 'freelancer não encontrado' }
+                    return { status_code: 404, message: 'Freelancer não encontrado' }
                 }
             } else {
                 return { status_code: 500, message: 'Erro interno do servidor' }
@@ -219,6 +306,7 @@ const getBuscarFreelancer = async (id) => {
         }
     }
 }
+
 
 const setAtualizarFreelancer = async (dadosFreelancer, contentType, id) => {
     try {

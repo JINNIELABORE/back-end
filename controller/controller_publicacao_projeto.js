@@ -220,67 +220,66 @@ const setExcluirPublicacaoProjeto = async (id) => {
 }
 
 const getListarPublicacaoProjetos = async () => {
-    let publicacaoProjetosJSON = {}
+    let publicacaoProjetosJSON = {};
 
-    let dadosPublicacaoProjetos = await publicacaoProjetoDAO.selectAllPublicacaoProjetos()
+    let dadosPublicacaoProjetos = await publicacaoProjetoDAO.selectAllPublicacaoProjetos();
 
     if (dadosPublicacaoProjetos) {
         if (dadosPublicacaoProjetos.length > 0) {
-            const publicacaoProjetosMap = {}
+            const publicacaoProjetosMap = {};
 
             dadosPublicacaoProjetos.forEach(projeto => {
-                const {
-                    id, id_cliente, nome_cliente, nome_projeto, descricao_projeto, orcamento,
-                    nivel_experiencia, nome_categoria, nome_habilidade, is_premium
-                } = projeto
+                const { 
+                    id, id_cliente, nome_cliente, nome_projeto, descricao_projeto, orcamento, 
+                    nivel_experiencia, is_premium, nome_categoria, nome_habilidade 
+                } = projeto;
 
                 if (!publicacaoProjetosMap[id]) {
                     publicacaoProjetosMap[id] = {
                         id,
                         id_cliente,
-                        nome_cliente,
+                        nome_cliente, 
                         nome_projeto,
                         descricao_projeto,
                         orcamento,
                         nivel_experiencia,
-                        is_premium, // Adicionado campo is_premium
-                        categorias: [],
+                        is_premium, // Inclui o campo aqui
+                        categorias: [], 
                         habilidades: []
-                    }
+                    };
                 }
 
                 if (nome_categoria) {
-                    const categoriaExistente = publicacaoProjetosMap[id].categorias.some(categoria => categoria.nome_categoria === nome_categoria)
+                    const categoriaExistente = publicacaoProjetosMap[id].categorias.some(categoria => categoria.nome_categoria === nome_categoria);
                     if (!categoriaExistente) {
                         publicacaoProjetosMap[id].categorias.push({
                             nome_categoria
-                        })
+                        });
                     }
                 }
 
                 if (nome_habilidade) {
-                    const habilidadeExistente = publicacaoProjetosMap[id].habilidades.some(habilidade => habilidade.nome_habilidade === nome_habilidade)
+                    const habilidadeExistente = publicacaoProjetosMap[id].habilidades.some(habilidade => habilidade.nome_habilidade === nome_habilidade);
                     if (!habilidadeExistente) {
                         publicacaoProjetosMap[id].habilidades.push({
                             nome_habilidade
-                        })
+                        });
                     }
                 }
-            })
+            });
 
-            publicacaoProjetosJSON.projetos = Object.values(publicacaoProjetosMap)
-            publicacaoProjetosJSON.quantidade = publicacaoProjetosJSON.projetos.length
-            publicacaoProjetosJSON.status_code = 200
+            publicacaoProjetosJSON.projetos = Object.values(publicacaoProjetosMap);
+            publicacaoProjetosJSON.quantidade = publicacaoProjetosJSON.projetos.length;
+            publicacaoProjetosJSON.status_code = 200;
 
-            return publicacaoProjetosJSON
+            return publicacaoProjetosJSON;
         } else {
-            return { message: 'Nenhum projeto encontrado', status_code: 404 }
+            return { message: 'Nenhum projeto encontrado', status_code: 404 };
         }
     } else {
-        return { message: 'Erro interno do servidor', status_code: 500 }
+        return { message: 'Erro interno do servidor', status_code: 500 };
     }
-}
-
+};
 
 const getBuscarPublicacaoProjeto = async (id) => {
 

@@ -53,6 +53,7 @@ const selectId = async () => {
     }
 }
 
+
 const selectAllPublicacaoProjetos = async () => {
     try {
         let sql = `
@@ -71,6 +72,8 @@ const selectAllPublicacaoProjetos = async () => {
         `;
 
         let rsPublicacaoProjetos = await prisma.$queryRawUnsafe(sql);
+
+        console.log("Dados retornados pelo DAO:", rsPublicacaoProjetos); // Log para verificar o retorno
 
         return rsPublicacaoProjetos;
     } catch (error) {

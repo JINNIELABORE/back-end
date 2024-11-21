@@ -25,7 +25,7 @@ const setInserirNovaPublicacaoProjeto = async (dadosPublicacaoProjeto, contentTy
                 
                 // Inserir o projeto no banco
                 let novaPublicacaoProjeto = await publicacaoProjetoDAO.insertPublicacaoProjeto({
-                    ...dadosPublicacaoProjeto,
+                    dadosPublicacaoProjeto,
                     is_premium: isPremium // Adiciona o valor de 'is_premium' na inserção
                 })
 
@@ -94,10 +94,11 @@ const setAtualizarPublicacaoProjeto = async (dadosPublicacaoProjeto, contentType
 
             // Validação dos campos obrigatórios
             if (
-                dadosPublicacaoProjeto.nome_projeto === '' || dadosPublicacaoProjeto.nome_projeto === undefined || dadosPublicacaoProjeto.nome_projeto === null || dadosPublicacaoProjeto.nome_projeto.length > 50 ||
-                dadosPublicacaoProjeto.descricao_projeto === '' || dadosPublicacaoProjeto.descricao_projeto === undefined || dadosPublicacaoProjeto.descricao_projeto === null || dadosPublicacaoProjeto.descricao_projeto.length > 150 ||
-                dadosPublicacaoProjeto.orcamento === '' || dadosPublicacaoProjeto.orcamento === undefined || dadosPublicacaoProjeto.orcamento === null ||
-                dadosPublicacaoProjeto.id_nivel_experiencia === '' || dadosPublicacaoProjeto.id_nivel_experiencia === undefined || dadosPublicacaoProjeto.id_nivel_experiencia === null
+                !dadosPublicacaoProjeto.nome_projeto || dadosPublicacaoProjeto.nome_projeto.length > 50 ||
+                !dadosPublicacaoProjeto.descricao_projeto || dadosPublicacaoProjeto.descricao_projeto.length > 150 ||
+                dadosPublicacaoProjeto.orcamento === undefined || 
+                !dadosPublicacaoProjeto.id_nivel_experiencia || 
+                typeof dadosPublicacaoProjeto.is_premium !== 'boolean' // Adicionada validação de is_premium
             ) {
                 return message.ERROR_REQUIRED_FIELDS //400
 
@@ -132,6 +133,7 @@ const setAtualizarPublicacaoProjeto = async (dadosPublicacaoProjeto, contentType
                         descricao_projeto: updatedPublicacaoProjeto[0].descricao_projeto,
                         orcamento: updatedPublicacaoProjeto[0].orcamento,
                         id_nivel_experiencia: updatedPublicacaoProjeto[0].id_nivel_experiencia,
+                        is_premium: updatedPublicacaoProjeto[0].is_premium, // Incluído campo is_premium
                         categoria: categorias, // Retorna os nomes das categorias
                         habilidade: habilidades // Retorna os nomes das habilidades
                     }
@@ -148,6 +150,7 @@ const setAtualizarPublicacaoProjeto = async (dadosPublicacaoProjeto, contentType
         return message.ERROR_INTERNAL_SERVER //500 erro na camada da controller
     }
 }
+
 
 const setExcluirPublicacaoProjeto = async (id) => {
     try {
@@ -217,8 +220,6 @@ const setExcluirPublicacaoProjeto = async (id) => {
 }
 
 const getListarPublicacaoProjetos = async () => {
-
-    // Cria o objeto JSON
     let publicacaoProjetosJSON = {}
 
     let dadosPublicacaoProjetos = await publicacaoProjetoDAO.selectAllPublicacaoProjetos()
@@ -228,21 +229,22 @@ const getListarPublicacaoProjetos = async () => {
             const publicacaoProjetosMap = {}
 
             dadosPublicacaoProjetos.forEach(projeto => {
-                const { 
-                    id, id_cliente, nome_cliente, nome_projeto, descricao_projeto, orcamento, 
-                    nivel_experiencia, nome_categoria, nome_habilidade 
+                const {
+                    id, id_cliente, nome_cliente, nome_projeto, descricao_projeto, orcamento,
+                    nivel_experiencia, nome_categoria, nome_habilidade, is_premium
                 } = projeto
 
                 if (!publicacaoProjetosMap[id]) {
                     publicacaoProjetosMap[id] = {
                         id,
                         id_cliente,
-                        nome_cliente, 
+                        nome_cliente,
                         nome_projeto,
                         descricao_projeto,
                         orcamento,
-                        nivel_experiencia, 
-                        categorias: [], 
+                        nivel_experiencia,
+                        is_premium, // Adicionado campo is_premium
+                        categorias: [],
                         habilidades: []
                     }
                 }

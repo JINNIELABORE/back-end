@@ -60,24 +60,25 @@ const selectAllPublicacaoProjetos = async () => {
                    c.nome_cliente, 
                    cat.nome_categoria, 
                    hab.nome_habilidade, 
-                   ne.nivel_experiencia  -- Adiciona o nome da experiência
+                   ne.nivel_experiencia
             FROM publicacao_projetos p
             LEFT JOIN categoria_publicacao_projetos cp ON cp.id_projeto = p.id
             LEFT JOIN categorias cat ON cat.id = cp.id_categoria
             LEFT JOIN habilidade_publicacao_projetos hp ON hp.id_projeto = p.id
             LEFT JOIN habilidades hab ON hab.id = hp.id_habilidade
             LEFT JOIN cadastro_cliente c ON c.id = p.id_cliente
-            LEFT JOIN nivel_experiencia ne ON ne.id = p.id_nivel_experiencia  -- JOIN para pegar o nome da experiência
-        `
+            LEFT JOIN nivel_experiencia ne ON ne.id = p.id_nivel_experiencia;
+        `;
 
-        let rsPublicacaoProjetos = await prisma.$queryRawUnsafe(sql)
+        let rsPublicacaoProjetos = await prisma.$queryRawUnsafe(sql);
 
-        return rsPublicacaoProjetos
+        return rsPublicacaoProjetos;
     } catch (error) {
-        console.error("Error fetching publicacao projetos: ", error)
-        return false
+        console.error("Error fetching publicacao projetos: ", error);
+        return false;
     }
-}
+};
+
 
 
 const selectByIdPublicaoProjeto = async (id) => {
@@ -95,27 +96,36 @@ const selectByIdPublicaoProjeto = async (id) => {
 }
 
 const updatePublicacaoProjeto = async (idPublicacaoProjeto, dadosPublicacaoProjeto) => {
-
-    let sql
-
     try {
-        sql = `update publicacao_projetos set 
-                                           id_cliente = '${dadosPublicacaoProjeto.id_cliente}'
-                                           nome_projeto = '${dadosPublicacaoProjeto.nome_projeto}', 
-                                           descricao_projeto = '${dadosPublicacaoProjeto.descricao_projeto}',
-                                           orcamento = '${dadosPublicacaoProjeto.orcamento}',
-                                           id_nivel_experiencia = '${dadosPublicacaoProjeto.id_nivel_experiencia}' where id = ${idPublicacaoProjeto}`
+        const sql = `
+            UPDATE publicacao_projetos 
+            SET 
+                id_cliente = ?, 
+                nome_projeto = ?, 
+                descricao_projeto = ?, 
+                orcamento = ?, 
+                id_nivel_experiencia = ?,
+                is_premium = ?
+            WHERE id = ?;
+        `;
 
-        let result = await prisma.$executeRawUnsafe(sql)
-        
-        return result
+        const result = await prisma.$executeRawUnsafe(sql, 
+            dadosPublicacaoProjeto.id_cliente,
+            dadosPublicacaoProjeto.nome_projeto,
+            dadosPublicacaoProjeto.descricao_projeto,
+            dadosPublicacaoProjeto.orcamento,
+            dadosPublicacaoProjeto.id_nivel_experiencia,
+            dadosPublicacaoProjeto.is_premium,
+            idPublicacaoProjeto
+        );
 
+        return result;
     } catch (error) {
-
-        return false
+        console.error("Erro ao atualizar publicação de projeto:", error);
+        return false;
     }
+};
 
-}
 
 const deletePublicacaoProjeto = async (id) => {
 

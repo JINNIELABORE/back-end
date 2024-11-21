@@ -111,6 +111,56 @@ const deleteFreelancer = async (id) => {
     }
 
 }
+const selectAllFreelancers = async () => {
+    try {
+        let sql = `
+                    SELECT f.*, 
+                                a.id AS id_avaliacao, 
+                                a.estrelas, 
+                                a.comentario, 
+                                au.id_avaliador, 
+                                au.tipo_avaliador, 
+                                au.id_avaliado, 
+                                au.tipo_avaliado,
+                                f_avaliador.nome_cliente AS nome_avaliador,
+                                fc.id_categoria,
+                                c.nome_categoria,
+                                c.icon_categoria, -- Ícones das categorias
+                                fh.id_habilidade,
+                                h.nome_habilidade,
+                                h.icon_habilidade, -- Ícones das habilidades
+                                fp.foto_perfil,
+                                pf.id_portfolio, 
+                                p.arquivo AS arquivo_portfolio,
+                                dp.descricao AS descricao_freelancer,
+                                fpj.id_projeto,
+                                pp.nome_projeto,
+                                fpj.status AS projeto_status
+                            FROM cadastro_freelancer f
+                    LEFT JOIN avaliacao_usuario au ON au.id_avaliado = f.id AND au.tipo_avaliado = 'freelancer'
+                    LEFT JOIN avaliacao a ON a.id = au.id_avaliacao
+                    LEFT JOIN cadastro_cliente f_avaliador ON f_avaliador.id = au.id_avaliador
+                    LEFT JOIN freelancer_categoria fc ON fc.id_freelancer = f.id
+                    LEFT JOIN categorias c ON c.id = fc.id_categoria
+                    LEFT JOIN freelancer_habilidade fh ON fh.id_freelancer = f.id
+                    LEFT JOIN habilidades h ON h.id = fh.id_habilidade
+                    LEFT JOIN foto_perfil fp ON fp.id_freelancer = f.id
+                    LEFT JOIN portfolio_freelancer pf ON pf.id_freelancer = f.id
+                    LEFT JOIN portfolio p ON p.id = pf.id_portfolio
+                    LEFT JOIN descricao_perfil dp ON dp.id_freelancer = f.id
+                    LEFT JOIN freelancer_projeto fpj ON fpj.id_freelancer = f.id
+                    LEFT JOIN publicacao_projetos pp ON pp.id = fpj.id_projeto
+        `
+
+        let rsFreelancers = await prisma.$queryRawUnsafe(sql)
+
+        return rsFreelancers
+
+    } catch (error) {
+        console.error('Database Error:', error)
+        return false
+    }
+}
 
 // Verifica se o CPF já existe no banco de dados
 const selectByCpf = async (cpf_freelancer) => {

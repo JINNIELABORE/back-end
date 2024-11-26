@@ -7,7 +7,7 @@ const insertSolicitacaoPagamento = async (dadosPagamento) => {
     try {
         let sql
 
-        sql = `insert into solicitacao_pagamento(id_freelancer, valor_solicitado) values('${dadosPagamento.id_freelancer}','${dadosPagamento.valor_solicitado}' )`
+        sql = `insert into solicitacao_pagamento (id_freelancer, valor_solicitado) values ('${dadosPagamento.id_freelancer}','${dadosPagamento.valor_solicitado}' )`
 
         let result = await prisma.$executeRawUnsafe(sql)
 

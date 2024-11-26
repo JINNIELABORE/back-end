@@ -93,6 +93,7 @@ model publicacao_projetos {
   descricao_projeto    String? @db.VarChar(150)
   orcamento            Float
   id_nivel_experiencia Int
+  is_premium           Boolean @default(false)
 
   @@index([id_nivel_experiencia], map: "id_nivel_experiencia")
   @@index([id_cliente], map: "id_cliente")
@@ -146,17 +147,15 @@ model avaliacao_usuario {
 model pagamentos {
   id               Int                         @id @default(autoincrement())
   id_cliente       Int
+  id_freelancer    Int
   valor            Decimal                     @db.Decimal(10, 2)
   metodo_pagamento pagamentos_metodo_pagamento
-  status_pagamento pagamentos_status_pagamento
-  parcelas         Int?                        @default(1)
-  taxa             Decimal?                    @default(0.00) @db.Decimal(5, 2)
-  codigo_transacao String                      @unique(map: "codigo_transacao") @db.VarChar(50)
+  status_pagamento pagamentos_status_pagamento @default(pendente)
   descricao        String?                     @db.Text
-  moeda            String?                     @default("BRL") @db.VarChar(3)
-  data_pagamento   DateTime?                   @default(now()) @db.Timestamp(0)
+  link_pagamento   String?                     @db.Text
 
   @@index([id_cliente], map: "id_cliente")
+  @@index([id_freelancer], map: "id_freelancer")
 }
 
 model freelancer_projeto {
@@ -169,6 +168,32 @@ model freelancer_projeto {
   @@index([id_projeto], map: "id_projeto")
 }
 
+model denuncia {
+  id        Int    @id @default(autoincrement())
+  arquivo   String @db.Text
+  descricao String @db.Text
+}
+
+model disputa {
+  id               Int                      @id @default(autoincrement())
+  id_denuncia      Int
+  id_denunciante   Int
+  tipo_denunciante disputa_tipo_denunciante
+  id_denunciado    Int
+  tipo_denunciado  disputa_tipo_denunciado
+  situacao         disputa_situacao         @default(pendente)
+
+  @@index([id_denuncia], map: "id_denuncia")
+}
+
+model solicitacao_pagamento {
+  id               Int     @id @default(autoincrement())
+  id_freelancer    Int
+  valor_solicitado Decimal @db.Decimal(10, 2)
+
+  @@index([id_freelancer], map: "id_freelancer")
+}
+
 enum avaliacao_usuario_tipo_avaliador {
   cliente
   freelancer
@@ -179,15 +204,28 @@ enum avaliacao_usuario_tipo_avaliado {
   freelancer
 }
 
-enum pagamentos_metodo_pagamento {
-  cartao_credito
-  boleto
-  pix
-  transferencia
-}
-
 enum pagamentos_status_pagamento {
   pendente
   concluido
   cancelado
+}
+
+enum disputa_tipo_denunciante {
+  cliente
+  freelancer
+}
+
+enum pagamentos_metodo_pagamento {
+  pix
+}
+
+enum disputa_tipo_denunciado {
+  cliente
+  freelancer
+}
+
+enum disputa_situacao {
+  pendente
+  em_andamento @map("em andamento")
+  resolvido
 }

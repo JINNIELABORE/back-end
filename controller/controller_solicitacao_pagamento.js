@@ -7,8 +7,8 @@ const setInserirNovaSolicitacao = async (dadosSolicitacaoPagamento, contentType)
             let novaSolicitacaoJson = {}
 
             if (
-                dadosSolicitacaoPagamento.idFreelancer == '' || dadosSolicitacaoPagamento.idFreelancer == undefined || dadosSolicitacaoPagamento.idFreelancer == null || dadosSolicitacaoPagamento.idFreelancer.length > 45 ||
-                dadosSolicitacaoPagamento.valorSolicitado == '' || dadosSolicitacaoPagamento.valorSolicitado == undefined || dadosSolicitacaoPagamento.valorSolicitado == null || dadosSolicitacaoPagamento.valorSolicitado.length > 400
+                dadosSolicitacaoPagamento.id_freelancer == '' || dadosSolicitacaoPagamento.id_freelancer == undefined || dadosSolicitacaoPagamento.id_freelancer == null || dadosSolicitacaoPagamento.id_freelancer.length > 45 ||
+                dadosSolicitacaoPagamento.valor_solicitado == '' || dadosSolicitacaoPagamento.valor_solicitado == undefined || dadosSolicitacaoPagamento.valor_solicitado == null || dadosSolicitacaoPagamento.valor_solicitado.length > 400
             ) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {
@@ -18,7 +18,7 @@ const setInserirNovaSolicitacao = async (dadosSolicitacaoPagamento, contentType)
                     let id = await solicitacaoDao.selectId()
 
                     novaSolicitacaoJson.status = message.SUCESS_CREATED_ITEM.status
-                    novaSolicitacaoJson.statusCode = message.SUCESS_CREATED_ITEM.status_code
+                    novaSolicitacaoJson.status_code = message.SUCESS_CREATED_ITEM.status_code
                     novaSolicitacaoJson.message = message.SUCESS_CREATED_ITEM.message
                     novaSolicitacaoJson.id = parseInt(id)
                     novaSolicitacaoJson.solicitacaoPagamento = dadosSolicitacaoPagamento
@@ -43,8 +43,8 @@ const setAtualizarSolicitacaoPagamento = async (dadosSolicitacaoPagamento, conte
             let updateSolicitacaoPagamentoJson = {}
 
             if (
-                dadosSolicitacaoPagamento.idFreelancer == '' || dadosSolicitacaoPagamento.idFreelancer == undefined || dadosSolicitacaoPagamento.idFreelancer == null || dadosSolicitacaoPagamento.idFreelancer.length > 45 ||
-                dadosSolicitacaoPagamento.valorSolicitado == '' || dadosSolicitacaoPagamento.valorSolicitado == undefined || dadosSolicitacaoPagamento.valorSolicitado == null || dadosSolicitacaoPagamento.valorSolicitado.length > 400
+                dadosSolicitacaoPagamento.id_freelancer == '' || dadosSolicitacaoPagamento.id_freelancer == undefined || dadosSolicitacaoPagamento.id_freelancer == null || dadosSolicitacaoPagamento.id_freelancer.length > 45 ||
+                dadosSolicitacaoPagamento.valor_solicitado == '' || dadosSolicitacaoPagamento.valor_solicitado == undefined || dadosSolicitacaoPagamento.valor_solicitado == null || dadosSolicitacaoPagamento.valor_solicitado.length > 400
             ) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {
@@ -55,7 +55,7 @@ const setAtualizarSolicitacaoPagamento = async (dadosSolicitacaoPagamento, conte
                     let updatedId = updatedSolicitacaoPagamento[0].id 
 
                     updateSolicitacaoPagamentoJson.status = message.SUCESS_UPDATE_ITEM.status
-                    updateSolicitacaoPagamentoJson.statusCode = message.SUCESS_UPDATE_ITEM.status_code
+                    updateSolicitacaoPagamentoJson.status_code = message.SUCESS_UPDATE_ITEM.status_code
                     updateSolicitacaoPagamentoJson.message = message.SUCESS_UPDATE_ITEM.message
                     updateSolicitacaoPagamentoJson.id = updatedId // Usa o id atualizado aqui
                     updateSolicitacaoPagamentoJson.solicitacaoPagamento = dadosSolicitacaoPagamento
@@ -104,7 +104,7 @@ const getListarSolicitacao = async () => {
         if (dadosSolicitacaoPagamentos.length > 0) {
             solicitacoesPagamentosJson.solicitacoesPagamentos = dadosSolicitacaoPagamentos
             solicitacoesPagamentosJson.quantidade = dadosSolicitacaoPagamentos.length
-            solicitacoesPagamentosJson.statusCode = 200
+            solicitacoesPagamentosJson.status_code = 200
 
             return solicitacoesPagamentosJson
         } else {
@@ -127,7 +127,7 @@ const getBuscarSolicitacaoPagamento = async (id) => {
         if (dadosSolicitacaoPagamento) {
             if (dadosSolicitacaoPagamento.length > 0) {
                 solicitacaoPagamentoJson.solicitacaoPagamento = dadosSolicitacaoPagamento
-                solicitacaoPagamentoJson.statusCode = 200
+                solicitacaoPagamentoJson.status_code = 200
 
                 return solicitacaoPagamentoJson
             } else {

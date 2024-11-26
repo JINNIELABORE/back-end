@@ -161,19 +161,17 @@ create table avaliacao_usuario (
 );
 
 CREATE TABLE pagamentos (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    id_cliente INT NOT NULL, 
-    valor DECIMAL(10, 2) NOT NULL, 
-    metodo_pagamento ENUM('cartao_credito', 'boleto', 'pix', 'transferencia') NOT NULL, 
-    status_pagamento ENUM('pendente', 'concluido', 'cancelado') NOT NULL, 
-    parcelas INT DEFAULT 1, 
-    taxa DECIMAL(5, 2) DEFAULT 0.00, 
-    codigo_transacao VARCHAR(50) UNIQUE NOT NULL, 
-    descricao TEXT, 
-    moeda VARCHAR(3) DEFAULT 'BRL', 
-    data_pagamento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id int primary key auto_increment,
+    id_cliente int not null,
+    id_freelancer int not null,
+    valor decimal (10, 2) not null,
+    metodo_pagamento ENUM('pix') not null,
+    status_pagamento ENUM('pendente', 'concluido', 'cancelado') not null default 'pendente',
+    descricao text, 
+    link_pagamento text,
     
-    FOREIGN KEY (id_cliente) REFERENCES cadastro_cliente(id)
+    foreign key (id_cliente) references cadastro_cliente(id),
+    foreign key (id_freelancer) references cadastro_freelancer(id)
 );
 
 create table freelancer_projeto (

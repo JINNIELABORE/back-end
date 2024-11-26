@@ -10,10 +10,10 @@ const setInserirNovoPagamento = async (dadosPagamento, contentType) => {
             // Valida se os campos estão corretos
             if (
                 dadosPagamento.id_cliente == '' || dadosPagamento.id_cliente == undefined || dadosPagamento.id_cliente == null ||
+                dadosPagamento.id_freelancer == '' || dadosPagamento.id_freelancer == undefined || dadosPagamento.id_freelancer == null ||
                 dadosPagamento.valor == '' || dadosPagamento.valor == undefined || dadosPagamento.valor == null ||
                 dadosPagamento.metodo_pagamento == '' || dadosPagamento.metodo_pagamento == undefined || dadosPagamento.metodo_pagamento == null ||
-                dadosPagamento.status_pagamento == '' || dadosPagamento.status_pagamento == undefined || dadosPagamento.status_pagamento == null ||
-                dadosPagamento.codigo_transacao == '' || dadosPagamento.codigo_transacao == undefined || dadosPagamento.codigo_transacao == null
+                dadosPagamento.status_pagamento == '' || dadosPagamento.status_pagamento == undefined || dadosPagamento.status_pagamento == null
             ) {
                 return message.ERROR_REQUIRED_FIELDS //400
             } else {
@@ -52,10 +52,10 @@ const setAtualizarPagamento = async (dadosPagamento, contentType, id) => {
             // Valida os campos do pagamento
             if (
                 dadosPagamento.id_cliente == '' || dadosPagamento.id_cliente == undefined || dadosPagamento.id_cliente == null ||
+                dadosPagamento.id_freelancer == '' || dadosPagamento.id_freelancer == undefined || dadosPagamento.id_freelancer == null ||
                 dadosPagamento.valor == '' || dadosPagamento.valor == undefined || dadosPagamento.valor == null ||
                 dadosPagamento.metodo_pagamento == '' || dadosPagamento.metodo_pagamento == undefined || dadosPagamento.metodo_pagamento == null ||
-                dadosPagamento.status_pagamento == '' || dadosPagamento.status_pagamento == undefined || dadosPagamento.status_pagamento == null ||
-                dadosPagamento.codigo_transacao == '' || dadosPagamento.codigo_transacao == undefined || dadosPagamento.codigo_transacao == null
+                dadosPagamento.status_pagamento == '' || dadosPagamento.status_pagamento == undefined || dadosPagamento.status_pagamento == null
             ) {
                 return message.ERROR_REQUIRED_FIELDS //400
             } else {

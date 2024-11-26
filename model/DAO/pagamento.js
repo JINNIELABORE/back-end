@@ -8,10 +8,9 @@ const insertPagamento = async (dadosPagamento) => {
     try {
         let sql
 
-        sql = `insert into pagamentos(id_cliente, valor, metodo_pagamento, status_pagamento, parcelas, taxa, codigo_transacao, descricao, moeda) 
-               values('${dadosPagamento.id_cliente}', '${dadosPagamento.valor}', '${dadosPagamento.metodo_pagamento}', 
-                      '${dadosPagamento.status_pagamento}', '${dadosPagamento.parcelas}', '${dadosPagamento.taxa}', 
-                      '${dadosPagamento.codigo_transacao}', '${dadosPagamento.descricao}', '${dadosPagamento.moeda}')`
+        sql = `insert into pagamentos(id_cliente, id_freelancer, valor, metodo_pagamento, status_pagamento, descricao, link_pagamento) 
+               values('${dadosPagamento.id_cliente}', '${dadosPagamento.id_freelancer}', '${dadosPagamento.valor}', '${dadosPagamento.metodo_pagamento}', 
+                      '${dadosPagamento.status_pagamento}', '${dadosPagamento.descricao}', '${dadosPagamento.link_pagamento}')`
 
                       console.log(sql);
                       
@@ -52,8 +51,13 @@ const updatePagamento = async (idPagamento, dadosPagamento) => {
 
     try {
         sql = `update pagamentos set 
-                nome_habilidade = '${dadosPagamento.nome_habilidade}', 
-                icon_habilidade = '${dadosPagamento.icon_habilidade}' 
+                id_cliente = '${dadosPagamento.id_cliente}', 
+                id_freelancer = '${dadosPagamento.id_freelancer}', 
+                valor = '${dadosPagamento.valor}', 
+                metodo_pagamento = '${dadosPagamento.metodo_pagamento}', 
+                status_pagamento = '${dadosPagamento.status_pagamento}', 
+                descricao = '${dadosPagamento.descricao}', 
+                link_pagamento = '${dadosPagamento.link_pagamento}'
                 where id = ${idPagamento}`
 
         let result = await prisma.$executeRawUnsafe(sql)

@@ -216,7 +216,6 @@ const getListarDenuncias = async () => {
     }
 }
 
-
 const getBuscarDenuncia = async (id) => {
     let idDenuncia = id
 

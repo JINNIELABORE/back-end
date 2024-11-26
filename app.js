@@ -46,6 +46,7 @@ const controllerAvaliacao = require('./controller/controller_avaliacao.js')
 const controllerPagamentos = require('./controller/controller_pagamento.js')
 const controllerFreelancerProjeto = require('./controller/controller_freelancer_projeto')
 const controllerDenuncia = require('./controller/controller_denuncia.js')
+const controllerSolicitarPagamento = require('./controller/controller_solicitacao_pagamento.js')
 
 // Clientes
 
@@ -1158,6 +1159,55 @@ app.post('/v1/jinni/denuncia', cors(), bodyParserJSON, async (request, response,
     response.status(resultado.status_code)
     response.json(resultado)
 })
+
+// Solicitações de Pagamento
+
+app.get('/v1/jinni/solicitacoes/pagamento', cors(), bodyParserJSON, async (request, response, next) => {
+    let dadosSolicitacoes = await controllerSolicitarPagamento.getListarSolicitacao()
+
+    response.status(dadosSolicitacoes.status_code)
+    response.json(dadosSolicitacoes)
+})
+
+app.get('/v1/jinni/solicitacao/pagamento/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idSolicitacao = request.params.id
+
+    let dadosSolicitacao = await controllerSolicitarPagamento.getBuscarSolicitacaoPagamento(idSolicitacao)
+
+    response.status(dadosSolicitacao.status_code)
+    response.json(dadosSolicitacao)
+})
+
+app.delete('/v1/jinni/solicitacao/pagamento/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idSolicitacao = request.params.id
+
+    let resultado = await controllerSolicitarPagamento.setExcluirSolicitacaoPagamento(idSolicitacao)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.put('/v1/jinni/solicitacao/pagamento/:id', cors(), bodyParserJSON, async (request, response, next) => {
+    let idSolicitacao = request.params.id
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerSolicitarPagamento.setAtualizarSolicitacaoPagamento(dadosBody, contentType, idSolicitacao)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
+app.post('/v1/jinni/solicitacao/pagamento', cors(), bodyParserJSON, async (request, response, next) => {
+    let contentType = request.headers['content-type']
+    let dadosBody = request.body
+
+    let resultado = await controllerSolicitarPagamento.setInserirNovaSolicitacao(dadosBody, contentType)
+
+    response.status(resultado.status_code)
+    response.json(resultado)
+})
+
 
 app.listen(8080, function () {
     console.log('servidor rodando na porta 8080')

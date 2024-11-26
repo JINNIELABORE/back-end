@@ -201,8 +201,16 @@ create table disputa (
     
     foreign key (id_denuncia) references denuncia(id)
 );
-  
 
+create table solicitacao_pagamento (
+id int not null auto_increment primary key,
+id_freelancer int not null, 
+valor_solicitado decimal(10,2) not null,
+
+foreign key (id_freelancer) references cadastro_freelancer(id)
+
+);
+  
 INSERT INTO avaliacao (estrelas, comentario)
 VALUES (4, 'Muito bom seviço');
 

@@ -166,7 +166,7 @@ CREATE TABLE pagamentos (
     id_freelancer int not null,
     valor decimal (10, 2) not null,
     metodo_pagamento ENUM('pix') not null,
-    status_pagamento ENUM('pendente', 'concluido', 'cancelado') not null default 'pendente',
+    status_pagamento ENUM('pendente', 'concluido', 'cancelado') not null default 'concluido',
     descricao text, 
     link_pagamento text,
     

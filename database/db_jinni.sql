@@ -203,14 +203,87 @@ create table disputa (
 );
 
 create table solicitacao_pagamento (
-id int not null auto_increment primary key,
-id_freelancer int not null, 
-valor_solicitado decimal(10,2) not null,
+    id int not null auto_increment primary key,
+    id_freelancer int not null, 
+    valor_solicitado decimal(10,2) not null,
+    banco varchar(80) not null,
+    agencia varchar(10) not null,
+    numero_conta varchar(20) not null,
+    tipo_conta varchar(20) not null,
+    nome_completo_titular varchar(150) not null,
+    cpf varchar(11) not null,
+    status_pago BOOLEAN NOT NULL DEFAULT FALSE,
 
-foreign key (id_freelancer) references cadastro_freelancer(id)
-
+    foreign key (id_freelancer) references cadastro_freelancer(id)
 );
-  
+
+
+CREATE TABLE total_a_receber (
+    id_freelancer INT NOT NULL PRIMARY KEY,
+    total DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    FOREIGN KEY (id_freelancer) REFERENCES cadastro_freelancer(id)
+);
+
+-- Definir o delimitador para o trigger
+DELIMITER //
+
+-- Trigger para inserir o saldo inicial de 0.00 ao cadastrar um freelancer
+CREATE TRIGGER after_insert_freelancer
+AFTER INSERT ON cadastro_freelancer
+FOR EACH ROW
+BEGIN
+    -- Insere o freelancer na tabela total_a_receber com saldo inicial de 0.00
+    INSERT INTO total_a_receber (id_freelancer, total)
+    VALUES (NEW.id, 0.00);
+END//
+
+-- Trigger para atualizar o saldo do freelancer quando um pagamento for concluído
+CREATE TRIGGER after_insert_pagamento
+AFTER INSERT ON pagamentos
+FOR EACH ROW
+BEGIN
+    -- Verifica se o pagamento foi concluído
+    IF NEW.status_pagamento = 'concluido' THEN
+        -- Verifica se o freelancer já existe na tabela total_a_receber
+        IF NOT EXISTS (SELECT 1 FROM total_a_receber WHERE id_freelancer = NEW.id_freelancer) THEN
+            -- Se não existir, insere o freelancer com saldo 0.00
+            INSERT INTO total_a_receber (id_freelancer, total)
+            VALUES (NEW.id_freelancer, 0.00);
+        END IF;
+
+        -- Atualiza o saldo do freelancer com o valor do pagamento
+        UPDATE total_a_receber
+        SET total = total + NEW.valor
+        WHERE id_freelancer = NEW.id_freelancer;
+    END IF;
+END//
+
+-- Trigger para subtrair o valor quando a solicitação de pagamento for marcada como paga
+CREATE TRIGGER after_update_status_pagamento
+AFTER UPDATE ON solicitacao_pagamento
+FOR EACH ROW
+BEGIN
+    -- Verifica se o status_pago foi alterado para TRUE (pago)
+    IF NEW.status_pago = TRUE AND OLD.status_pago = FALSE THEN
+        -- Verifica se o freelancer já existe na tabela total_a_receber
+        IF NOT EXISTS (SELECT 1 FROM total_a_receber WHERE id_freelancer = NEW.id_freelancer) THEN
+            -- Se não existir, insere o freelancer com saldo 0.00
+            INSERT INTO total_a_receber (id_freelancer, total)
+            VALUES (NEW.id_freelancer, 0.00);
+        END IF;
+
+        -- Subtrai o valor solicitado do total do freelancer na tabela total_a_receber
+        UPDATE total_a_receber
+        SET total = total - NEW.valor_solicitado
+        WHERE id_freelancer = NEW.id_freelancer;
+    END IF;
+END//
+
+-- Voltar ao delimitador padrão
+DELIMITER ;
+
+-- INSERTS -------------------------------------------------------------------------------------------------------------------------------------
+
 INSERT INTO avaliacao (estrelas, comentario)
 VALUES (4, 'Muito bom seviço');
 
@@ -324,3 +397,6 @@ VALUES
 (1, 1), -- Freelancer A -> projeto_site_institucional.zip
 (2, 3), -- Freelancer C -> projeto_app_mobile.zip
 (3, 4); -- Freelancer D -> analise_dados_vendas.pdf
+
+INSERT INTO pagamentos (id_cliente, id_freelancer, valor, metodo_pagamento, status_pagamento, descricao, link_pagamento)
+VALUES (1, 2, 500.00, 'pix', 'concluido', 'Pagamento pelo projeto X', 'link_do_pagamento');

@@ -187,11 +187,23 @@ model disputa {
 }
 
 model solicitacao_pagamento {
-  id               Int     @id @default(autoincrement())
-  id_freelancer    Int
-  valor_solicitado Decimal @db.Decimal(10, 2)
+  id                    Int     @id @default(autoincrement())
+  id_freelancer         Int
+  valor_solicitado      Decimal @db.Decimal(10, 2)
+  banco                 String  @db.VarChar(80)
+  agencia               String  @db.VarChar(10)
+  numero_conta          String  @db.VarChar(20)
+  tipo_conta            String  @db.VarChar(20)
+  nome_completo_titular String  @db.VarChar(150)
+  cpf                   String  @db.VarChar(11)
+  status_pago           Boolean @default(false)
 
   @@index([id_freelancer], map: "id_freelancer")
+}
+
+model total_a_receber {
+  id_freelancer Int     @id
+  total         Decimal @default(0.00) @db.Decimal(10, 2)
 }
 
 enum avaliacao_usuario_tipo_avaliador {

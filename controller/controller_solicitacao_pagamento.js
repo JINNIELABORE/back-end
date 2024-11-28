@@ -6,9 +6,19 @@ const setInserirNovaSolicitacao = async (dadosSolicitacaoPagamento, contentType)
         if (String(contentType).toLowerCase() == 'application/json') {
             let novaSolicitacaoJson = {}
 
+            // Atualizando validações
             if (
-                dadosSolicitacaoPagamento.id_freelancer == '' || dadosSolicitacaoPagamento.id_freelancer == undefined || dadosSolicitacaoPagamento.id_freelancer == null || dadosSolicitacaoPagamento.id_freelancer.length > 45 ||
-                dadosSolicitacaoPagamento.valor_solicitado == '' || dadosSolicitacaoPagamento.valor_solicitado == undefined || dadosSolicitacaoPagamento.valor_solicitado == null || dadosSolicitacaoPagamento.valor_solicitado.length > 400
+                dadosSolicitacaoPagamento.id_freelancer == '' || dadosSolicitacaoPagamento.id_freelancer == undefined || dadosSolicitacaoPagamento.id_freelancer == null ||
+                dadosSolicitacaoPagamento.valor_solicitado == '' || dadosSolicitacaoPagamento.valor_solicitado == undefined || dadosSolicitacaoPagamento.valor_solicitado == null ||
+                dadosSolicitacaoPagamento.banco == '' || dadosSolicitacaoPagamento.banco == undefined || dadosSolicitacaoPagamento.banco == null ||
+                dadosSolicitacaoPagamento.agencia == '' || dadosSolicitacaoPagamento.agencia == undefined || dadosSolicitacaoPagamento.agencia == null ||
+                dadosSolicitacaoPagamento.numero_conta == '' || dadosSolicitacaoPagamento.numero_conta == undefined || dadosSolicitacaoPagamento.numero_conta == null ||
+                dadosSolicitacaoPagamento.tipo_conta == '' || dadosSolicitacaoPagamento.tipo_conta == undefined || dadosSolicitacaoPagamento.tipo_conta == null ||
+                dadosSolicitacaoPagamento.nome_completo_titular == '' || dadosSolicitacaoPagamento.nome_completo_titular == undefined || dadosSolicitacaoPagamento.nome_completo_titular == null ||
+                dadosSolicitacaoPagamento.cpf == '' || dadosSolicitacaoPagamento.cpf == undefined || dadosSolicitacaoPagamento.cpf == null ||
+                dadosSolicitacaoPagamento.id_freelancer.length > 45 || 
+                dadosSolicitacaoPagamento.cpf.length != 11 || 
+                dadosSolicitacaoPagamento.valor_solicitado.length > 400
             ) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {
@@ -42,9 +52,9 @@ const setAtualizarSolicitacaoPagamento = async (dadosSolicitacaoPagamento, conte
         if (String(contentType).toLowerCase() == 'application/json') {
             let updateSolicitacaoPagamentoJson = {}
 
+            // Atualizando validações
             if (
-                dadosSolicitacaoPagamento.id_freelancer == '' || dadosSolicitacaoPagamento.id_freelancer == undefined || dadosSolicitacaoPagamento.id_freelancer == null || dadosSolicitacaoPagamento.id_freelancer.length > 45 ||
-                dadosSolicitacaoPagamento.valor_solicitado == '' || dadosSolicitacaoPagamento.valor_solicitado == undefined || dadosSolicitacaoPagamento.valor_solicitado == null || dadosSolicitacaoPagamento.valor_solicitado.length > 400
+                dadosSolicitacaoPagamento.status_pago == '' || dadosSolicitacaoPagamento.status_pago == undefined || dadosSolicitacaoPagamento.status_pago == null 
             ) {
                 return message.ERROR_REQUIRED_FIELDS // 400
             } else {

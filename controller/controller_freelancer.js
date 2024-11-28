@@ -74,7 +74,8 @@ const getListarFreelancers = async () => {
                     email_freelancer, senha_freelancer, is_premium, foto_perfil,
                     id_avaliacao, estrelas, comentario, nome_avaliador, id_categoria, nome_categoria,
                     icon_categoria, id_habilidade, nome_habilidade, icon_habilidade, id_avaliador, tipo_avaliador, id_portfolio, arquivo_portfolio,
-                    descricao_freelancer, id_projeto, nome_projeto, projeto_status
+                    descricao_freelancer, id_projeto, nome_projeto, projeto_status, total_a_receber,
+                    id_solicitacao, valor_solicitado, banco, agencia, numero_conta, tipo_conta, nome_completo_titular, cpf_titular, status_pago
                 } = freelancer
 
                 // Verifica se o freelancer já foi adicionado ao mapa
@@ -95,9 +96,11 @@ const getListarFreelancers = async () => {
                         portfolio: [],
                         projetos_em_andamento: [],
                         projetos_finalizados: [],
+                        solicitacoesPagamentos: [], // Novo campo para armazenar as solicitações de pagamento
                         quantidade_projetos: 0,
                         quantidade_andamento: 0,
-                        quantidade_finalizados: 0
+                        quantidade_finalizados: 0,
+                        total_a_receber: 0 // Inicializa o total_a_receber
                     }
                 }
 
@@ -169,6 +172,26 @@ const getListarFreelancers = async () => {
 
                     freelancersMap[id].quantidade_projetos += 1
                 }
+
+                // Somando o total_a_receber de cada freelancer, caso haja
+                if (total_a_receber) {
+                    freelancersMap[id].total_a_receber += parseFloat(total_a_receber) || 0;  // Garante que o valor seja numérico
+                }
+
+                // Adiciona solicitações de pagamento ao freelancer
+                if (id_solicitacao) {
+                    freelancersMap[id].solicitacoesPagamentos.push({
+                        id: id_solicitacao,
+                        valor_solicitado,
+                        banco,
+                        agencia,
+                        numero_conta,
+                        tipo_conta,
+                        nome_completo_titular,
+                        cpf: cpf_titular,
+                        status_pago
+                    })
+                }
             })
 
             freelancersJSON.freelancers = Object.values(freelancersMap)
@@ -204,9 +227,11 @@ const getBuscarFreelancer = async (id) => {
                             email_freelancer, senha_freelancer, is_premium, foto_perfil,
                             id_avaliacao, estrelas, comentario, nome_avaliador, id_categoria, nome_categoria,
                             icon_categoria, id_habilidade, nome_habilidade, icon_habilidade, id_avaliador, tipo_avaliador, id_portfolio, arquivo_portfolio,
-                            descricao_freelancer, id_projeto, nome_projeto, projeto_status
+                            descricao_freelancer, id_projeto, nome_projeto, projeto_status, total_a_receber,
+                            id_solicitacao, valor_solicitado, banco, agencia, numero_conta, tipo_conta, nome_completo_titular, cpf_titular, status_pago
                         } = freelancer
 
+                        // Verifica se o freelancer já foi adicionado ao mapa
                         if (!freelancersMap[id]) {
                             freelancersMap[id] = {
                                 id,
@@ -224,12 +249,15 @@ const getBuscarFreelancer = async (id) => {
                                 portfolio: [],
                                 projetos_em_andamento: [],
                                 projetos_finalizados: [],
+                                solicitacoesPagamentos: [], // Novo campo para solicitacoes de pagamento
                                 quantidade_projetos: 0,
                                 quantidade_andamento: 0,
-                                quantidade_finalizados: 0
+                                quantidade_finalizados: 0,
+                                total_a_receber: 0 // Inicializa o total_a_receber
                             }
                         }
 
+                        // Adiciona categorias, habilidades, avaliações, portfólio e projetos como antes
                         if (id_categoria && nome_categoria && icon_categoria) {
                             const categoriaExistente = freelancersMap[id].categorias.some(categoria => categoria.id_categoria === id_categoria)
                             if (!categoriaExistente) {
@@ -278,6 +306,7 @@ const getBuscarFreelancer = async (id) => {
                             }
                         }
 
+                        // Adiciona projetos
                         if (id_projeto && nome_projeto !== null) {
                             const projeto = { id_projeto, nome_projeto }
 
@@ -293,6 +322,26 @@ const getBuscarFreelancer = async (id) => {
 
                             freelancersMap[id].quantidade_projetos += 1
                         }
+
+                        // Somando o total_a_receber
+                        if (total_a_receber) {
+                            freelancersMap[id].total_a_receber += parseFloat(total_a_receber) || 0
+                        }
+
+                        // Adiciona as solicitações de pagamento
+                        if (id_solicitacao) {
+                            freelancersMap[id].solicitacoesPagamentos.push({
+                                id: id_solicitacao,
+                                valor_solicitado,
+                                banco,
+                                agencia,
+                                numero_conta,
+                                tipo_conta,
+                                nome_completo_titular,
+                                cpf: cpf_titular,
+                                status_pago
+                            })
+                        }
                     })
 
                     freelancerJSON.freelancers = Object.values(freelancersMap)
@@ -306,6 +355,7 @@ const getBuscarFreelancer = async (id) => {
                 return { status_code: 500, message: 'Erro interno do servidor' }
             }
         } catch (error) {
+            console.error('Erro ao buscar freelancer:', error)
             return { status_code: 500, message: 'Erro interno do servidor' }
         }
     }

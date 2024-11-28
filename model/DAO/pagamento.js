@@ -8,9 +8,8 @@ const insertPagamento = async (dadosPagamento) => {
     try {
         let sql
 
-        sql = `insert into pagamentos(id_cliente, id_freelancer, valor, metodo_pagamento, status_pagamento, descricao, link_pagamento) 
-               values('${dadosPagamento.id_cliente}', '${dadosPagamento.id_freelancer}', '${dadosPagamento.valor}', '${dadosPagamento.metodo_pagamento}', 
-                      '${dadosPagamento.status_pagamento}', '${dadosPagamento.descricao}', '${dadosPagamento.link_pagamento}')`
+        sql = `insert into pagamentos(id_cliente, id_freelancer, valor, descricao, link_pagamento) 
+               values('${dadosPagamento.id_cliente}', '${dadosPagamento.id_freelancer}', '${dadosPagamento.valor}', '${dadosPagamento.descricao}', '${dadosPagamento.link_pagamento}')`
 
                       console.log(sql);
                       

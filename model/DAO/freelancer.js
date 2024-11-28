@@ -256,13 +256,13 @@ const selectByEmail = async (email_freelancer) => {
 
 const getFreelancerByEmail = async (email_freelancer) => {
     try {
-        let sql = `SELECT nome_freelancer FROM cadastro_freelancer WHERE email_freelancer = '${email_freelancer}'`
+        let sql = `SELECT email_freelancer, senha_freelancer FROM cadastro_freelancer WHERE email_freelancer = '${email_freelancer}'`
         console.log(sql)
         let rsFreelancer = await prisma.$queryRawUnsafe(sql)
         console.log(rsFreelancer)  
 
         if (rsFreelancer.length > 0) {
-            return rsFreelancer[0].nome_freelancer // Retorna o nome do freelancer
+            return rsFreelancer// Retorna o nome do freelancer
         } else {
             return null // E-mail não cadastrado
         }

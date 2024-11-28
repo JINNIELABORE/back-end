@@ -469,19 +469,17 @@ app.put ('/v1/jinni/habilidade/freelancer/:id',  cors(), bodyParserJSON, async (
 
 })
 
-app.post('v1/jinni/freelancer/nome', async (req, res) => {
-    const { email_freelancer } = req.body
+app.get('v1/jinni/nome/freelancer', async (req, res) => {
+    const emailPesquisado = req.query.emailDigitado
+console.log(emailPesquisado)
 
-    if (!email_freelancer) {
-        return res.status(400).json({ error: 'Email é obrigatório.' })
-    }
 
-    const nomeFreelancer = await controllerFreelancers.getFreelancerByEmail(email_freelancer)
+    const nomeFreelancer = await controllerFreelancers.getFreelancerByEmail(emailPesquisado)
 
     if (nomeFreelancer) {
-        return res.status(200).json({ nome: nomeFreelancer })
+        return res.status(200).json({ nome: nomeFreelancer})
     } else {
-        return res.status(404).json({ error: 'Freelancer não encontrado.' })
+        return res.status(404).json({ error: 'Cliente não encontrado.' })
     }
 })
 

@@ -256,7 +256,7 @@ const selectByEmail = async (email_freelancer) => {
 
 const getFreelancerByEmail = async (email_freelancer) => {
     try {
-        let sql = `SELECT email_freelancer, senha_freelancer FROM cadastro_freelancer WHERE email_freelancer = '${email_freelancer}'`
+        let sql = `SELECT id_freelancer, email_freelancer, senha_freelancer FROM cadastro_freelancer WHERE email_freelancer = '${email_freelancer}'`
         console.log(sql)
         let rsFreelancer = await prisma.$queryRawUnsafe(sql)
         console.log(rsFreelancer)  

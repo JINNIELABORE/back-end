@@ -217,7 +217,7 @@ const selectByEmail = async (email_cliente) => {
 
 const getClienteByEmail = async (email_cliente) => {
     try {
-        let sql = `SELECT id_cliente, email_cliente, senha_cliente FROM cadastro_cliente WHERE email_cliente = '${email_cliente}'`
+        let sql = `SELECT id, email_cliente, senha_cliente FROM cadastro_cliente WHERE email_cliente = '${email_cliente}'`
         let rsCliente = await prisma.$queryRawUnsafe(sql)
 
         if (rsCliente.length > 0) {
